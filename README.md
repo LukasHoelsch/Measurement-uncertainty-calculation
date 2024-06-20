@@ -8,10 +8,11 @@ This GitHub page features the Uncertainty-Calculation toolchain used in the pape
 
 # Software Structure
 
+````bash
 .
-├── testBench_evaluation                                                                                          
-│   └── init                                                                                                  
-│   │                                                                                                         
+├── testBench_evaluation
+│   └── init.m
+│   │
 │   └── motorModel
 │       ├── Brusa
 │   │
@@ -63,3 +64,5 @@ This GitHub page features the Uncertainty-Calculation toolchain used in the pape
 │
 └── init
 └── testBench_evaluation
+
+````bash
