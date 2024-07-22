@@ -1,0 +1,33 @@
+classdef inverterModel
+
+    properties
+        OP
+        Semiconductor
+    end
+
+    properties (Dependent)
+
+        P_loss % W
+
+    end
+
+    
+    methods
+
+        %% constructor
+        function obj = inverterModel(OP,Semiconductor)
+
+            obj.OP = OP;
+            obj.Semiconductor = Semiconductor;
+        end
+
+        %% output function
+
+        % loss calculation
+        function P_loss = get.P_loss(obj) % W
+
+            P_loss = 6*((obj.Semiconductor.E_sum*obj.Semiconductor.f_sw) +...
+                (obj.Semiconductor.U_ce*obj.OP.i_dq + obj.Semiconductor.r_ce*(obj.OP.i_dq^2)));
+        end
+    end
+end
