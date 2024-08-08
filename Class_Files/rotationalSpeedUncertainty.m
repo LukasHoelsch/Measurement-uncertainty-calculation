@@ -51,7 +51,7 @@ classdef rotationalSpeedUncertainty
         
         function u_n1 = get.u_n1(obj) % 1/min
             
-            u_n1 = obj.OP.n_max*obj.d_n_rel;
+            u_n1 = obj.OP.n_op*obj.d_n_rel;
         end
         
     end

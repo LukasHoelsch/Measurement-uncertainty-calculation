@@ -1,8 +1,8 @@
 classdef inverterModel
 
     properties
-        OP
         Semiconductor
+        OP
     end
 
     properties (Dependent)
@@ -15,10 +15,10 @@ classdef inverterModel
     methods
 
         %% constructor
-        function obj = inverterModel(OP,Semiconductor)
+        function obj = inverterModel(Semiconductor,OP)
 
-            obj.OP = OP;
             obj.Semiconductor = Semiconductor;
+            obj.OP = OP;
         end
 
         %% output function

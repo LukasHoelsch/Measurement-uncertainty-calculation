@@ -3,6 +3,7 @@ classdef powerAnalyzerUncertainty
     properties
         device
         OP
+        motor
 
     end
     
@@ -38,10 +39,11 @@ classdef powerAnalyzerUncertainty
    methods
        
        %% constructor
-       function obj = powerAnalyzerUncertainty(device,OP)
+       function obj = powerAnalyzerUncertainty(device,OP,motor)
            
            obj.device = device;
            obj.OP = OP;
+           obj.motor = motor;
        end
        
        
@@ -49,14 +51,14 @@ classdef powerAnalyzerUncertainty
        % display error troque
        function u_T3 = get.u_T3(obj) % Nm
            
-           u_T3 = obj.c_R*(obj.device.d_A*obj.OP.T_max*obj.device.d_ME*...
+           u_T3 = obj.c_R*(obj.device.d_A*obj.motor.T_calc*obj.device.d_ME*...
                obj.device.T_ME);
        end
        
        % display error speed
        function u_n3 = get.u_n3(obj) % 1/min
            
-           u_n3 = obj.c_R*(obj.device.d_A*obj.OP.n_max+obj.device.d_ME*...
+           u_n3 = obj.c_R*(obj.device.d_A*obj.OP.n_op+obj.device.d_ME*...
                obj.device.n_ME);
        end
        

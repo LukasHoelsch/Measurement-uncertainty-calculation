@@ -13,7 +13,7 @@ WT5000.d_nfw_win1 = 0.01;       % angle error in °
 WT5000.d_nfw_win2 = 0.00012;    % angle error in °/Hz
 WT5000.I_nfw_MB = 700;          % measuring range end value in A
 
-% % accuracy PA 
+% % accuracy power analyzer
 % This data are taken from the WT3000 manual; Section for the power
 % measurement accuracy
 WT5000.d_1kHz = 0.0005;     % uncertainty factor for the specified frequency

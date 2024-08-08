@@ -1,9 +1,8 @@
 classdef motorModel
 
     properties
-        motor_spec   % struct
-        i_dq_ref % operating point in A
-        OP
+        motor_spec   % motor specifications
+        OP           % operating point information 
     end
 
     properties (Dependent)
@@ -16,6 +15,7 @@ classdef motorModel
         P_calc_bound % W
         P            % W
         P_loss       % W
+        P_mech       % W
 
     end
 
@@ -23,10 +23,9 @@ classdef motorModel
     methods
         
         %% constructor
-        function obj = motorModel(motor,i_dq_ref,OP)
+        function obj = motorModel(motor,OP)
             
             obj.motor_spec = motor;
-            obj.i_dq_ref = i_dq_ref;
             obj.OP = OP;
         end
         
@@ -36,15 +35,15 @@ classdef motorModel
         % calculation of the torque
         function T_calc_idq = get.T_calc_idq(obj) % Nm
             
-            T_calc_idq = 3/2*obj.motor_spec.p*(obj.motor_spec.Psi_d.fit_Psi_d(obj.i_dq_ref.i_d,obj.i_dq_ref.i_q)*obj.i_dq_ref.i_q-...
-                obj.motor_spec.Psi_q.fit_Psi_q(obj.i_dq_ref.i_d,obj.i_dq_ref.i_q)*obj.i_dq_ref.i_d);
+            T_calc_idq = 3/2*obj.motor_spec.p*(obj.motor_spec.Psi_d.fit_Psi_d(obj.OP.i_d,obj.OP.i_q)*obj.OP.i_q-...
+                obj.motor_spec.Psi_q.fit_Psi_q(obj.OP.i_d,obj.OP.i_q)*obj.OP.i_d);
         end
         
         
         % Calculate the motor power
         function P_calc = get.P_calc(obj)
             
-            P_calc = obj.T_calc_idq * obj.OP.n_max*2*pi/60;
+            P_calc = obj.T_calc_idq * obj.OP.n_op*2*pi/60;
         end
 
 
@@ -69,7 +68,7 @@ classdef motorModel
         
         % Loss
         function P_loss = get.P_loss(obj)
-           P_loss = (100-obj.motor_spec.losses.fitLossBrusa(obj.OP.n_max,obj.T_calc_idq))/100*obj.P_calc;
+           P_loss = (100-obj.motor_spec.losses.fitLossBrusa(obj.OP.n_op,obj.T_calc_idq))/100*obj.P_calc;
            
         end
         
@@ -89,15 +88,21 @@ classdef motorModel
         function T_calc = get.T_calc(obj)
             T_calc = obj.T_calc_bound;
         end
+
+
+        % Calculation of the meachnical power
+        function P_mech = get.P_mech(obj)
+            P_mech = obj.T_calc*obj.OP.n_op/60*2*pi; % W, estimation
         
+        end
         
         
         % calculation of the voltage in the steady state
         function u_dq = get.u_dq(obj) % V
             
-            i_dq = [obj.i_dq_ref.i_d;obj.i_dq_ref.i_q];
-            psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.i_dq_ref.i_d,obj.i_dq_ref.i_q);
-                obj.motor_spec.Psi_q.fit_Psi_q(obj.i_dq_ref.i_d,obj.i_dq_ref.i_q)];
+            i_dq = [obj.OP.i_d;obj.OP.i_q];
+            psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.OP.i_d,obj.OP.i_q);
+                obj.motor_spec.Psi_q.fit_Psi_q(obj.OP.i_d,obj.OP.i_q)];
             
             u_dq = obj.motor_spec.Rs*i_dq + obj.OP.n_max*[0,-1;1,0]*psi_dq;
         end
