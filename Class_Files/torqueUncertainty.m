@@ -3,17 +3,19 @@ classdef torqueUncertainty
    properties
         device
         OP
+        motor
    end
    
    properties (Access = private)
-       c_R = 1/sqrt(3);
+       b_r = 1/sqrt(3);
    end
    
    
    properties (Dependent)   % parameters which should be calculated
        
-       u_dc         % Nm
+       u_dC         % Nm
        u_dlh        % Nm
+       u_sigma_rel  % Nm
        u_T1_rel     % Nm
        u_T1_abs     % Nm
    end
@@ -21,35 +23,41 @@ classdef torqueUncertainty
    
    methods
        % constructor
-       function obj = torqueUncertainty(device,OP)
+       function obj = torqueUncertainty(device,OP,motor)
            
            obj.device = device;
            obj.OP = OP;
+           obj.motor = motor;
        end
        
        
       %%  output functions
 
-      % standard deviation
-       function u_dc = get.u_dc(obj) % Nm
-           u_dc = obj.c_R*obj.device.d_c*obj.device.T_n;
+      % sensitivity tolerance
+       function u_dC = get.u_dC(obj) % Nm
+           u_dC = obj.b_r*obj.device.d_c*obj.device.T_n;
        end
        
-       % lineartity error
+       % lineartity and hysteresis
        function u_dlh = get.u_dlh(obj) % Nm
-           u_dlh = obj.c_R*obj.device.d_lh*obj.device.T_n;
+           u_dlh = obj.b_r*obj.device.d_lh*obj.device.T_n;
        end
        
+       % repeatability
+       function u_rep = get.u_sigma_rel(obj) % Nm
+
+           u_rep = obj.device.sigma_rel*obj.motor.T_calc;
+       end
       
                      
-       % relativ torque measurement
+       % relativ torque measurement; see also Fig. 3 in the publication
        function u_T1_rel = get.u_T1_rel(obj) % Nm
-           u_T1_rel = obj.u_dc;
+           u_T1_rel = obj.u_sigma_rel;
        end
        
        % absolut torque measurement
        function u_T1_abs = get.u_T1_abs(obj) % Nm
-           u_T1_abs = sqrt(obj.u_dc^2+obj.u_dlh^2);
+           u_T1_abs = sqrt(obj.u_dC^2+obj.u_dlh^2+obj.u_sigma_rel^2);
        end
        
    end

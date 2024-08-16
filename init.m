@@ -45,3 +45,41 @@ u_T2_rel_plot = zeros(length(n_ref),length(i_d_MTPC)*length(i_q_MTPC));
 u_T3_rel_plot = zeros(length(n_ref),length(i_d_MTPC)*length(i_q_MTPC));
 Loss_inverter_plot = zeros(length(n_ref),length(i_d_MTPC)*length(i_q_MTPC));
 U_power_abs = zeros(length(n_ref),length(i_d_MTPC)*length(i_q_MTPC));
+
+
+
+
+
+%% Loading all available spec files
+%% Torque sensor
+% HBM - T10FS
+run('T10FS_spec.m')
+
+% HBM - T12HP
+run('T12HP_spec.m')
+
+
+%% Torque measuring amplifier
+% ML60B
+run('ML60B_spec.m')
+
+%% Power analyzer
+% WT3000
+run('WT3000_spec.m')
+
+% WT5000
+run('WT5000_spec.m')
+
+%% Inverter
+run('SkiiP_1242GB120_4D_spec')
+
+
+%% motor spec
+run('HSM_16_17_12_C01_spec.m');
+
+% Load fit_Torque
+load([project_dir_FittedModels,'\fit_Torque.mat'])
+
+% Load fit_Psi_dq
+load([project_dir_FittedModels,'\fit_Psi_d.mat'])
+load([project_dir_FittedModels,'\fit_Psi_q.mat'])
