@@ -8,22 +8,27 @@ classdef powerAnalyzerUncertainty
     end
     
    properties (Access = private)
-       c_R = 1/sqrt(3);
+       b_r = 1/sqrt(3);
    end
    
-   properties (Dependent)   % parameters which should be calculated
+   properties (Dependent)   %
        u_T3                 % Nm
        u_n3                 % 1/min
-       F_nfw_lin            % A,  nullflusswandler, linear
-       F_nfw_off            % A,  offset 
-       F_nfw_fre            % A,  frequenz
-       F_rel_nfw_win        % 
-       u_rel_nfw            % 
-       F_nfw_lin_dcLink     % A, linear
-       F_nfw_off_dcLink     % A, offset
-       F_nfw_fre_dcLink     % A, frequenz
-       F_rel_nfw_win_dcLink % A
-       u_rel_nfw_dcLink     %
+       %
+       % dcLink
+       u_CT_lin_abc         % A, CT, linearity
+       u_CT_offset_abc      % A, CT, offset 
+       u_CT_f_abc           % 1, CT, frequency influence
+       u_CT_phi_rel_abc     % 1, CT, angular influence
+       u_CT_rel_abc         % A, CT, relative
+       %
+       % abc
+       u_CT_lin_dcLink      % A, CT, linearity
+       u_CT_offset_dcLink   % A, CT, offset
+       u_CT_f_dcLink        % A, CT, frequency influence
+       u_CT_phi_dcLink      % 1, CT, angular influence
+       u_CT_rel_dcLink      %A, CT, relative
+       %
        F_d_dcLink           % relative display error
        u_nfw_P_dcLink
        F_TV                 % temperature variation
@@ -38,126 +43,142 @@ classdef powerAnalyzerUncertainty
    
    methods
        
-       %% constructor
-       function obj = powerAnalyzerUncertainty(device,OP,motor)
+       
+        %% constructor
+        function obj = powerAnalyzerUncertainty(device,OP,motor)
            
-           obj.device = device;
-           obj.OP = OP;
-           obj.motor = motor;
+            obj.device = device;
+            obj.OP = OP;
+            obj.motor = motor;
+        end
+       
+       
+        %% power analyzer torque, rotational speed
+        % input: values from the amplifier
+        % 
+        % troque
+        function u_T3 = get.u_T3(obj) % Nm
+           
+            u_T3 = obj.b_r*(obj.device.d_A*obj.motor.T_calc+obj.device.d_a_MR*...
+                obj.device.T_MR);
+        end
+       
+        % rotational speed
+        function u_n3 = get.u_n3(obj) % 1/min
+           
+            u_n3 = obj.b_r*(obj.device.d_A*obj.OP.n_op+obj.device.d_a_MR*...
+                obj.device.n_ME);
+        end
+       
+        %% current transducer; i_abc
+        % input: measurement values
+
+        % linearity
+        function u_CT_lin_abc = get.u_CT_lin_abc(obj)
+           
+            u_CT_lin_abc = obj.device.d_CT_lin*obj.device.I_phase;
+        end
+       
+        % offset
+       function u_CT_offset_abc = get.u_CT_offset_abc(obj)
+           
+           u_CT_offset_abc = obj.device.d_CT_offset*obj.device.I_CT_MR;
        end
        
-       
-       %% output functions
-       % display error troque
-       function u_T3 = get.u_T3(obj) % Nm
+       % frequency influence
+       function u_CT_f_abc = get.u_CT_f_abc(obj)
            
-           u_T3 = obj.c_R*(obj.device.d_A*obj.motor.T_calc*obj.device.d_ME*...
-               obj.device.T_ME);
-       end
-       
-       % display error speed
-       function u_n3 = get.u_n3(obj) % 1/min
-           
-           u_n3 = obj.c_R*(obj.device.d_A*obj.OP.n_op+obj.device.d_ME*...
-               obj.device.n_ME);
-       end
-       
-       % Nullflusswandler
-       function F_nfw_lin = get.F_nfw_lin(obj)
-           
-           F_nfw_lin = obj.device.d_nfw_lin*obj.device.I_phase;
-       end
-       
-       function F_nfw_off = get.F_nfw_off(obj)
-           
-           F_nfw_off = obj.device.d_nfw_off*obj.device.I_nfw_MB;
-       end
-       
-       function F_nfw_fre = get.F_nfw_fre(obj)
-           
-           F_nfw_fre = obj.device.d_nfw_fre*obj.device.I_phase*...
+           u_CT_f_abc = obj.device.d_CT_f*obj.device.I_phase*...
                obj.device.f_I_phase;
        end
        
-       function F_rel_nfw_win = get.F_rel_nfw_win(obj)
+       % angular influence
+       function u_CT_phi_rel_abc = get.u_CT_phi_rel_abc(obj)
            
-           F_rel_nfw_win = 1-(cos((obj.device.phi_phase+...
-               obj.device.d_nfw_win1+...
-               obj.device.d_nfw_win2*obj.device.f_I_phase)/360*2*pi)/...
+           u_CT_phi_rel_abc = 1-(cos((obj.device.phi_phase+...
+               obj.device.d_CT_phi_fix+...
+               obj.device.d_CT_phi_var*obj.device.f_I_phase)/360*2*pi)/...
                (cos(obj.device.phi_phase/360*2*pi)));
        end
        
-       % uncertainty Nullflusswandler i_abc
-       function u_rel_nfw = get.u_rel_nfw(obj)
+       % relativ; i_abc
+       function u_CT_rel_abc = get.u_CT_rel_abc(obj)
            
-           u_rel_nfw = obj.c_R*((obj.F_nfw_lin+obj.F_nfw_off+...
-               obj.F_nfw_fre)/obj.device.I_phase+...
-               obj.F_rel_nfw_win);
+           u_CT_rel_abc = obj.b_r*((obj.u_CT_lin_abc+obj.u_CT_offset_abc+...
+               obj.u_CT_f_abc)/obj.device.I_phase+...
+               obj.u_CT_phi_rel_abc);
        end
        
-       %% DC-link
-       % Nullflusswandler
-       function F_nfw_lin_dcLink = get.F_nfw_lin_dcLink(obj)
+        %% current transducer; i_dcLink
+        % input: measurement values
+
+        % linearity
+        function u_CT_lin_dcLink = get.u_CT_lin_dcLink(obj)
            
-           F_nfw_lin_dcLink = obj.device.d_nfw_lin*obj.device.I_dcLink;
-       end
+            u_CT_lin_dcLink = obj.device.d_CT_lin*obj.device.I_dcLink;
+        end
        
-       function F_nfw_off_dcLink = get.F_nfw_off_dcLink(obj)
+        % offset
+        function u_CT_offset_dcLink = get.u_CT_offset_dcLink(obj)
            
-           F_nfw_off_dcLink = obj.device.d_nfw_off*obj.device.I_nfw_MB;
-       end
+            u_CT_offset_dcLink = obj.device.d_CT_offset*obj.device.I_CT_MR;
+        end
        
-       function F_nfw_fre_dcLink = get.F_nfw_fre_dcLink(obj)
+        % frequency influence
+        function u_CT_f_dcLink = get.u_CT_f_dcLink(obj)
            
-           F_nfw_fre_dcLink = obj.device.d_nfw_fre*obj.device.I_dcLink*...
-               obj.device.f_I_dcLink;
-       end
+            u_CT_f_dcLink = obj.device.d_CT_f*obj.device.I_dcLink*...
+                obj.device.f_I_dcLink;
+        end
        
-       function F_rel_nfw_win_dcLink = get.F_rel_nfw_win_dcLink(obj)
+        % angular influence
+        function u_CT_phi_dcLink = get.u_CT_phi_dcLink(obj)
            
-           F_rel_nfw_win_dcLink = 1-(cos((obj.device.phi_dcLink+...
-               obj.device.d_nfw_win1+...
-               obj.device.d_nfw_win2*obj.device.f_I_dcLink)/360*2*pi)/...
-               cos(obj.device.phi_dcLink/360*2*pi));
-       end
+            u_CT_phi_dcLink = 1-(cos((obj.device.phi_dcLink+...
+                obj.device.d_CT_phi_fix+...
+                obj.device.d_CT_phi_var*obj.device.f_I_dcLink)/360*2*pi)/...
+                cos(obj.device.phi_dcLink/360*2*pi));
+        end
        
-       % uncertainty Nullflusswandler i_DC
-       function u_rel_nfw_dcLink = get.u_rel_nfw_dcLink(obj)
+        % relativ; i_dcLink
+        function u_CT_rel_dcLink = get.u_CT_rel_dcLink(obj)
            
-           u_rel_nfw_dcLink = obj.c_R*((obj.F_nfw_lin_dcLink+...
-               obj.F_nfw_off_dcLink+obj.F_nfw_fre_dcLink)/...
-               obj.device.I_dcLink+obj.F_rel_nfw_win_dcLink);
-       end
+            u_CT_rel_dcLink = obj.b_r*((obj.u_CT_lin_dcLink+...
+                obj.u_CT_offset_dcLink+obj.u_CT_f_dcLink)/...
+                obj.device.I_dcLink+obj.u_CT_phi_dcLink);
+        end
        
-       %% specifications power analyzor
        
-       % error specification power analyzor
-       function F_d_dcLink = get.F_d_dcLink(obj) % W
+        %% power analyzor
+        % input: values from the CT
+        
+        % 
+        function F_d_dcLink = get.F_d_dcLink(obj) % W
                     
-           F_d_dcLink = obj.OP.P_500Hz*obj.device.d_1kHz;
-       end
+            F_d_dcLink = obj.OP.P_500Hz*obj.device.d_1kHz;
+        end
        
-       % uncertainty DC-link NFW
-       function u_nfw_P_dcLink = get.u_nfw_P_dcLink(obj) % W
-           u_nfw_P_dcLink = obj.OP.P_dcLink*obj.u_rel_nfw_dcLink;
-       end
+        % uncertainty DC-link NFW
+        function u_nfw_P_dcLink = get.u_nfw_P_dcLink(obj) % W
+            u_nfw_P_dcLink = obj.OP.P_dcLink*obj.u_CT_rel_dcLink;
+        end
        
        
-       % error power analyzor DC-link
-       function F_analyzer_dcLink = get.F_analyzer_dcLink(obj) % W
-          F_analyzer_dcLink = 1/2*obj.F_d_dcLink; 
-       end
+        % error power analyzor DC-link
+        function F_analyzer_dcLink = get.F_analyzer_dcLink(obj) % W
+            F_analyzer_dcLink = 1/2*obj.F_d_dcLink; 
+        end
        
-       % uncertainty power analyzor DC-link
-       function u_analyzer_dcLink = get.u_analyzer_dcLink(obj) % W
-           u_analyzer_dcLink = obj.c_R*obj.F_analyzer_dcLink;
-       end
+        % uncertainty power analyzor DC-link
+        function u_analyzer_dcLink = get.u_analyzer_dcLink(obj) % W
+            u_analyzer_dcLink = obj.b_r*obj.F_analyzer_dcLink;
+        end
        
-       % total uncertainty DC-link, NFW and power analyzor
-       function u_total_dcLink = get.u_total_dcLink(obj) % W
-           u_total_dcLink = sqrt(obj.u_nfw_P_dcLink^2 +...
-               obj.u_analyzer_dcLink^2);
-       end
+        % total uncertainty DC-link, NFW and power analyzor
+        function u_total_dcLink = get.u_total_dcLink(obj) % W
+            u_total_dcLink = sqrt(obj.u_nfw_P_dcLink^2 +...
+                obj.u_analyzer_dcLink^2);
+        end
        
        
        

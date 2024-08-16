@@ -9,14 +9,19 @@ classdef motorModel
         
         T_calc       % Nm
         T_calc_idq   % Nm
+        u_dq_complex
         u_dq         % V
+        u_i_dq       % V
         T_calc_bound % W
         P_calc       % W
         P_calc_bound % W
         P            % W
         P_loss       % W
         P_mech       % W
-
+        S            % W
+        phi          % deg
+        theta        % deg
+        u_i_dq_complex
     end
 
     
@@ -97,18 +102,124 @@ classdef motorModel
         end
         
         
-        % calculation of the voltage in the steady state
+        % calculation of the stator voltage in the steady state
         function u_dq = get.u_dq(obj) % V
             
-            i_dq = [obj.OP.i_d;obj.OP.i_q];
+            i_dq = [obj.OP.i_d;obj.OP.i_q]; 
             psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.OP.i_d,obj.OP.i_q);
                 obj.motor_spec.Psi_q.fit_Psi_q(obj.OP.i_d,obj.OP.i_q)];
             
-            u_dq = obj.motor_spec.Rs*i_dq + obj.OP.n_max*[0,-1;1,0]*psi_dq;
+            u_dq = obj.motor_spec.Rs*i_dq + (obj.OP.n_op/60)*obj.motor_spec.p*2*pi*[0,-1;1,0]*psi_dq;
         end
         
 
+        % calculation of the complex stator voltage in the steady state
+        function u_dq_complex = get.u_dq_complex(obj) % V
+            
+            %i_dq = [obj.OP.i_d;obj.OP.i_q]; 
+            %i_dq_complex = obj.OP.i_d + 1j*obj.OP.i_q; % imaginary i_q from the lecture EMD, slide 301
+
+            i_d_complex = obj.OP.i_d;
+            i_q_complex = obj.OP.i_q*1j;
+
+            psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.OP.i_d,obj.OP.i_q);
+                obj.motor_spec.Psi_q.fit_Psi_q(obj.OP.i_d,obj.OP.i_q)];
+            
+            % u_dq_complex = obj.motor_spec.Rs*i_dq_complex - obj.OP.n_op/60*obj.motor_spec.p*2*pi*psi_dq(2) +...
+            %     obj.OP.n_op/60*obj.motor_spec.p*2*pi*psi_dq(1) ;
+
+            u_d_complex = obj.motor_spec.Rs * i_d_complex - obj.OP.n_op/60*obj.motor_spec.p*2*pi*psi_dq(2);
+            u_q_complex = obj.motor_spec.Rs * i_q_complex + obj.OP.n_op/60*obj.motor_spec.p*2*pi*psi_dq(1);
+
+            u_dq_complex = sqrt(u_d_complex^2 + u_q_complex^2);
+
+            "u_dq_complex"
+            u_dq_complex
+
+           
+        end
+
+
+        % calculation of the induced voltage in the steady state
+        function u_i_dq = get.u_i_dq(obj) % V
+
+            psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.OP.i_d,obj.OP.i_q);
+                obj.motor_spec.Psi_q.fit_Psi_q(obj.OP.i_d,obj.OP.i_q)];
       
+            u_i_dq = (obj.OP.n_op/60)*obj.motor_spec.p*2*pi*[0,-1;1,0]*psi_dq;
+        end
+
+
+        % calculation of the complex induced voltage in the steady state
+        function u_i_dq_complex = get.u_i_dq_complex(obj) % V
+
+            psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.OP.i_d,obj.OP.i_q);
+                obj.motor_spec.Psi_q.fit_Psi_q(obj.OP.i_d,obj.OP.i_q)];
+      
+            %u_i_dq_complex = -1j*(obj.OP.n_op/60)*obj.motor_spec.p*2*pi*psi_dq(2)+1j*(obj.OP.n_op/60)*obj.motor_spec.p*2*pi*psi_dq(1);
+            
+
+            u_i_d_complex = -1j*(obj.OP.n_op/60)*obj.motor_spec.p*2*pi*psi_dq(2);
+            u_i_q_complex = 1j*(obj.OP.n_op/60)*obj.motor_spec.p*2*pi*psi_dq(1);
+
+            u_i_dq_complex = sqrt(u_i_d_complex^2 + u_i_q_complex^2);
+
+            "u_i_dq_complex"
+            u_i_dq_complex
+
+        end
+
+        % apparent power
+        function S = get.S(obj) % W
+            
+            S = 3*3/2* obj.u_dq * obj.OP.i_dq;
+        end
+
+
+        % power factor angle calculation
+        function phi = get.phi(obj)
+            
+            phi = acosd((obj.P_mech+obj.P_loss)/obj.S);
+        end
+
+
+        % load angle 
+        function theta = get.theta(obj)
+            % "abs_zaehler"
+            % abs(obj.u_i_dq_complex-obj.u_dq_complex)
+            % "abs_nenner"
+            % abs(obj.u_dq_complex)
+
+            theta = asind(abs(obj.u_i_dq_complex-obj.u_dq_complex)/abs(obj.u_dq_complex));
+            "theta"
+            theta
+        end
+
     end
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

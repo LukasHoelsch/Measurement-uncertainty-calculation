@@ -6,7 +6,7 @@ classdef rotationalSpeedUncertainty
     end
     
     properties (Access = private)
-        c_R = 1/sqrt(3);
+        b_r = 1/sqrt(3);
     end
     
     properties (Dependent)   % parameters which should be calculated
