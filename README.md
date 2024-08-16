@@ -1,7 +1,11 @@
 # Analysis of the Measuring Chain at the Test Bench for an Efficiency Evaluation of Electric Drives
 
-This GitHub page features the Uncertainty-Calculation toolchain used in the paper "Analysis of the Measuring Chain at the Test Bench for an Efficiency Evaluation of Electric Drives"
+This GitHub page features the uncertainty-calculation toolchain used in the proposal "Analysis of the Measuring Chain at the Test Bench for an Efficiency Evaluation of Electric Drives"
 
+This toolchain is used to calculate the uncertainty of an electric drive, which includes the electrical machine, the inverter and the control algorithm. 
+
+#
+fitLossBrusa, efficiency in \%, as in the data sheet given. 
 
 # Setup Software
 
