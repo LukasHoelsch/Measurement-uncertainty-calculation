@@ -67,7 +67,7 @@ run('init.m')
 % values, the uncertainty is determined.
 
 
-[i_d_MTPC,i_q_MTPC] = MTPC_LPV_hoelsch(fit_Torque,i_max);
+[i_d_MTPC,i_q_MTPC] = MTPC_LPV(fit_Torque,i_max);
 
 %% MTPV
 % [i_d_MTPV,i_q_MTPV,T_MTPV,out] = MTPV_LPV(fit_Psi_d,240,600,7000,3)
