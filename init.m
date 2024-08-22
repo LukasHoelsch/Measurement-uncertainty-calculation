@@ -72,6 +72,10 @@ run('WT5000_spec.m')
 
 %% Inverter
 run('SkiiP_1242GB120_4D_spec')
+run('FS02MR12A8MA2B_spec')
+
+load([project_dir_FittedModels,'\fit_E_on.mat'])
+load([project_dir_FittedModels,'\fit_E_off.mat'])
 
 
 %% motor spec

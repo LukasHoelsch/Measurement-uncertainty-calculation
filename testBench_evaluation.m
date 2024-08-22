@@ -14,21 +14,25 @@ project_dir = [fileparts(mfilename('fullpath'))];
 
 
 
-%% Setting the operation range
-% number of current values
-i_d_MTPC = zeros(3);
-i_q_MTPC = zeros(3);
+%% Settings for the calculation
+% Please fill out the following fields.
+
+% number of sampling points for the d current, the q current has the same
+% size
+n_samplingPoints = 1;
 
 % maximal torque
 T_max = 180; % Nm
 
 % minimal speed
+% OPPs are often used in the high-speed range, therefore, the min. speed is
+% limited
 n_min = 2000;
 
 % maximal speed
 n_max = 11000;
 
-n_ref = linspace(n_min,n_max,length(i_d_MTPC));
+
 
 % maximal current of the machine
 OP.i_max = 340;
@@ -37,16 +41,22 @@ i_max = 340;
 % DC-link voltage
 OP.u_DC = 400; % V
 
+% switching frequency 
+OP.f_sw = 8000; % Hz
+
+
 
 % torque flange
-% T10FS
-% T12HP
+% select between
+%   T10FS
+%   T12HP
 torqueFlange_selected = 'T12HP';
 
 
 % power analyzer
-% WT3000
-% WT5000
+% select between
+%   WT3000
+%   WT5000
 powerAnalyzer_selected = 'WT5000';
 
 
@@ -55,8 +65,15 @@ powerAnalyzer_selected = 'WT5000';
 % k_p = 2 -> 95.00 % -------"-----------
 % k_p = 3 -> 99.73 % -------"-----------
 k_p = 2;
-            
 
+
+%% load the data
+% number of current values
+i_d_MTPC = zeros(n_samplingPoints);
+i_q_MTPC = zeros(length(i_d_MTPC));
+
+% sampling points for the rotational speed
+n_ref = linspace(n_min,n_max,length(i_d_MTPC));
 
 %% Initialization
 run('init.m')
@@ -109,8 +126,20 @@ for ii = 1:1:length(i_d_MTPC)
         %% Calculation
         if end_calculation == 0
             
+            % operating point dependant variables
+
+            % electrical frequency and time
+            OP.f_el = OP.n_op/60*motor.motor_spec.p; % Hz
+            OP.T_el = 1/OP.f_el; % s
+
+            % sampling frequency and time
+            OP.f_sampling = 1e6; % Hz
+            OP.t_sampling = 1/OP.f_sampling; % s
+
+
+
             % Inverter
-            inverter = inverterModel(SkiiP_1242GB120_4D,OP);
+            inverter = inverterModel(FS02MR12A8MA2B,motor,OP);
             
     
             % Estimation of the DC-link power
@@ -271,6 +300,23 @@ for ii = 1:1:length(i_d_MTPC)
             % load angle
             result.loadAngle(nn,number) = motor.theta;
 
+            % result.u_ab = motor.u_ab;
+            % 
+            % result.u_abc = motor.u_abc;
+
+            % d complex stator voltage
+            result.u_d_complex(nn,number) = motor.u_dq_complex(1);
+            % q complex stator voltage
+            result.u_q_complex(nn,number) = motor.u_dq_complex(2);
+            
+            % d complex induced stator voltage
+            result.u_i_d_complex(nn,number) = motor.u_i_dq_complex(1);
+            % q complex induced stator voltage
+            result.u_i_q_complex(nn,number) = motor.u_i_dq_complex(1);
+
+
+            %
+            result.P_sw(nn,number) = inverter.P_sw;
 
             %% sesitivity
             u_T1_rel_plot(nn,number) = torqueFlange.u_T1_rel;
@@ -297,63 +343,68 @@ number = number +1;
 % end calculation
 end
 
-
+%% Plot the calculation settings
+fprintf('Selected settings:\n')
+fprintf('Number of samping points for id and iq: %d \n',n_samplingPoints)
+fprintf('Torque flange: %s\n',torqueFlange_selected)
+fprintf('Power analyzer: %s\n',powerAnalyzer_selected)
+fprintf('Coverage factor: %d\n',k_p)
 
 
 %% Plot uncertainty
-figure(1);
-[~,h] = contourf(result.n_motor,result.T_motor,2*Up.eta_rel);
-xlim([2000 11000])
-xlabel('$n$ in 1/min','interpreter','latex');
-ylabel('$T$ in Nm','interpreter','latex');
-colorbar;
-title('Efficiency uncertainty (rel) in \%, kp=2','interpreter','latex');
-h.LevelListMode = 'manual';
-h.LevelStepMode = 'manual';
-h.LevelStep = 5;
-h.ShowText = 'on';
-h.LineStyle = 'none';
-
-
-figure(2);
-[~,h] = contourf(result.n_motor,result.T_motor,result.electricDrive_efficiency);
-xlim([2000 11000])
-xlabel('$n$ in 1/min','interpreter','latex');
-ylabel('$T$ in Nm','interpreter','latex');
-colorbar;
-title('Efficiency electric drive in \%, kp=2','interpreter','latex');
-h.LevelListMode = 'manual';
-h.LevelStepMode = 'manual';
-h.LevelStep = 5;
-h.ShowText = 'on';
-h.LineStyle = 'none';
-
-figure(3);
-[~,h] = contourf(result.n_motor,result.T_motor,result.electricDrive_power);
-xlim([2000 11000])
-xlabel('$n$ in 1/min','interpreter','latex');
-ylabel('$T$ in Nm','interpreter','latex');
-colorbar;
-title('Power electric drive in W','interpreter','latex');
-h.LevelListMode = 'manual';
-h.LevelStepMode = 'manual';
-h.LevelStep = 5;
-h.ShowText = 'on';
-h.LineStyle = 'none';
-
-
-figure(4);
-[~,h] = contourf(result.n_motor,result.T_motor,result.electricDrive_loss);
-xlim([2000 11000])
-xlabel('$n$ in 1/min','interpreter','latex');
-ylabel('$T$ in Nm','interpreter','latex');
-colorbar;
-title('Loss electric drive in W','interpreter','latex');
-h.LevelListMode = 'manual';
-h.LevelStepMode = 'manual';
-h.LevelStep = 5;
-h.ShowText = 'on';
-h.LineStyle = 'none';
+% figure(1);
+% [~,h] = contourf(result.n_motor,result.T_motor,2*Up.eta_rel);
+% xlim([2000 11000])
+% xlabel('$n$ in 1/min','interpreter','latex');
+% ylabel('$T$ in Nm','interpreter','latex');
+% colorbar;
+% title('Efficiency uncertainty (rel) in \%, kp=2','interpreter','latex');
+% h.LevelListMode = 'manual';
+% h.LevelStepMode = 'manual';
+% h.LevelStep = 5;
+% h.ShowText = 'on';
+% h.LineStyle = 'none';
+% 
+% 
+% figure(2);
+% [~,h] = contourf(result.n_motor,result.T_motor,result.electricDrive_efficiency);
+% xlim([2000 11000])
+% xlabel('$n$ in 1/min','interpreter','latex');
+% ylabel('$T$ in Nm','interpreter','latex');
+% colorbar;
+% title('Efficiency electric drive in \%, kp=2','interpreter','latex');
+% h.LevelListMode = 'manual';
+% h.LevelStepMode = 'manual';
+% h.LevelStep = 5;
+% h.ShowText = 'on';
+% h.LineStyle = 'none';
+% 
+% figure(3);
+% [~,h] = contourf(result.n_motor,result.T_motor,result.electricDrive_power);
+% xlim([2000 11000])
+% xlabel('$n$ in 1/min','interpreter','latex');
+% ylabel('$T$ in Nm','interpreter','latex');
+% colorbar;
+% title('Power electric drive in W','interpreter','latex');
+% h.LevelListMode = 'manual';
+% h.LevelStepMode = 'manual';
+% h.LevelStep = 5;
+% h.ShowText = 'on';
+% h.LineStyle = 'none';
+% 
+% 
+% figure(4);
+% [~,h] = contourf(result.n_motor,result.T_motor,result.electricDrive_loss);
+% xlim([2000 11000])
+% xlabel('$n$ in 1/min','interpreter','latex');
+% ylabel('$T$ in Nm','interpreter','latex');
+% colorbar;
+% title('Loss electric drive in W','interpreter','latex');
+% h.LevelListMode = 'manual';
+% h.LevelStepMode = 'manual';
+% h.LevelStep = 5;
+% h.ShowText = 'on';
+% h.LineStyle = 'none';
 
 
 
@@ -370,19 +421,19 @@ h.LineStyle = 'none';
 % h.LevelStep = 5;
 % h.ShowText = 'on';
 % h.LineStyle = 'none';
-
-figure(7);
-[~,h] = contourf(result.n_motor,result.T_motor,result.loadAngle);
-xlim([2000 11000])
-xlabel('$n$ in 1/min','interpreter','latex');
-ylabel('$T$ in Nm','interpreter','latex');
-colorbar;
-title('Loss electric drive in W','interpreter','latex');
-h.LevelListMode = 'manual';
-h.LevelStepMode = 'manual';
-h.LevelStep = 5;
-h.ShowText = 'on';
-h.LineStyle = 'none';
+% 
+% figure(7);
+% [~,h] = contourf(result.n_motor,result.T_motor,result.loadAngle);
+% xlim([2000 11000])
+% xlabel('$n$ in 1/min','interpreter','latex');
+% ylabel('$T$ in Nm','interpreter','latex');
+% colorbar;
+% title('Loss electric drive in W','interpreter','latex');
+% h.LevelListMode = 'manual';
+% h.LevelStepMode = 'manual';
+% h.LevelStep = 5;
+% h.ShowText = 'on';
+% h.LineStyle = 'none';
 
 
 

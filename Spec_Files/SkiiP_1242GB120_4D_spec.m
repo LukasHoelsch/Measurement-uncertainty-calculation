@@ -4,7 +4,7 @@
 
 %% Inverter
 % Basic initializations for the inverter model
-SkiiP_1242GB120_4D.f_sw = 8000; % Hz
+% SkiiP_1242GB120_4D.f_sw = 8000; % Hz
 
 % In the data sheet only the sum of these two values (E_sum) are given.
 % Therfore, the following values are only assumptions

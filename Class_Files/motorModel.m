@@ -22,6 +22,10 @@ classdef motorModel
         phi          % deg
         theta        % deg
         u_i_dq_complex
+        u_ab         % V
+        u_abc        % V
+        i_ab         % A
+        i_abc        % A
     end
 
     
@@ -131,10 +135,10 @@ classdef motorModel
             u_d_complex = obj.motor_spec.Rs * i_d_complex - obj.OP.n_op/60*obj.motor_spec.p*2*pi*psi_dq(2);
             u_q_complex = obj.motor_spec.Rs * i_q_complex + obj.OP.n_op/60*obj.motor_spec.p*2*pi*psi_dq(1);
 
-            u_dq_complex = sqrt(u_d_complex^2 + u_q_complex^2);
+            u_dq_complex = [u_d_complex; u_q_complex];
 
-            "u_dq_complex"
-            u_dq_complex
+            "u_dq_complex";
+            u_dq_complex;
 
            
         end
@@ -162,10 +166,10 @@ classdef motorModel
             u_i_d_complex = -1j*(obj.OP.n_op/60)*obj.motor_spec.p*2*pi*psi_dq(2);
             u_i_q_complex = 1j*(obj.OP.n_op/60)*obj.motor_spec.p*2*pi*psi_dq(1);
 
-            u_i_dq_complex = sqrt(u_i_d_complex^2 + u_i_q_complex^2);
+            u_i_dq_complex = [u_i_d_complex; u_i_q_complex];
 
-            "u_i_dq_complex"
-            u_i_dq_complex
+            "u_i_dq_complex";
+            u_i_dq_complex;
 
         end
 
@@ -185,15 +189,81 @@ classdef motorModel
 
         % load angle 
         function theta = get.theta(obj)
-            % "abs_zaehler"
-            % abs(obj.u_i_dq_complex-obj.u_dq_complex)
-            % "abs_nenner"
-            % abs(obj.u_dq_complex)
 
-            theta = asind(abs(obj.u_i_dq_complex-obj.u_dq_complex)/abs(obj.u_dq_complex));
-            "theta"
-            theta
+            %theta = asind(abs(obj.u_i_dq_complex-obj.u_dq_complex)/abs(obj.u_dq_complex));
+            
+            theta = atand(abs(obj.u_dq_complex(1)/obj.u_dq_complex(2)));
         end
+
+
+
+        %% voltage
+        % dq -> alpha bera
+        function u_ab =get.u_ab(obj)
+
+            epsilon_el = 0:0.1:2*pi;
+
+            % initialization
+            u_ab = zeros(2,length(epsilon_el));
+
+            for zz=1:1:length(epsilon_el)
+                % transformation matrix
+                Tdqab = [cos(epsilon_el(zz)), sin(epsilon_el(zz)); -sin(epsilon_el(zz)), cos(epsilon_el(zz))];
+                
+                u_ab(:,zz) = Tdqab*obj.u_dq;
+            end
+        end
+
+        % alpha beta -> abc
+        function u_abc = get.u_abc(obj)
+
+            % transformation matrix abc -> ab
+            Tababc = 2/3*[1,-1/2,-1/2;0,sqrt(3)/2,-sqrt(3)/2];
+
+            % inverse
+            Tabcab = pinv(Tababc);
+            u_abc = zeros(3,length(obj.u_ab(1,:)));
+
+            for zz=1:1:length(obj.u_ab(1,:))
+                u_abc(:,zz) = Tabcab * obj.u_ab(:,zz);
+            end
+        end
+
+        
+
+        %% current
+        % dq -> alpha bera
+        function i_ab =get.i_ab(obj)
+
+            epsilon_el = 0:0.1:2*pi;
+
+            % initialization
+            i_ab = zeros(2,length(epsilon_el));
+
+            for zz=1:1:length(epsilon_el)
+                % transformation matrix
+                Tdqab = [cos(epsilon_el(zz)), sin(epsilon_el(zz)); -sin(epsilon_el(zz)), cos(epsilon_el(zz))];
+                
+                i_ab(:,zz) = Tdqab*[obj.OP.i_d;obj.OP.i_q];
+            end
+        end
+
+        % alpha beta -> abc
+        function i_abc = get.i_abc(obj)
+
+            % transformation matrix abc -> ab
+            Tababc = 2/3*[1,-1/2,-1/2;0,sqrt(3)/2,-sqrt(3)/2];
+
+            % inverse
+            Tabcab = pinv(Tababc);
+            i_abc = zeros(3,length(obj.i_ab(1,:)));
+
+            for zz=1:1:length(obj.i_ab(1,:))
+                i_abc(:,zz) = Tabcab * obj.i_ab(:,zz);
+            end
+        end
+
+
 
     end
 end
