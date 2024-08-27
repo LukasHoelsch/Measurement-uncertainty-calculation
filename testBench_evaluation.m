@@ -19,7 +19,7 @@ project_dir = [fileparts(mfilename('fullpath'))];
 
 % number of sampling points for the d current, the q current has the same
 % size
-n_samplingPoints = 1;
+n_samplingPoints = 2;
 
 % maximal torque
 T_max = 180; % Nm
@@ -95,7 +95,8 @@ run('init.m')
 %% Calcualtion of the operating points
 % The operating points are calculated with the i_dq values and the
 % rotational speed n
-for ii = 1:1:length(i_d_MTPC)
+% for ii = 1:1:length(i_d_MTPC)
+for ii = 1:1:2
 
     for nn = 1:1:length(n_ref)
     
@@ -103,8 +104,8 @@ for ii = 1:1:length(i_d_MTPC)
         OP.n_op = n_ref(nn);       % 1/min
         
         % Operating point
-        OP.i_d = i_d_MTPC(ii);
-        OP.i_q = i_q_MTPC(ii);
+        OP.i_d = i_d_MTPC(80+ii);
+        OP.i_q = i_q_MTPC(80+ii);
     
         % Calculate amplitude
         OP.i_dq = sqrt(OP.i_d^2+OP.i_q^2);
@@ -133,7 +134,7 @@ for ii = 1:1:length(i_d_MTPC)
             OP.T_el = 1/OP.f_el; % s
 
             % sampling frequency and time
-            OP.f_sampling = 1e6; % Hz
+            OP.f_sampling = 5e4; % Hz
             OP.t_sampling = 1/OP.f_sampling; % s
 
 
@@ -277,6 +278,9 @@ for ii = 1:1:length(i_d_MTPC)
             Up.T_rel(nn,number) = k_p*u_c.T_rel;    % Nm
             
                        
+            % switching loss
+            result.P_loss_sw(nn,number) = inverter.P_sw;
+
             % inverter loss
             result.P_loss_inverter(nn,number) = inverter.P_loss;
             
@@ -300,9 +304,9 @@ for ii = 1:1:length(i_d_MTPC)
             % load angle
             result.loadAngle(nn,number) = motor.theta;
 
-            % result.u_ab = motor.u_ab;
+            result.u_ab = motor.u_ab;
             % 
-            % result.u_abc = motor.u_abc;
+            %result.u_abc = motor.u_abc;
 
             % d complex stator voltage
             result.u_d_complex(nn,number) = motor.u_dq_complex(1);
@@ -316,7 +320,7 @@ for ii = 1:1:length(i_d_MTPC)
 
 
             %
-            result.P_sw(nn,number) = inverter.P_sw;
+            %result.P_sw(nn,number) = inverter.P_sw;
 
             %% sesitivity
             u_T1_rel_plot(nn,number) = torqueFlange.u_T1_rel;
@@ -350,6 +354,22 @@ fprintf('Torque flange: %s\n',torqueFlange_selected)
 fprintf('Power analyzer: %s\n',powerAnalyzer_selected)
 fprintf('Coverage factor: %d\n',k_p)
 
+
+
+%% plot
+t = linspace(0,0.2,10);
+
+figure(1);
+plot(t,result.u_ab(1,:));
+hold on;
+plot(t,result.u_ab(2,:));
+
+% 
+% figure(2);
+% plot(t,result.u_abc(1,:));
+% hold on;
+% plot(t,result.u_abc(2,:));
+% plot(t,result.u_abc(3,:));
 
 %% Plot uncertainty
 % figure(1);

@@ -1,7 +1,7 @@
 classdef inverterModel
 
     properties
-        Semiconductor
+        semiconductor
         motor
         OP
     end
@@ -21,9 +21,9 @@ classdef inverterModel
     methods
 
         %% constructor
-        function obj = inverterModel(Semiconductor,motor,OP)
+        function obj = inverterModel(semiconductor,motor,OP)
 
-            obj.Semiconductor = Semiconductor;
+            obj.semiconductor = semiconductor;
             obj.motor = motor;
             obj.OP = OP;
         end
@@ -48,7 +48,7 @@ classdef inverterModel
             % initialization
             a = zeros(1,length(t_s));
             zz = 1;
-            
+
             while zz < length(t_s)
                 if counter == -500
                     while counter < 500
@@ -57,7 +57,7 @@ classdef inverterModel
                         zz = zz+1;
                     end
                 end
-                   
+
                 if counter ==500
                     while counter > -500
                         a(zz) = counter;
@@ -66,14 +66,17 @@ classdef inverterModel
                     end
                 end
             end
-        
+
 
             % resize the carrier signal
             carrier = a(1:length(t_s)-1);
 
+            % new variable
+            u_abc_c = obj.motor.u_abc(1,:);
+
             for zz = 1:1:length(t_s)-1
                 % compare the triangle signal (carrier) with the reference signal
-                if obj.motor.u_abc(1,zz) > (carrier(zz)/500)
+                if u_abc_c(1,zz) > (carrier(zz)/500)
                     % pulse high
                     s(zz) = 1;
                 else
@@ -82,48 +85,50 @@ classdef inverterModel
                 end
 
             end
-        
+
 
             switching_times = zeros(1,length(t_s)-1);
 
             % determine the switching time points
             for zz=2:1:length(t_s)-1
-            
+
                 if s(zz) ~= s(zz-1)
                     switching_times(zz) = s(zz);
-                    
+
                 end
             end
-            
-            
+
+
             % current          
             current_values = zeros(1,length(t_s));
-              
+            i_abc_c = obj.motor.i_abc(1,:);
+
             % get the current values at the switching points
-            for zz=2:1:length(t_s)-1
-            
+            for zz=1:1:length(t_s)-1
+
                 if switching_times(zz) ~= 0
-                    current_values(zz) = obj.motor.i_abc(1:zz);
-                    
+                    current_values(zz) = i_abc_c(1,zz);
+
                 end
             end
 
 
+            E_on = zeros(1,length(t_s)-1);
+            E_off = zeros(1,length(t_s)-1);
 
-            for zz=2:1:length(t_s)-1
+            for zz=1:1:length(t_s)
 
                 if current_values(zz) ~= 0
                     if switching_times(zz) == 1
-                        E_on(zz) = fit_E_on(current_values(zz));
-                        
+                        E_on(zz) = obj.semiconductor.fit_E_on.fit_E_on(current_values(zz));
+
                     elseif switching_times(zz) == -1
-                        E_off(zz) = fit_E_off(current_values(zz));
-                        
+                        E_off(zz) = obj.semiconductor.fit_E_off.fit_E_off(current_values(zz));
                     end
                 end
             end
-            
-            P_sw = (6*((1/length(t_s))*(sum(E_on)+sum(E_off))))*(1/T_el);
+
+            P_sw = (6*((1/length(t_s))*(sum(E_on)+sum(E_off))))*(1/obj.OP.T_el);
 
         end
 
@@ -139,8 +144,8 @@ classdef inverterModel
         % loss
         % function P_loss = get.P_loss(obj) % W
         % 
-        %     P_loss = 6*((obj.Semiconductor.E_sum*obj.OP.f_sw)*(obj.OP.i_dq/obj.OP.i_max) +...
-        %         (obj.Semiconductor.U_ce*obj.OP.i_dq + obj.Semiconductor.r_ce*(obj.OP.i_dq^2)));
+        %     P_loss = 6*((obj.semiconductor.E_sum*obj.OP.f_sw)*(obj.OP.i_dq/obj.OP.i_max) +...
+        %         (obj.semiconductor.U_ce*obj.OP.i_dq + obj.semiconductor.r_ce*(obj.OP.i_dq^2)));
         % end
 
 

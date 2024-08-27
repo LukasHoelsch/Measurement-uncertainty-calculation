@@ -21,7 +21,7 @@ dred=colormatrix(7,:);
 
 %%
 plot_enable = 1;
-save_plot=1;
+save_plot=0;
 
 
 if plot_enable == 1
@@ -52,7 +52,7 @@ if plot_enable == 1
     
     fig.sp(end+1) = subplot(1,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(Up.n_motor,Up.T_motor,Up.P_loss_inverter)
+    [~,h] = contourf(result.n_motor,result.T_motor,result.P_loss_inverter)
     u = colorbar
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';

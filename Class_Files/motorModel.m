@@ -201,7 +201,8 @@ classdef motorModel
         % dq -> alpha bera
         function u_ab =get.u_ab(obj)
 
-            epsilon_el = 0:0.1:2*pi;
+            %epsilon_el = 0:0.1:2*pi;
+            epsilon_el = linspace(0,2*pi,499);
 
             % initialization
             u_ab = zeros(2,length(epsilon_el));
@@ -235,7 +236,7 @@ classdef motorModel
         % dq -> alpha bera
         function i_ab =get.i_ab(obj)
 
-            epsilon_el = 0:0.1:2*pi;
+            epsilon_el = linspace(0,2*pi,499);
 
             % initialization
             i_ab = zeros(2,length(epsilon_el));
