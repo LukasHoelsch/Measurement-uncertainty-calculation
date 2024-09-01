@@ -50,38 +50,44 @@ if plot_enable == 1
                 'PaperPosition',[0,0,FigW,FigH],...
                 'Position',[1,1,FigW,FigH]);
     
+    max_abs = max(max(Up.power_abs));
+    max_rel = max(max(Up.power_rel));
+
     fig.sp(end+1) = subplot(2,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(Up.n_motor,Up.T_motor,Up.power_rel)
+    [~,h] = contourf(result.n_motor,result.T_motor,Up.power_abs)
     u = colorbar
+    clim([0 max_abs]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
     u.Label.String = '$\mathrm{U_{p,mech}}$ in W';
     u.Limits = [0,20];
-%
-    h.LevelListMode = 'manual';
-    h.LevelStep = 5;
+
+    h.LevelListMode = 'auto';
+    h.LevelStep = 0.5;
     h.ShowText = 'on';
     h.LineStyle = 'none';
  
     fig.sp(end+1) = subplot(2,1,2);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(Up.n_motor,Up.T_motor,Up.power_abs)
+    [~,h] = contourf(result.n_motor,result.T_motor,Up.power_rel)
     u = colorbar
+    clim([0 max_abs]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
     u.Label.String = '$\mathrm{U_{P,mech}}$ in W';
     u.Limits = [0,20];
+
 %
-    h.LevelListMode = 'manual';
-    h.LevelStep = 5;
-    h.ShowText = 'on';
+    h.LevelListMode = 'auto';
+    h.LevelStep = 0.5;
+    h.ShowText = 'off';
     h.LineStyle = 'none';
- 
+    
     
 
     %
@@ -107,7 +113,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
     set(fig.sp(kk), 'YTick', YTicks);
-    set(fig.sp(kk), 'ZTick', ZTicks);
+    %set(fig.sp(kk), 'ZTick', ZTicks);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
@@ -116,7 +122,8 @@ if plot_enable == 1
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
-    
+    %clim([0,max_abs]);
+
 
     kk=2;
     subplot(fig.sp(kk))
@@ -124,7 +131,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'ylim', [y_min y_max]);
     set(fig.sp(kk), 'XTick', XTicks);
     set(fig.sp(kk), 'YTick', YTicks);
-    set(fig.sp(kk), 'ZTick', ZTicks);
+    %set(fig.sp(kk), 'ZTick', ZTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);
@@ -135,7 +142,7 @@ if plot_enable == 1
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
-    
+    %clim([0,max_rel]);
 
     
      if save_plot ==1

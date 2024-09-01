@@ -52,20 +52,21 @@ if plot_enable == 1
     
     fig.sp(end+1) = subplot(1,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(Up.n_motor,Up.T_motor,electricDrive_efficiency)
+    [~,h] = contourf(result.n_motor,result.T_motor,result.electricDrive_efficiency)
     u = colorbar
+    clim([90 99]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
     u.Label.String = '$\eta_{\mathrm{sys}}$ in \%';
-    u.Limits = [70, 95];
+    %u.Limits = [90, 96];
 %
-    h.LevelListMode = 'manual';
-    h.LevelStep = 20;
+    h.LevelListMode = 'auto';
+    h.LevelStep = 0.1;
     h.ShowText = 'on';
     h.LineStyle = 'none';
-    h.LevelList = [70,75,80,85,90,95];
+    %h.LevelList = [80,85,90,95];
  
 
     %
@@ -85,8 +86,8 @@ if plot_enable == 1
     YTicks = [20,60,100,140,180];
     YTickLabel={'20','60','100','140','180'};
     
-    ZTicks = [0,70,75,80,85,90];
-    ZTickLabel={'0','70','75','80','85','90'};
+    ZTicks = [80,85,90,95];
+    ZTickLabel={'80','85','90','95'};
     
     kk=1;
     subplot(fig.sp(kk))

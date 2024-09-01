@@ -21,7 +21,7 @@ dred=colormatrix(7,:);
 
 %%
 plot_enable = 1;
-save_plot=0;
+save_plot=1;
 
 
 if plot_enable == 1
@@ -60,7 +60,7 @@ if plot_enable == 1
     u.Label.FontSize = 10;
     u.Label.String = '$P_{\mathrm{l}}$ in W';
 %
-    h.LevelListMode = 'manual';
+    h.LevelListMode = 'auto';
     h.LevelStep = 5;
     h.ShowText = 'on';
     h.LineStyle = 'none';
@@ -81,8 +81,8 @@ if plot_enable == 1
     YTicks = [20,60,100,140,180];
     YTickLabel={'20','60','100','140','180'};
 
-    ZTicks = [0,2000,4000,6000,8000];
-    ZTickLabel={'0','2000','4000','6000','8000'};
+    % ZTicks = [0,2000,4000,6000,8000];
+    % ZTickLabel={'0','2000','4000','6000','8000'};
     
     kk=1;
     subplot(fig.sp(kk))
@@ -90,7 +90,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'ylim', [y_min y_max]);
     set(fig.sp(kk), 'XTick', XTicks);
     set(fig.sp(kk), 'YTick', YTicks);
-    set(fig.sp(kk), 'ZTick', ZTicks);
+    % set(fig.sp(kk), 'ZTick', ZTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);

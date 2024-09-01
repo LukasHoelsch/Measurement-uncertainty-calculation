@@ -120,18 +120,13 @@ classdef motorModel
         % calculation of the complex stator voltage in the steady state
         function u_dq_complex = get.u_dq_complex(obj) % V
             
-            %i_dq = [obj.OP.i_d;obj.OP.i_q]; 
-            %i_dq_complex = obj.OP.i_d + 1j*obj.OP.i_q; % imaginary i_q from the lecture EMD, slide 301
-
             i_d_complex = obj.OP.i_d;
             i_q_complex = obj.OP.i_q*1j;
 
             psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.OP.i_d,obj.OP.i_q);
                 obj.motor_spec.Psi_q.fit_Psi_q(obj.OP.i_d,obj.OP.i_q)];
             
-            % u_dq_complex = obj.motor_spec.Rs*i_dq_complex - obj.OP.n_op/60*obj.motor_spec.p*2*pi*psi_dq(2) +...
-            %     obj.OP.n_op/60*obj.motor_spec.p*2*pi*psi_dq(1) ;
-
+            
             u_d_complex = obj.motor_spec.Rs * i_d_complex - obj.OP.n_op/60*obj.motor_spec.p*2*pi*psi_dq(2);
             u_q_complex = obj.motor_spec.Rs * i_q_complex + obj.OP.n_op/60*obj.motor_spec.p*2*pi*psi_dq(1);
 
@@ -202,7 +197,7 @@ classdef motorModel
         function u_ab =get.u_ab(obj)
 
             %epsilon_el = 0:0.1:2*pi;
-            epsilon_el = linspace(0,2*pi,499);
+            epsilon_el = linspace(0,2*pi,49);
 
             % initialization
             u_ab = zeros(2,length(epsilon_el));
@@ -236,7 +231,7 @@ classdef motorModel
         % dq -> alpha bera
         function i_ab =get.i_ab(obj)
 
-            epsilon_el = linspace(0,2*pi,499);
+            epsilon_el = linspace(0,2*pi,49);
 
             % initialization
             i_ab = zeros(2,length(epsilon_el));

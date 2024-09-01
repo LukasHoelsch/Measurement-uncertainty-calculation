@@ -19,7 +19,7 @@ project_dir = [fileparts(mfilename('fullpath'))];
 
 % number of sampling points for the d current, the q current has the same
 % size
-n_samplingPoints = 2;
+n_samplingPoints = 30;
 
 % maximal torque
 T_max = 180; % Nm
@@ -87,16 +87,15 @@ run('init.m')
 [i_d_MTPC,i_q_MTPC] = MTPC_LPV(fit_Torque,i_max);
 
 %% MTPV
-% [i_d_MTPV,i_q_MTPV,T_MTPV,out] = MTPV_LPV(fit_Psi_d,240,600,7000,3)
-
+% MTPV strategy is for this machine not necessary
 
 
 
 %% Calcualtion of the operating points
 % The operating points are calculated with the i_dq values and the
 % rotational speed n
-% for ii = 1:1:length(i_d_MTPC)
-for ii = 1:1:2
+for ii = 1:1:length(i_d_MTPC)
+%for ii = 1:1:77
 
     for nn = 1:1:length(n_ref)
     
@@ -104,8 +103,8 @@ for ii = 1:1:2
         OP.n_op = n_ref(nn);       % 1/min
         
         % Operating point
-        OP.i_d = i_d_MTPC(80+ii);
-        OP.i_q = i_q_MTPC(80+ii);
+        OP.i_d = i_d_MTPC(ii);
+        OP.i_q = i_q_MTPC(ii);
     
         % Calculate amplitude
         OP.i_dq = sqrt(OP.i_d^2+OP.i_q^2);
@@ -145,28 +144,33 @@ for ii = 1:1:2
     
             % Estimation of the DC-link power
             OP.P_dcLink = motor.P_mech + motor.P_loss + inverter.P_loss;
+            OP.I_dcLink = OP.P_dcLink/OP.u_DC;
+
+            % abc currents
+            OP.I_abc_fund = ((motor.P_mech/3*0.99)/OP.u_DC)*0.95;
+            OP.I_abc_harm = ((motor.P_mech/3*0.99)/OP.u_DC)*0.05;
             
             % power measurement uncertainty
-            OP.P_500Hz = motor.P_mech/3*0.99;    % W
-            OP.P_5kHz = 0;          % W
-            OP.P_50kHz = 0;         % W
-            OP.P_1MHz = 0;          % W
+            % OP.P_500Hz = motor.P_mech/3*0.99;    % W
+            % OP.P_5kHz = 0;          % W
+            % OP.P_50kHz = 0;         % W
+            % OP.P_1MHz = 0;          % W
             
             
-            WT3000.I_phase = OP.i_dq/sqrt(2);   % current RMS in A
-            WT3000.phi_phase = motor.phi;       % power factor angle in °
-            WT3000.f_I_phase = OP.n_op/60*HSM_16_17_12_C01.p;   % Hz
-
-            WT3000.f_I_dcLink = 0;              % Hz
-            WT3000.phi_dcLink = 0       ;       % °, only active power from the DC-link
-            WT3000.I_dcLink = OP.P_dcLink/OP.u_DC;  % A
+            % WT3000.I_phase = OP.i_dq/sqrt(2);   % current RMS in A
+            % WT3000.phi_phase = motor.phi;       % power factor angle in °
+            % WT3000.f_I_phase = OP.n_op/60*HSM_16_17_12_C01.p;   % Hz
+            % 
+            % WT3000.f_I_dcLink = 0;              % Hz
+            % WT3000.phi_dcLink = 0       ;       % °, only active power from the DC-link
+            % WT3000.I_dcLink = OP.P_dcLink/OP.u_DC;  % A
             % 
             WT5000.I_phase = OP.i_dq/sqrt(2);   % current RMS in A
             WT5000.phi_phase = motor.phi;          % angle in °
             WT5000.f_I_phase = OP.n_op/60*HSM_16_17_12_C01.p;   % Hz
-            WT5000.f_I_dcLink = 0;              % Hz
-            WT5000.phi_dcLink = 0;              % °, only active power from the DC-link
-            WT5000.I_dcLink = OP.P_dcLink/OP.u_DC;  % A
+            % WT5000.f_I_dcLink = 0;              % Hz
+            % WT5000.phi_dcLink = 0;              % °, only active power from the DC-link
+            % WT5000.I_dcLink = OP.P_dcLink/OP.u_DC;  % A
             
             
             
@@ -193,16 +197,7 @@ for ii = 1:1:2
             elseif strcmp(powerAnalyzer_selected,'WT5000')
                 powerAnalyzer = powerAnalyzerUncertainty(WT5000,OP,motor);
             end
-            
-
-            %% test
-
-            % i_dq_complex = OP.i_d + 1j*OP.i_q; % imaginary i_q from the lecture EMD, slide 301
-            % psi_dq = [fit_Psi_d(OP.i_d,OP.i_q);
-            %     fit_Psi_q(OP.i_d,OP.i_q)];
-            % u_dq_complex = motor.motor_spec.Rs*i_dq_complex - OP.n_op/60*motor.motor_spec.p*2*pi*psi_dq(2) +...
-            %     OP.n_op/60*motor.motor_spec.p*2*pi*psi_dq(1) 
-            
+                    
 
             
             %% Torque uncertainty
@@ -230,10 +225,10 @@ for ii = 1:1:2
             
             
             %% Efficiency uncertainty
-            u_c.eta_rel = sqrt((1/OP.P_dcLink)^2*u_c.p_mech_rel^2+(-motor.P_mech/(OP.P_dcLink)^2)^2*powerAnalyzer.u_total_dcLink^2); % 1
+            u_c.eta_rel = sqrt((1/OP.P_dcLink)^2*u_c.p_mech_rel^2+(-motor.P_mech/(OP.P_dcLink)^2)^2*powerAnalyzer.u_rel_dcLink^2); % 1
             
             % absolut
-            u_c.eta_abs = sqrt((1/OP.P_dcLink)^2*u_c.p_mech_abs^2+(-motor.P_mech/(OP.P_dcLink)^2)^2*powerAnalyzer.u_total_dcLink^2); % 1
+            u_c.eta_abs = sqrt((1/OP.P_dcLink)^2*u_c.p_mech_abs^2+(-motor.P_mech/(OP.P_dcLink)^2)^2*powerAnalyzer.u_abs_dcLink^2); % 1
             
             
             
@@ -277,8 +272,10 @@ for ii = 1:1:2
             % torque
             Up.T_rel(nn,number) = k_p*u_c.T_rel;    % Nm
             
-                       
-            % switching loss
+            
+
+            %%
+            % inverter, switching loss
             result.P_loss_sw(nn,number) = inverter.P_sw;
 
             % inverter loss
@@ -295,32 +292,10 @@ for ii = 1:1:2
             result.electricDrive_efficiency(nn,number) = motor.P_mech/(result.electricDrive_loss(nn,number)+motor.P_mech)*100;
 
 
-            % induced voltage
-            % result.u_i_dq(nn,number) = motor.u_i_dq;
-            % 
-            % % stator voltage
-            % result.u_dq(nn,number) = motor.u_dq;
-
             % load angle
             result.loadAngle(nn,number) = motor.theta;
 
-            result.u_ab = motor.u_ab;
-            % 
-            %result.u_abc = motor.u_abc;
-
-            % d complex stator voltage
-            result.u_d_complex(nn,number) = motor.u_dq_complex(1);
-            % q complex stator voltage
-            result.u_q_complex(nn,number) = motor.u_dq_complex(2);
-            
-            % d complex induced stator voltage
-            result.u_i_d_complex(nn,number) = motor.u_i_dq_complex(1);
-            % q complex induced stator voltage
-            result.u_i_q_complex(nn,number) = motor.u_i_dq_complex(1);
-
-
-            %
-            %result.P_sw(nn,number) = inverter.P_sw;
+           
 
             %% sesitivity
             u_T1_rel_plot(nn,number) = torqueFlange.u_T1_rel;
@@ -333,7 +308,7 @@ for ii = 1:1:2
         % uncertainty calculation is not started
         else
             result.T_motor(nn,number) = NaN;
-            result.n_op(nn,number) = NaN;
+            result.n_motor(nn,number) = NaN;
             Up.eta_rel(nn,number) = NaN;
         
         % end statement from if calculation
@@ -357,12 +332,12 @@ fprintf('Coverage factor: %d\n',k_p)
 
 
 %% plot
-t = linspace(0,0.2,10);
-
-figure(1);
-plot(t,result.u_ab(1,:));
-hold on;
-plot(t,result.u_ab(2,:));
+% t = linspace(0,0.2,49);
+% 
+% figure(1);
+% plot(t,result.u_ab(1,:));
+% hold on;
+% plot(t,result.u_ab(2,:));
 
 % 
 % figure(2);

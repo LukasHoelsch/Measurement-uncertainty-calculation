@@ -12,7 +12,7 @@ classdef inverterModel
         %P_cond  % W
         P_loss  % W
         n_steps
-        
+        P_conduction
 
 
     end
@@ -33,7 +33,8 @@ classdef inverterModel
 
         % number of sampling points
         function n_steps = get.n_steps(obj)
-            n_steps = obj.OP.T_el/obj.OP.t_sampling;
+            %n_steps = obj.OP.T_el/obj.OP.t_sampling;
+            n_steps = 49;
         end
 
 
@@ -120,10 +121,10 @@ classdef inverterModel
 
                 if current_values(zz) ~= 0
                     if switching_times(zz) == 1
-                        E_on(zz) = obj.semiconductor.fit_E_on.fit_E_on(current_values(zz));
+                        E_on(zz) = obj.semiconductor.fit_E_on.fit_E_on(abs(current_values(zz)));
 
                     elseif switching_times(zz) == -1
-                        E_off(zz) = obj.semiconductor.fit_E_off.fit_E_off(current_values(zz));
+                        E_off(zz) = obj.semiconductor.fit_E_off.fit_E_off(abs(current_values(zz)));
                     end
                 end
             end
@@ -149,12 +150,16 @@ classdef inverterModel
         % end
 
 
+        % conduction loss
+        function P_conduction = get.P_conduction(obj) % W
 
+            P_conduction = 3*obj.OP.i_dq^2*obj.semiconductor.R_ds_on;
+        end
 
         % Mosfet loss calculation
         function P_loss = get.P_loss(obj) % W
 
-            P_loss = 1;
+            P_loss = obj.P_sw + obj.P_conduction;
         end
 
 

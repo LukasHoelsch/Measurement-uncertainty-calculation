@@ -52,20 +52,22 @@ if plot_enable == 1
     
     fig.sp(end+1) = subplot(1,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(Up.n_motor,Up.T_motor,2*Up.eta_rel)
+    [~,h] = contourf(result.n_motor,result.T_motor,2*Up.eta_rel)
     u = colorbar
+    clim([0 0.7]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$\mathrm{Y_{p}}$ in \%';
+    u.Label.String = '$2~\mathrm{U_{k=2}}$ in \%';
     u.Limits = [0.25, 0.6];
+    u.LimitsMode = "auto";
 %
     h.LevelListMode = 'manual';
-    h.LevelStep = 20;
+    h.LevelStep = .1;
     h.ShowText = 'on';
     h.LineStyle = 'none';
-    h.LevelList = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8];
+    %h.LevelList = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8];
  
 
     %
@@ -77,7 +79,7 @@ if plot_enable == 1
     y_min = 20;
     y_max = 180;
     z_min = 0;
-    z_max = 0.25;
+    z_max = 0.6;
 
     XTicks=[0 2000 4000 6000 8000 10000];
     XTickLabel={'0','2000','4000','6000','8000','10000'};
@@ -95,15 +97,15 @@ if plot_enable == 1
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
-    set(fig.sp(kk), 'zlim', [z_min z_max]);
+    % set(fig.sp(kk), 'zlim', [z_min z_max]);
     set(fig.sp(kk), 'XTick', XTicks);
     set(fig.sp(kk), 'YTick', YTicks);
-    set(fig.sp(kk), 'ZTick', ZTicks);
+    % set(fig.sp(kk), 'ZTick', ZTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
-    set(fig.sp(kk), 'ZTickLabel', ZTickLabel,'Fontsize',10);
+    % set(fig.sp(kk), 'ZTickLabel', ZTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
     ax = gca;
     ax.FontSize = 10;

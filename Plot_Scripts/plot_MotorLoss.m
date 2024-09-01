@@ -52,7 +52,7 @@ if plot_enable == 1
     
     fig.sp(end+1) = subplot(1,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(Up.n_motor,Up.T_motor,Up.P_loss_motor)
+    [~,h] = contourf(result.n_motor,result.T_motor,result.P_loss_motor)
     u = colorbar
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
@@ -60,8 +60,8 @@ if plot_enable == 1
     u.Label.FontSize = 10;
     u.Label.String = '$P_{\mathrm{l}}$ in W';
 %
-    h.LevelListMode = 'manual';
-    h.LevelStep = 5;
+    h.LevelListMode = 'auto';
+    h.LevelStep = 50;
     h.ShowText = 'on';
     h.LineStyle = 'none';
  
@@ -105,12 +105,17 @@ if plot_enable == 1
     
      if save_plot ==1
             FigName = ['MotorLoss.pdf'];
+            %FigName = ['MotorLoss.eps'];
         if exist([fig.folder FigName]) == 0
                 print('-dpdf','-painters', fig.res,[fig.folder FigName]);
+                %print('-deps','-painters', fig.res,[fig.folder FigName]);
+                
             else
                 choice = questdlg(['Datei "' FigName '" existiert bereit! Überschreiben?'], 'Problem', 'Ja', 'Nein', 'Ja');
             if strcmp(choice, 'Ja')
                  print(fig.fh(end), '-dpdf', '-painters' , fig.res,[fig.folder FigName]);
+                 %print(fig.fh(end), '-deps', '-painters' , fig.res,[fig.folder FigName]);
+                 
             end
        end
      end 

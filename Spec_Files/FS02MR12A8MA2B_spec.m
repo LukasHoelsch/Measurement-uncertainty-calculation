@@ -19,7 +19,7 @@ FS02MR12A8MA2B.fit_E_off = load([project_dir_FittedModels,'\fit_E_off.mat']);
 % For the data extraction, T_vj = 125 °C is used.
 
 % conduction loss
-% FS02MR12A8MA2B.R_ds_on = 0.0032; % ohm
+FS02MR12A8MA2B.R_ds_on = 0.0032; % ohm
 % 
 % % current vector, sampling points
 % FS02MR12A8MA2B.I_on = [44.82758620689655, 82.68199233716474, 125.51724137931033, 182.29885057471265, ...
