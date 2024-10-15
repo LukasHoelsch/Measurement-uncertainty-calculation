@@ -21,7 +21,7 @@ dred=colormatrix(7,:);
 
 %%
 plot_enable = 1;
-save_plot=1;
+save_plot=0;
 
 
 if plot_enable == 1
@@ -52,7 +52,7 @@ if plot_enable == 1
     
     fig.sp(end+1) = subplot(1,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(result.n_motor,result.T_motor,2*Up.eta_rel)
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_MM)
     u = colorbar
     clim([0 0.7]);
     u.FontSize = 10;
@@ -78,8 +78,8 @@ if plot_enable == 1
     x_max = 11000;
     y_min = 20;
     y_max = 180;
-    z_min = 0;
-    z_max = 0.6;
+    % z_min = 0;
+    % z_max = 0.6;
 
     XTicks=[0 2000 4000 6000 8000 10000];
     XTickLabel={'0','2000','4000','6000','8000','10000'};
@@ -90,8 +90,8 @@ if plot_enable == 1
 %     ZTicks = [0,2000,4000,6000,8000];
 %     ZTickLabel={'0','2000','4000','6000','8000'};
     
-    ZTicks = [0,0.05,0.1,0.15,0.2,0.25];
-    ZTickLabel={'0','0.05','0.1','0.15','0.2','0.25'};
+    % ZTicks = [0,0.05,0.1,0.15,0.2,0.25];
+    % ZTickLabel={'0','0.05','0.1','0.15','0.2','0.25'};
     
     kk=1;
     subplot(fig.sp(kk))

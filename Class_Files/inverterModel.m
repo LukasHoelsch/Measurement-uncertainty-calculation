@@ -3,7 +3,13 @@ classdef inverterModel
     properties
         semiconductor
         motor
-        OP
+        u_DC
+        counter
+        f_el
+        T_el
+        i_dq
+        motor_u_abc
+        motor_i_abc
     end
 
     properties (Dependent)
@@ -21,63 +27,33 @@ classdef inverterModel
     methods
 
         %% constructor
-        function obj = inverterModel(semiconductor,motor,OP)
+        function obj = inverterModel(semiconductor,motor,u_DC,counter,f_el,T_el,i_dq,motor_u_abc,motor_i_abc)
 
             obj.semiconductor = semiconductor;
             obj.motor = motor;
-            obj.OP = OP;
+            obj.u_DC = u_DC;
+            obj.counter = counter;
+            obj.f_el = f_el;
+            obj.T_el = T_el;
+            obj.i_dq = i_dq;
+            obj.motor_u_abc = motor_u_abc;
+            obj.motor_i_abc = motor_i_abc;
         end
 
 
         %% general functions
 
-        % number of sampling points
-        function n_steps = get.n_steps(obj)
-            %n_steps = obj.OP.T_el/obj.OP.t_sampling;
-            n_steps = 49;
-        end
-
-
-        % counter function (triangle)
         function P_sw = get.P_sw(obj)
-            % sample step
-            t_s = 0:1:obj.n_steps;
-
-            % counter start value
-            counter=-500;
-
-            % initialization
-            a = zeros(1,length(t_s));
-            zz = 1;
-
-            while zz < length(t_s)
-                if counter == -500
-                    while counter < 500
-                        a(zz) = counter;
-                        counter = counter +20;
-                        zz = zz+1;
-                    end
-                end
-
-                if counter ==500
-                    while counter > -500
-                        a(zz) = counter;
-                        counter = counter -20;
-                        zz = zz+1;
-                    end
-                end
-            end
-
-
-            % resize the carrier signal
-            carrier = a(1:length(t_s)-1);
 
             % new variable
-            u_abc_c = obj.motor.u_abc(1,:);
+            u_abc_c = obj.motor_u_abc(1,:)/obj.u_DC;
+
+            % 
+            t_s = 0:1:200;
 
             for zz = 1:1:length(t_s)-1
                 % compare the triangle signal (carrier) with the reference signal
-                if u_abc_c(1,zz) > (carrier(zz)/500)
+                if u_abc_c(1,zz) > obj.counter(1,zz)
                     % pulse high
                     s(zz) = 1;
                 else
@@ -102,7 +78,7 @@ classdef inverterModel
 
             % current          
             current_values = zeros(1,length(t_s));
-            i_abc_c = obj.motor.i_abc(1,:);
+            i_abc_c = obj.motor_i_abc(1,:);
 
             % get the current values at the switching points
             for zz=1:1:length(t_s)-1
@@ -129,31 +105,17 @@ classdef inverterModel
                 end
             end
 
-            P_sw = (6*((1/length(t_s))*(sum(E_on)+sum(E_off))))*(1/obj.OP.T_el);
+            P_sw = (6*((1/length(t_s))*(sum(E_on)+sum(E_off))))*(1/obj.T_el);
 
         end
 
 
         %% output function
-        % switching loss
-        % function P_sw = get.P_sw(obj)
-        % 
-        %     P_sw = 1;
-        % end
-
-
-        % loss
-        % function P_loss = get.P_loss(obj) % W
-        % 
-        %     P_loss = 6*((obj.semiconductor.E_sum*obj.OP.f_sw)*(obj.OP.i_dq/obj.OP.i_max) +...
-        %         (obj.semiconductor.U_ce*obj.OP.i_dq + obj.semiconductor.r_ce*(obj.OP.i_dq^2)));
-        % end
-
 
         % conduction loss
         function P_conduction = get.P_conduction(obj) % W
 
-            P_conduction = 3*obj.OP.i_dq^2*obj.semiconductor.R_ds_on;
+            P_conduction = 3*obj.i_dq^2*obj.semiconductor.R_ds_on;
         end
 
         % Mosfet loss calculation

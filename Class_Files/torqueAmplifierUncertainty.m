@@ -2,8 +2,7 @@ classdef torqueAmplifierUncertainty
     
    properties
        device_spec
-       OP
-       motor
+       motor_T_calc
    end
    
    properties (Access = private)
@@ -18,18 +17,17 @@ classdef torqueAmplifierUncertainty
    
    methods
        
-       function obj = torqueAmplifierUncertainty(device,OP,motor) % constructor
+       function obj = torqueAmplifierUncertainty(device,motor_T_calc) % constructor
            
            obj.device_spec = device;
-           obj.OP = OP;
-           obj.motor = motor;
+           obj.motor_T_calc = motor_T_calc;
 
        end
    
    
        % 
        function u_T2 = get.u_T2(obj) % Nm
-           u_T2 = obj.device_spec.d_amp*obj.b_r*obj.motor.T_calc;
+           u_T2 = obj.device_spec.d_amp*obj.b_r*obj.motor_T_calc;
        end
 
    end

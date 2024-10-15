@@ -32,11 +32,11 @@ The structure of the calculation is shown below, with the main file testBech_eva
 │   │
 │   └── measuringAmplifier
 │       ├── ML60B
-````bash
+
 
 # Folder Structure
 The folder strcture is as follows:
-````bash
+
 .
 ├── Class_Files
 │   ├── inverterModel
@@ -73,4 +73,3 @@ The folder strcture is as follows:
 └── init
 └── testBench_evaluation
 
-````bash

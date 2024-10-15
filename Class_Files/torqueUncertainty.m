@@ -2,8 +2,7 @@ classdef torqueUncertainty
     
    properties
         device
-        OP
-        motor
+        motor_T_calc
    end
    
    properties (Access = private)
@@ -23,11 +22,10 @@ classdef torqueUncertainty
    
    methods
        % constructor
-       function obj = torqueUncertainty(device,OP,motor)
+       function obj = torqueUncertainty(device,motor_T_calc)
            
            obj.device = device;
-           obj.OP = OP;
-           obj.motor = motor;
+           obj.motor_T_calc = motor_T_calc;
        end
        
        
@@ -46,7 +44,7 @@ classdef torqueUncertainty
        % repeatability
        function u_rep = get.u_sigma_rel(obj) % Nm
 
-           u_rep = obj.device.sigma_rel*obj.motor.T_calc;
+           u_rep = obj.device.sigma_rel*obj.motor_T_calc;
        end
       
                      

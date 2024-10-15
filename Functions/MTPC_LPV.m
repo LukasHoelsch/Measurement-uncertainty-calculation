@@ -3,8 +3,8 @@ function [i_d_MTPC,i_q_MTPC] = MTPC_LPV(fit_Torque,i_max)
 
 
 % fixed
-dr=5;
-dphi=0.1;
+dr=10; % 5
+dphi=0.2; % 0.1
 
 % create vector
 r_vec=0:dr:i_max;

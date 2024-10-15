@@ -60,7 +60,7 @@ WT5000.d_voltage_harm_MR = 0.0005;    % measurement range
 %
 
 % measurement range voltage
-WT5000.U_MB = 400;     % V, measuring range end value
+WT5000.U_MR = 400;     % V, measuring range end value
 
 % measurement range current
 WT5000.I_MR = 400;     % A, measuring range end value

@@ -12,6 +12,11 @@ clc;
 % Get project directories
 project_dir = [fileparts(mfilename('fullpath'))];
 
+%% Hardware settings
+% check if the parallel computing toolbox is available
+
+parallelComputing = 'True';
+
 
 
 %% Settings for the calculation
@@ -19,7 +24,7 @@ project_dir = [fileparts(mfilename('fullpath'))];
 
 % number of sampling points for the d current, the q current has the same
 % size
-n_samplingPoints = 30;
+n_samplingPoints = 5;
 
 % maximal torque
 T_max = 180; % Nm
@@ -89,7 +94,8 @@ run('init.m')
 %% MTPV
 % MTPV strategy is for this machine not necessary
 
-
+%% Counter
+[OP.counter] = Determination_Counter(100000);
 
 %% Calcualtion of the operating points
 % The operating points are calculated with the i_dq values and the
@@ -112,16 +118,20 @@ for ii = 1:1:length(i_d_MTPC)
         % Calculate the motor parameters for the selected OP
         % e.g., torque, power
         motor = motorModel(HSM_16_17_12_C01,OP);
-        
+        motorStruckt.motor_spec = motorModel(HSM_16_17_12_C01,OP).motor_spec;
+        motorStruckt.T_calc = motorModel(HSM_16_17_12_C01,OP).T_calc;
+        motorStruckt.P_mech = motorModel(HSM_16_17_12_C01,OP).P_mech;
+        motorStruckt.P_loss = motorModel(HSM_16_17_12_C01,OP).P_loss;
+
 
         % Test, if the motor is working in the safe operation range, otherwise
         % the calculation ends and NaN is taken for that OP
-        if motor.T_calc == 0
+        if motorStruckt.T_calc == 0
             end_calculation = 1; % uncertainty calculation will end
         else
             end_calculation = 0; % uncertaitty calculation will start
         end
-        
+     
 
         %% Calculation
         if end_calculation == 0
@@ -129,7 +139,7 @@ for ii = 1:1:length(i_d_MTPC)
             % operating point dependant variables
 
             % electrical frequency and time
-            OP.f_el = OP.n_op/60*motor.motor_spec.p; % Hz
+            OP.f_el = OP.n_op/60*motorStruckt.motor_spec.p; % Hz
             OP.T_el = 1/OP.f_el; % s
 
             % sampling frequency and time
@@ -137,18 +147,19 @@ for ii = 1:1:length(i_d_MTPC)
             OP.t_sampling = 1/OP.f_sampling; % s
 
 
-
             % Inverter
-            inverter = inverterModel(FS02MR12A8MA2B,motor,OP);
+            %inverter = inverterModel(FS02MR12A8MA2B,motor,OP);
             
+            inv.P_loss = inverterModel(FS02MR12A8MA2B,motor,OP).P_loss;
+            inv.P_sw = inverterModel(FS02MR12A8MA2B,motor,OP).P_sw;
     
             % Estimation of the DC-link power
-            OP.P_dcLink = motor.P_mech + motor.P_loss + inverter.P_loss;
+            OP.P_dcLink = motorStruckt.P_mech + motorStruckt.P_loss + inv.P_loss;
             OP.I_dcLink = OP.P_dcLink/OP.u_DC;
 
             % abc currents
-            OP.I_abc_fund = ((motor.P_mech/3*0.99)/OP.u_DC)*0.95;
-            OP.I_abc_harm = ((motor.P_mech/3*0.99)/OP.u_DC)*0.05;
+            OP.I_abc_fund = ((motorStruckt.P_mech/3*0.99)/OP.u_DC)*0.95;
+            OP.I_abc_harm = ((motorStruckt.P_mech/3*0.99)/OP.u_DC)*0.05;
             
             % power measurement uncertainty
             % OP.P_500Hz = motor.P_mech/3*0.99;    % W
@@ -216,19 +227,19 @@ for ii = 1:1:length(i_d_MTPC)
             
             %% Mechanical power uncertainty
             % relative
-            u_c.p_mech_rel = sqrt((2*pi*OP.n_op/60)^2*u_c.T_rel^2+(motor.T_calc*2*pi)^2*(u_c.n/60)^2); % W
+            u_c.p_mech_rel = sqrt((2*pi*OP.n_op/60)^2*u_c.T_rel^2+(motorStruckt.T_calc*2*pi)^2*(u_c.n/60)^2); % W
             
             % uncertainty calculation for the measurement of absolute values
-            u_c.p_mech_abs = sqrt((2*pi*OP.n_op/60)^2*u_c.T_abs^2+(motor.T_calc*2*pi)^2*(u_c.n/60)^2); % W
+            u_c.p_mech_abs = sqrt((2*pi*OP.n_op/60)^2*u_c.T_abs^2+(motorStruckt.T_calc*2*pi)^2*(u_c.n/60)^2); % W
             
             
             
             
             %% Efficiency uncertainty
-            u_c.eta_rel = sqrt((1/OP.P_dcLink)^2*u_c.p_mech_rel^2+(-motor.P_mech/(OP.P_dcLink)^2)^2*powerAnalyzer.u_rel_dcLink^2); % 1
+            u_c.eta_rel = sqrt((1/OP.P_dcLink)^2*u_c.p_mech_rel^2+(-motorStruckt.P_mech/(OP.P_dcLink)^2)^2*powerAnalyzer.u_rel_dcLink^2); % 1
             
             % absolut
-            u_c.eta_abs = sqrt((1/OP.P_dcLink)^2*u_c.p_mech_abs^2+(-motor.P_mech/(OP.P_dcLink)^2)^2*powerAnalyzer.u_abs_dcLink^2); % 1
+            u_c.eta_abs = sqrt((1/OP.P_dcLink)^2*u_c.p_mech_abs^2+(-motorStruckt.P_mech/(OP.P_dcLink)^2)^2*powerAnalyzer.u_abs_dcLink^2); % 1
             
             
             
@@ -242,23 +253,23 @@ for ii = 1:1:length(i_d_MTPC)
             
             
             %% Uncertainty in W
-            Up.power_rel(nn,number) = (motor.P_loss+inverter.P_loss)*(Up.eta_rel(nn,number)/100);
+            Up.power_rel(nn,number) = (motorStruckt.P_loss+inv.P_loss)*(Up.eta_rel(nn,number)/100);
             
-            Up.power_abs(nn,number) = (motor.P_loss+inverter.P_loss)*(Up.eta_abs(nn,number)/100);
+            Up.power_abs(nn,number) = (motorStruckt.P_loss+inv.P_loss)*(Up.eta_abs(nn,number)/100);
             
     
             
             %% relative uncertainty, motor loss
-            Up.loss_rel(nn,number) = Up.power_rel(nn,number)/(motor.P_loss+inverter.P_loss)*100;
+            Up.loss_rel(nn,number) = Up.power_rel(nn,number)/(motorStruckt.P_loss+inv.P_loss)*100;
             
     
             %% Plot
             % save some data for grafical visualization
-            result.T_motor(nn,number) = motor.T_calc;  % Nm
+            result.T_motor(nn,number) = motorStruckt.T_calc;  % Nm
             result.n_motor(nn,number) = OP.n_op;  % 1/min
             result.i_d_op(nn,number) = OP.i_d;   % A
             result.i_q_op(nn,number) = OP.i_q;   % A
-            result.P_loss_motor(nn,number) = motor.P_loss; % W
+            result.P_loss_motor(nn,number) = motorStruckt.P_loss; % W
             result.u_d(nn,number) = motor.u_dq(1);
             
             % Area of trust 95 %
@@ -276,20 +287,20 @@ for ii = 1:1:length(i_d_MTPC)
 
             %%
             % inverter, switching loss
-            result.P_loss_sw(nn,number) = inverter.P_sw;
+            result.P_loss_sw(nn,number) = inv.P_sw;
 
             % inverter loss
-            result.P_loss_inverter(nn,number) = inverter.P_loss;
+            result.P_loss_inverter(nn,number) = inv.P_loss;
             
             % electric drive loss
-            result.electricDrive_loss(nn,number) = (inverter.P_loss + motor.P_loss);
+            result.electricDrive_loss(nn,number) = (inv.P_loss + motorStruckt.P_loss);
 
             % electric drive power
-            result.electricDrive_power(nn,number) = motor.P_mech;
+            result.electricDrive_power(nn,number) = motorStruckt.P_mech;
 
 
             % electric drive efficiency
-            result.electricDrive_efficiency(nn,number) = motor.P_mech/(result.electricDrive_loss(nn,number)+motor.P_mech)*100;
+            result.electricDrive_efficiency(nn,number) = motorStruckt.P_mech/(result.electricDrive_loss(nn,number)+motorStruckt.P_mech)*100;
 
 
             % load angle
@@ -316,6 +327,7 @@ for ii = 1:1:length(i_d_MTPC)
     
     % end for n 
     end
+
 
 number = number +1;
 

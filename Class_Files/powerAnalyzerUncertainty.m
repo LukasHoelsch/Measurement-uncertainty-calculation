@@ -2,9 +2,15 @@ classdef powerAnalyzerUncertainty
     
     properties
         device
-        OP
-        motor
-
+        n_op
+        motor_T_calc
+        I_abc_fund
+        f_I_abc_fund
+        powerFactor_phi
+        I_abc_harm
+        motor_u_dq
+        I_dcLink
+        u_DC
     end
     
    properties (Access = private)
@@ -39,8 +45,8 @@ classdef powerAnalyzerUncertainty
        %
        %
        % abc, power analyzer
-       u_current_a          % A
-       u_voltage_a          % V
+       i_a          % A
+       v_a          % V
        %
        u_el_abs_abc     % absolut
        u_el_rel_abc     % relative
@@ -60,11 +66,19 @@ classdef powerAnalyzerUncertainty
        
        
         %% constructor
-        function obj = powerAnalyzerUncertainty(device,OP,motor)
+        function obj = powerAnalyzerUncertainty(device,n_op,motor_T_calc,I_abc_fund,...
+                f_I_abc_fund,powerFactor_phi,I_abc_harm,motor_u_dq,I_dcLink,u_DC)
            
             obj.device = device;
-            obj.OP = OP;
-            obj.motor = motor;
+            obj.n_op = n_op;
+            obj.motor_T_calc = motor_T_calc;
+            obj.I_abc_fund = I_abc_fund;
+            obj.f_I_abc_fund = f_I_abc_fund;
+            obj.powerFactor_phi = powerFactor_phi;
+            obj.I_abc_harm = I_abc_harm;
+            obj.motor_u_dq = motor_u_dq;
+            obj.I_dcLink = I_dcLink;
+            obj.u_DC = u_DC;
         end
        
        
@@ -74,14 +88,14 @@ classdef powerAnalyzerUncertainty
         % troque
         function u_T3 = get.u_T3(obj) % Nm
            
-            u_T3 = obj.b_r*(obj.device.d_A*obj.motor.T_calc+obj.device.d_a_MR*...
+            u_T3 = obj.b_r*(obj.device.d_A*obj.motor_T_calc+obj.device.d_a_MR*...
                 obj.device.T_MR);
         end
        
         % rotational speed
         function u_n3 = get.u_n3(obj) % 1/min
            
-            u_n3 = obj.b_r*(obj.device.d_A*obj.OP.n_op+obj.device.d_a_MR*...
+            u_n3 = obj.b_r*(obj.device.d_A*obj.n_op+obj.device.d_a_MR*...
                 obj.device.n_ME);
         end
        
@@ -91,7 +105,7 @@ classdef powerAnalyzerUncertainty
         % linearity
         function u_CT_lin_abc = get.u_CT_lin_abc(obj)
            
-            u_CT_lin_abc = obj.device.d_CT_lin*obj.device.I_phase;
+            u_CT_lin_abc = obj.device.d_CT_lin*obj.I_abc_fund;
         end
        
         % offset
@@ -103,17 +117,17 @@ classdef powerAnalyzerUncertainty
        % frequency influence
        function u_CT_f_abc = get.u_CT_f_abc(obj)
            
-           u_CT_f_abc = obj.device.d_CT_f*obj.device.I_phase*...
-               obj.device.f_I_phase;
+           u_CT_f_abc = obj.device.d_CT_f*obj.I_abc_fund*...
+               obj.f_I_abc_fund;
        end
        
        % angular influence
        function u_CT_phi_rel_abc = get.u_CT_phi_rel_abc(obj)
            
-           u_CT_phi_rel_abc = 1-(cos((obj.device.phi_phase+...
+           u_CT_phi_rel_abc = 1-(cos((obj.powerFactor_phi+...
                obj.device.d_CT_phi_fix+...
-               obj.device.d_CT_phi_var*obj.device.f_I_phase)/360*2*pi)/...
-               (cos(obj.device.phi_phase/360*2*pi)));
+               obj.device.d_CT_phi_var*obj.f_I_abc_fund)/360*2*pi)/...
+               (cos(obj.powerFactor_phi/360*2*pi)));
        end
 
 
@@ -135,22 +149,22 @@ classdef powerAnalyzerUncertainty
        %% power analyzer, i_abc
 
        % phase current a
-       function u_current_a = get.u_current_a(obj)
+       function i_a = get.i_a(obj)
             
-            u_current_a = obj.b_r*(obj.OP.I_abc_fund*obj.device.d_current_fund + ...
-                obj.OP.I_abc_harm*obj.device.d_current_harm + ...
+          i_a = obj.b_r*(obj.I_abc_fund*obj.device.d_current_fund + ...
+                obj.I_abc_harm*obj.device.d_current_harm + ...
                 obj.device.I_MR*obj.device.d_current_fund_MR + ...
                 obj.device.I_MR*obj.device.d_current_harm_MR);
        
        end
 
        % phase voltage a
-       function u_voltage_a = get.u_voltage_a(obj)
+       function v_a = get.v_a(obj)
            % scaling with 2/3 from the Clark transformation
            % calculation of the RMS value wit sqrt(2) for the uncertaitny
-           u_voltage_a = obj.b_r*(obj.motor.u_dq*(2/3)/sqrt(2)*0.95*obj.device.d_voltage_fund + ...
-                obj.motor.u_dq*(2/3)/sqrt(2)*0.05*obj.device.d_voltage_harm + ...
-                obj.device.U_MB*obj.device.d_voltage_fund_MR + ...
+           v_a = obj.b_r*(obj.motor_u_dq*(2/3)/sqrt(2)*0.95*obj.device.d_voltage_fund + ...
+                obj.motor_u_dq*(2/3)/sqrt(2)*0.05*obj.device.d_voltage_harm + ...
+                obj.device.U_MR*obj.device.d_voltage_fund_MR + ...
                 obj.device.U_MR*obj.device.d_voltage_harm_MR);
        
        end
@@ -159,8 +173,8 @@ classdef powerAnalyzerUncertainty
        % absolute
        function u_el_abs_abc = get.u_el_abs_abc(obj)
 
-           u_el_abs_abc = sqrt(obj.u_current_a^2+obj.u_current_a^2+obj.u_current_a^2+ ...
-               obj.u_voltage_a^2+obj.u_voltage_a^2+obj.u_voltage_a^2 + ...
+           u_el_abs_abc = sqrt(obj.i_a^2+obj.i_a^2+obj.i_a^2+ ...
+               obj.v_a^2+obj.v_a^2+obj.v_a^2 + ...
                obj.u_CT_abs_abc^2);
        
        end
@@ -168,8 +182,8 @@ classdef powerAnalyzerUncertainty
        % relativ
        function u_el_rel_abc = get.u_el_rel_abc(obj)
 
-           u_el_rel_abc = sqrt(obj.u_current_a^2+obj.u_current_a^2+obj.u_current_a^2+ ...
-               obj.u_voltage_a^2+obj.u_voltage_a^2+obj.u_voltage_a^2 + ...
+           u_el_rel_abc = sqrt(obj.i_a^2+obj.i_a^2+obj.i_a^2+ ...
+               obj.v_a^2+obj.v_a^2+obj.v_a^2 + ...
                obj.u_CT_rel_abc^2);
        
        end
@@ -182,7 +196,7 @@ classdef powerAnalyzerUncertainty
         % linearity
         function u_CT_lin_dcLink = get.u_CT_lin_dcLink(obj)
            
-            u_CT_lin_dcLink = obj.device.d_CT_lin*obj.OP.I_dcLink;
+            u_CT_lin_dcLink = obj.device.d_CT_lin*obj.I_dcLink;
         end
        
         % offset
@@ -225,13 +239,13 @@ classdef powerAnalyzerUncertainty
         % phase current a
         function u_PA_a_dcLink_i = get.u_PA_a_dcLink_i(obj) % W
                     
-            u_PA_a_dcLink_i = (obj.OP.I_dcLink)*obj.device.d_current_DC;
+            u_PA_a_dcLink_i = (obj.I_dcLink)*obj.device.d_current_DC;
         end
        
         % phase voltage a
         function u_PA_a_dcLink_v = get.u_PA_a_dcLink_v(obj) % W
                     
-            u_PA_a_dcLink_v = obj.OP.u_DC*obj.device.d_voltage_DC;
+            u_PA_a_dcLink_v = obj.u_DC*obj.device.d_voltage_DC;
         end
        
        

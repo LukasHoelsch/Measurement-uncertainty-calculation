@@ -21,7 +21,7 @@ dred=colormatrix(7,:);
 
 %%
 plot_enable = 1;
-save_plot=1;
+save_plot=0;
 
 
 if plot_enable == 1
@@ -50,12 +50,12 @@ if plot_enable == 1
                 'PaperPosition',[0,0,FigW,FigH],...
                 'Position',[1,1,FigW,FigH]);
     
-    max_abs = max(max(Up.power_abs));
-    max_rel = max(max(Up.power_rel));
+    max_abs = max(max(Up_power_SM));
+    max_rel = max(max(Up_power_MM));
 
     fig.sp(end+1) = subplot(2,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(result.n_motor,result.T_motor,Up.power_abs)
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_power_SM)
     u = colorbar
     clim([0 max_abs]);
     u.FontSize = 10;
@@ -72,7 +72,7 @@ if plot_enable == 1
  
     fig.sp(end+1) = subplot(2,1,2);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(result.n_motor,result.T_motor,Up.power_rel)
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_power_MM)
     u = colorbar
     clim([0 max_abs]);
     u.FontSize = 10;
