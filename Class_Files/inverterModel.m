@@ -3,40 +3,37 @@ classdef inverterModel
     properties
         semiconductor
         motor
-        u_DC
+        v_DC
         counter
         f_el
         T_el
         i_dq
-        motor_u_abc
+        motor_v_abc
         motor_i_abc
     end
 
     properties (Dependent)
 
         P_sw    % W
-        %P_cond  % W
+        P_conduction  % W
         P_loss  % W
         n_steps
-        P_conduction
-
-
     end
 
     
     methods
 
         %% constructor
-        function obj = inverterModel(semiconductor,motor,u_DC,counter,f_el,T_el,i_dq,motor_u_abc,motor_i_abc)
+        function obj = inverterModel(semiconductor,motor,v_DC,counter,f_el,T_el,i_dq,motor_v_abc,motor_i_abc)
 
             obj.semiconductor = semiconductor;
             obj.motor = motor;
-            obj.u_DC = u_DC;
+            obj.v_DC = v_DC;
             obj.counter = counter;
             obj.f_el = f_el;
             obj.T_el = T_el;
             obj.i_dq = i_dq;
-            obj.motor_u_abc = motor_u_abc;
+            obj.motor_v_abc = motor_v_abc;
             obj.motor_i_abc = motor_i_abc;
         end
 
@@ -45,15 +42,17 @@ classdef inverterModel
 
         function P_sw = get.P_sw(obj)
 
-            % new variable
-            u_abc_c = obj.motor_u_abc(1,:)/obj.u_DC;
+            % select voltage of phase a
+            v_a = obj.motor_v_abc(1,:)/obj.v_DC;
 
-            % 
-            t_s = 0:1:200;
+            %
+            end_value = length(v_a);
+            t_s = 0:1:end_value;
+            s = zeros(end_value);
 
             for zz = 1:1:length(t_s)-1
                 % compare the triangle signal (carrier) with the reference signal
-                if u_abc_c(1,zz) > obj.counter(1,zz)
+                if v_a(1,zz) > obj.counter(1,zz)
                     % pulse high
                     s(zz) = 1;
                 else
@@ -78,13 +77,14 @@ classdef inverterModel
 
             % current          
             current_values = zeros(1,length(t_s));
-            i_abc_c = obj.motor_i_abc(1,:);
+            % select current of phase a
+            i_a = obj.motor_i_abc(1,:);
 
             % get the current values at the switching points
             for zz=1:1:length(t_s)-1
 
                 if switching_times(zz) ~= 0
-                    current_values(zz) = i_abc_c(1,zz);
+                    current_values(zz) = i_a(1,zz);
 
                 end
             end

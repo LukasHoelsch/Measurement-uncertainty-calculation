@@ -21,9 +21,8 @@ T10FS.d_para2 = 0.003;  %       % BT
 
 %% Rotational speed
 % Input prameter
-T10FS.d_np = 0.05;  % mm    % DS
-T10FS.d_ns = 0.05;  % mm    % DS
-T10FS.pulse = 360;  %       % DS
+T10FS.d_n_p = 0.05;  % mm    % DS
+T10FS.d_n_s = 0.05;  % mm    % DS
 T10FS.D = 175;      % mm    % DS
 %
 % Output parameter

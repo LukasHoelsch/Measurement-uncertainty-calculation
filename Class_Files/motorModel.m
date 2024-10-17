@@ -13,21 +13,20 @@ classdef motorModel
         
         T_calc       % Nm
         T_calc_idq   % Nm
-        u_dq_complex
-        u_dq         % V
-        u_i_dq       % V
+        v_dq_complex % V
+        v_dq         % V
+        v_ind_dq       % V
         T_calc_bound % W
         P_calc       % W
         P_calc_bound % W
-        P            % W
         P_loss       % W
         P_mech       % W
         S            % W
         phi          % deg
         theta        % deg
-        u_i_dq_complex
-        u_ab         % V
-        u_abc        % V
+        v_ind_dq_complex
+        v_ab         % V
+        v_abc        % V
         i_ab         % A
         i_abc        % A
     end
@@ -51,7 +50,7 @@ classdef motorModel
         
         % calculation of the torque
         function T_calc_idq = get.T_calc_idq(obj) % Nm
-            
+
             T_calc_idq = 3/2*obj.motor_spec.p*(obj.motor_spec.Psi_d.fit_Psi_d(obj.i_d,obj.i_q)*obj.i_q-...
                 obj.motor_spec.Psi_q.fit_Psi_q(obj.i_d,obj.i_q)*obj.i_d);
         end
@@ -75,14 +74,7 @@ classdef motorModel
                 P_calc_bound = obj.P_calc;
             end
         end
-
-        % Output motor power
-        function P = get.P(obj)
-
-            P = obj.P_calc_bound;
-        end
-
-        
+              
         % Loss
         function P_loss = get.P_loss(obj)
            P_loss = (100-obj.motor_spec.losses.fitLossBrusa(obj.n_op,obj.T_calc_idq))/100*obj.P_calc;
@@ -115,18 +107,18 @@ classdef motorModel
         
         
         % calculation of the stator voltage in the steady state
-        function u_dq = get.u_dq(obj) % V
+        function v_dq = get.v_dq(obj) % V
             
             i_dq_m = [obj.i_d;obj.i_q]; 
             psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.i_d,obj.i_q);
                 obj.motor_spec.Psi_q.fit_Psi_q(obj.i_d,obj.i_q)];
             
-            u_dq = obj.motor_spec.Rs*i_dq_m + (obj.n_op/60)*obj.motor_spec.p*2*pi*[0,-1;1,0]*psi_dq;
+            v_dq = obj.motor_spec.Rs*i_dq_m + (obj.n_op/60)*obj.motor_spec.p*2*pi*[0,-1;1,0]*psi_dq;
         end
         
 
         % calculation of the complex stator voltage in the steady state
-        function u_dq_complex = get.u_dq_complex(obj) % V
+        function v_dq_complex = get.v_dq_complex(obj) % V
             
             i_d_complex = obj.i_d;
             i_q_complex = obj.i_q*1j;
@@ -135,103 +127,86 @@ classdef motorModel
                 obj.motor_spec.Psi_q.fit_Psi_q(obj.i_d,obj.i_q)];
             
             
-            u_d_complex = obj.motor_spec.Rs * i_d_complex - obj.n_op/60*obj.motor_spec.p*2*pi*psi_dq(2);
-            u_q_complex = obj.motor_spec.Rs * i_q_complex + obj.n_op/60*obj.motor_spec.p*2*pi*psi_dq(1);
+            v_d_complex = obj.motor_spec.Rs * i_d_complex - obj.n_op/60*obj.motor_spec.p*2*pi*psi_dq(2);
+            v_q_complex = obj.motor_spec.Rs * i_q_complex + obj.n_op/60*obj.motor_spec.p*2*pi*psi_dq(1);
 
-            u_dq_complex = [u_d_complex; u_q_complex];
-
-            "u_dq_complex";
-            u_dq_complex;
-
-           
+            v_dq_complex = [v_d_complex; v_q_complex];
         end
 
 
         % calculation of the induced voltage in the steady state
-        function u_i_dq = get.u_i_dq(obj) % V
+        function v_ind_dq = get.v_ind_dq(obj) % V
 
             psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.i_d,obj.i_q);
                 obj.motor_spec.Psi_q.fit_Psi_q(obj.i_d,obj.i_q)];
       
-            u_i_dq = (obj.n_op/60)*obj.motor_spec.p*2*pi*[0,-1;1,0]*psi_dq;
+            v_ind_dq = (obj.n_op/60)*obj.motor_spec.p*2*pi*[0,-1;1,0]*psi_dq;
         end
 
 
         % calculation of the complex induced voltage in the steady state
-        function u_i_dq_complex = get.u_i_dq_complex(obj) % V
+        function v_ind_dq_complex = get.v_ind_dq_complex(obj) % V
 
             psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.i_d,obj.i_q);
                 obj.motor_spec.Psi_q.fit_Psi_q(obj.i_d,obj.i_q)];
-      
-            %u_i_dq_complex = -1j*(obj.OP.n_op/60)*obj.motor_spec.p*2*pi*psi_dq(2)+1j*(obj.OP.n_op/60)*obj.motor_spec.p*2*pi*psi_dq(1);
-            
 
             u_i_d_complex = -1j*(obj.n_op/60)*obj.motor_spec.p*2*pi*psi_dq(2);
             u_i_q_complex = 1j*(obj.n_op/60)*obj.motor_spec.p*2*pi*psi_dq(1);
 
-            u_i_dq_complex = [u_i_d_complex; u_i_q_complex];
-
-            "u_i_dq_complex";
-            u_i_dq_complex;
-
+            v_ind_dq_complex = [u_i_d_complex; u_i_q_complex];
         end
 
         % apparent power
         function S = get.S(obj) % W
             
-            S = 3/2* obj.u_dq * obj.i_dq;
+            S = 3/2* obj.v_dq * obj.i_dq;
         end
 
 
         % power factor angle calculation
         function phi = get.phi(obj)
             
-            %phi = acosd((obj.P_mech+obj.P_loss)/obj.S);
-            %phi = acosd((obj.P_mech)/obj.S);
+            % phi = acosd((obj.P_mech+obj.P_loss)/obj.S);
+            % phi = acosd((obj.P_mech)/obj.S);
             phi = 1;
         end
 
 
         % load angle 
-        function theta = get.theta(obj)
-
-            %theta = asind(abs(obj.u_i_dq_complex-obj.u_dq_complex)/abs(obj.u_dq_complex));
-            
-            theta = atand(abs(obj.u_dq_complex(1)/obj.u_dq_complex(2)));
+        function theta = get.theta(obj)            
+            theta = atand(abs(obj.v_dq_complex(1)/obj.v_dq_complex(2)));
         end
 
 
 
         %% voltage
         % dq -> alpha bera
-        function u_ab =get.u_ab(obj)
+        function v_ab =get.v_ab(obj)
 
-            %epsilon_el = 0:0.1:2*pi;
             epsilon_el = linspace(0,2*pi,200);
 
             % initialization
-            u_ab = zeros(2,length(epsilon_el));
+            v_ab = zeros(2,length(epsilon_el));
 
             for zz=1:1:length(epsilon_el)
                 % transformation matrix
                 Tdqab = [cos(epsilon_el(zz)), sin(epsilon_el(zz)); -sin(epsilon_el(zz)), cos(epsilon_el(zz))];
                 
-                u_ab(:,zz) = Tdqab*obj.u_dq;
+                v_ab(:,zz) = Tdqab*obj.v_dq;
             end
         end
 
         % alpha beta -> abc
-        function u_abc = get.u_abc(obj)
-
+        function v_abc = get.v_abc(obj)
             % transformation matrix abc -> ab
             Tababc = 2/3*[1,-1/2,-1/2;0,sqrt(3)/2,-sqrt(3)/2];
 
             % inverse
             Tabcab = pinv(Tababc);
-            u_abc = zeros(3,length(obj.u_ab(1,:)));
+            v_abc = zeros(3,length(obj.v_ab(1,:)));
 
-            for zz=1:1:length(obj.u_ab(1,:))
-                u_abc(:,zz) = Tabcab * obj.u_ab(:,zz);
+            for zz=1:1:length(obj.v_ab(1,:))
+                v_abc(:,zz) = Tabcab * obj.v_ab(:,zz);
             end
         end
 

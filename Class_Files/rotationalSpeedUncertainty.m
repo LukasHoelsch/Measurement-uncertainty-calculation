@@ -10,11 +10,10 @@ classdef rotationalSpeedUncertainty
     end
     
     properties (Dependent)   % parameters which should be calculated
-       d_np_grad        % °
-       d_ns_grad        % °
-       d_n_grad         % °
-       d_n_rel          % 1
-       u_n1             % 1/min
+       d_n_position
+       d_n_slot
+       d_n
+       u_n1_SM_MM % 1/min
        
     end
    
@@ -27,31 +26,24 @@ classdef rotationalSpeedUncertainty
         end
         
         %% output functions
-        function d_np_grad = get.d_np_grad(obj) % °
+        function d_n_position = get.d_n_position(obj)
             
-            d_np_grad = obj.device_spec.pulse*obj.device_spec.d_np/...
-                (obj.device_spec.D*pi);
+            d_n_position = (2*pi*obj.device_spec.d_n_p)/(obj.device_spec.D*pi);
         end
         
-        function d_ns_grad = get.d_ns_grad(obj) % °
+        function d_n_slot = get.d_n_slot(obj)
             
-            d_ns_grad = obj.device_spec.pulse*obj.device_spec.d_ns/...
-                (obj.device_spec.D*pi);
+            d_n_slot = (2*pi*obj.device_spec.d_n_s)/(obj.device_spec.D*pi);
         end
         
-        function d_n_grad = get.d_n_grad(obj) % °
+        function d_n = get.d_n(obj)
             
-            d_n_grad = obj.d_np_grad+obj.d_ns_grad;
+            d_n = obj.d_n_position+obj.d_n_slot;
         end
         
-        function d_n_rel = get.d_n_rel(obj) % 1
+        function u_n1_SM_MM = get.u_n1_SM_MM(obj)
             
-            d_n_rel = obj.d_n_grad/obj.device_spec.pulse;
-        end
-        
-        function u_n1 = get.u_n1(obj) % 1/min
-            
-            u_n1 = obj.n_op*obj.d_n_rel;
+            u_n1_SM_MM = obj.b_r*obj.d_n*obj.n_op;
         end
         
     end

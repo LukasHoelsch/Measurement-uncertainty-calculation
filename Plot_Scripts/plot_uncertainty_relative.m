@@ -52,8 +52,8 @@ if plot_enable == 1
     
     fig.sp(end+1) = subplot(1,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_MM)
-    u = colorbar
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_MM);
+    u = colorbar;
     clim([0 0.7]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';

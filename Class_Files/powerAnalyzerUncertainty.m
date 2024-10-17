@@ -6,11 +6,11 @@ classdef powerAnalyzerUncertainty
         motor_T_calc
         I_abc_fund
         f_I_abc_fund
-        powerFactor_phi
+        angle_phi
         I_abc_harm
-        motor_u_dq
+        motor_v_dq
         I_dcLink
-        u_DC
+        v_DC
     end
     
    properties (Access = private)
@@ -18,67 +18,79 @@ classdef powerAnalyzerUncertainty
    end
    
    properties (Dependent)   %
-       % torque
        u_T3                 % Nm
-       %
-       % speed
        u_n3                 % 1/min
        %
        % abc, current transducer
        u_CT_lin_abc         % A, CT, linearity
        u_CT_offset_abc      % A, CT, offset 
        u_CT_f_abc           % 1, CT, frequency influence
-       u_CT_phi_rel_abc     % 1, CT, angular influence
+       u_CT_phi_abc_MM     % 1, CT, angular influence
        %
-       u_CT_abs_abc         % A, CT, absolute
-       u_CT_rel_abc         % A, CT, relative
+       u_CT_abc_SM         % A, CT, single measurement
+       u_CT_abc_MM         % A, CT, multi measurement
        %
        %
        % dcLink, current transducer
        u_CT_lin_dcLink      % A, CT, linearity
        u_CT_offset_dcLink   % A, CT, offset
-       u_CT_f_dcLink        % A, CT, frequency influence
-       u_CT_phi_dcLink      % 1, CT, angular influence
        %
-       u_CT_abs_dcLink      % A, CT, absolut
-       u_CT_rel_dcLink      % A, CT, relative
+       u_CT_dcLink_SM      % A, CT, absolut
+       u_CT_dcLink_MM      % A, CT, relative
        %
        %
        % abc, power analyzer
        i_a          % A
        v_a          % V
        %
-       u_el_abs_abc     % absolut
-       u_el_rel_abc     % relative
+       u_el_abc_SM     % single measurement
+       u_el_abc_MM     % multi measurement
        %
        %
        % dcLink, power anaylzer
-       u_PA_a_dcLink_i           % relative display error
+       u_PA_a_dcLink_i           % display error
        u_PA_a_dcLink_v
        u_PA_dcLink
        %
-       u_abs_dcLink     % absolut
-       u_rel_dcLink     % relative
+       u_el_dcLink_SM     % single measurement
+       u_el_dcLink_MM     % multi measurement
    end
    
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %% static methods %%
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   methods(Static)
+        % frequency influence
+        function u_CT_f_dcLink = u_CT_f_dcLink()
+            % assumption: only active DC power
+            u_CT_f_dcLink = 0;
+        end
+       
+        % angular influence
+        function u_CT_phi_dcLink = u_CT_phi_dcLink()
+            % assumption: only active DC power
+            u_CT_phi_dcLink = 0;
+        end
+
+   end
    
    methods
        
        
         %% constructor
         function obj = powerAnalyzerUncertainty(device,n_op,motor_T_calc,I_abc_fund,...
-                f_I_abc_fund,powerFactor_phi,I_abc_harm,motor_u_dq,I_dcLink,u_DC)
+                f_I_abc_fund,angle_phi,I_abc_harm,motor_v_dq,I_dcLink,v_DC)
            
             obj.device = device;
             obj.n_op = n_op;
             obj.motor_T_calc = motor_T_calc;
             obj.I_abc_fund = I_abc_fund;
             obj.f_I_abc_fund = f_I_abc_fund;
-            obj.powerFactor_phi = powerFactor_phi;
+            obj.angle_phi = angle_phi;
             obj.I_abc_harm = I_abc_harm;
-            obj.motor_u_dq = motor_u_dq;
+            obj.motor_v_dq = motor_v_dq;
             obj.I_dcLink = I_dcLink;
-            obj.u_DC = u_DC;
+            obj.v_DC = v_DC;
         end
        
        
@@ -122,27 +134,27 @@ classdef powerAnalyzerUncertainty
        end
        
        % angular influence
-       function u_CT_phi_rel_abc = get.u_CT_phi_rel_abc(obj)
+       function u_CT_phi_abc_MM = get.u_CT_phi_abc_MM(obj)
            
-           u_CT_phi_rel_abc = 1-(cos((obj.powerFactor_phi+...
+           u_CT_phi_abc_MM = 1-(cos((obj.angle_phi+...
                obj.device.d_CT_phi_fix+...
                obj.device.d_CT_phi_var*obj.f_I_abc_fund)/360*2*pi)/...
-               (cos(obj.powerFactor_phi/360*2*pi)));
+               (cos(obj.angle_phi/360*2*pi)));
        end
 
 
        % abs; i_abc
-       function u_CT_abs_abc = get.u_CT_abs_abc(obj)
+       function u_CT_abc_SM = get.u_CT_abc_SM(obj)
            
-           u_CT_abs_abc = obj.b_r*(sqrt(obj.u_CT_lin_abc^2+obj.u_CT_offset_abc^2+...
-               obj.u_CT_f_abc^2 + obj.u_CT_phi_rel_abc^2));
+           u_CT_abc_SM = obj.b_r*(sqrt(obj.u_CT_lin_abc^2+obj.u_CT_offset_abc^2+...
+               obj.u_CT_f_abc^2 + obj.u_CT_phi_abc_MM^2));
        end
        
 
        % relativ; i_abc
-       function u_CT_rel_abc = get.u_CT_rel_abc(obj)
+       function u_CT_abc_MM = get.u_CT_abc_MM(obj)
            
-           u_CT_rel_abc = obj.b_r*(sqrt(obj.u_CT_f_abc^2 + obj.u_CT_phi_rel_abc^2));
+           u_CT_abc_MM = obj.b_r*(sqrt(obj.u_CT_f_abc^2 + obj.u_CT_phi_abc_MM^2));
        end
 
 
@@ -162,8 +174,8 @@ classdef powerAnalyzerUncertainty
        function v_a = get.v_a(obj)
            % scaling with 2/3 from the Clark transformation
            % calculation of the RMS value wit sqrt(2) for the uncertaitny
-           v_a = obj.b_r*(obj.motor_u_dq*(2/3)/sqrt(2)*0.95*obj.device.d_voltage_fund + ...
-                obj.motor_u_dq*(2/3)/sqrt(2)*0.05*obj.device.d_voltage_harm + ...
+           v_a = obj.b_r*(obj.motor_v_dq*(2/3)/sqrt(2)*0.95*obj.device.d_voltage_fund + ...
+                obj.motor_v_dq*(2/3)/sqrt(2)*0.05*obj.device.d_voltage_harm + ...
                 obj.device.U_MR*obj.device.d_voltage_fund_MR + ...
                 obj.device.U_MR*obj.device.d_voltage_harm_MR);
        
@@ -171,20 +183,20 @@ classdef powerAnalyzerUncertainty
 
        
        % absolute
-       function u_el_abs_abc = get.u_el_abs_abc(obj)
+       function u_el_abc_SM = get.u_el_abc_SM(obj)
 
-           u_el_abs_abc = sqrt(obj.i_a^2+obj.i_a^2+obj.i_a^2+ ...
+           u_el_abc_SM = sqrt(obj.i_a^2+obj.i_a^2+obj.i_a^2+ ...
                obj.v_a^2+obj.v_a^2+obj.v_a^2 + ...
-               obj.u_CT_abs_abc^2);
+               obj.u_CT_abc_SM^2);
        
        end
 
        % relativ
-       function u_el_rel_abc = get.u_el_rel_abc(obj)
+       function u_el_abc_MM = get.u_el_abc_MM(obj)
 
-           u_el_rel_abc = sqrt(obj.i_a^2+obj.i_a^2+obj.i_a^2+ ...
+           u_el_abc_MM = sqrt(obj.i_a^2+obj.i_a^2+obj.i_a^2+ ...
                obj.v_a^2+obj.v_a^2+obj.v_a^2 + ...
-               obj.u_CT_rel_abc^2);
+               obj.u_CT_abc_MM^2);
        
        end
 
@@ -205,31 +217,19 @@ classdef powerAnalyzerUncertainty
             u_CT_offset_dcLink = obj.device.d_CT_offset*obj.device.I_CT_MR;
         end
        
-        % frequency influence
-        function u_CT_f_dcLink = get.u_CT_f_dcLink(obj)
-            % assumption: only active DC power
-            u_CT_f_dcLink = 0;
-        end
-       
-        % angular influence
-        function u_CT_phi_dcLink = get.u_CT_phi_dcLink(obj)
-            % assumption: only active DC power
-            u_CT_phi_dcLink = 0;
-        end
-       
         % absolut; i_dcLink
-        function u_CT_abs_dcLink = get.u_CT_abs_dcLink(obj)
+        function u_CT_dcLink_SM = get.u_CT_dcLink_SM(obj)
            
-            u_CT_abs_dcLink = obj.b_r*sqrt(obj.u_CT_lin_dcLink^2 +...
+            u_CT_dcLink_SM = obj.b_r*sqrt(obj.u_CT_lin_dcLink^2 +...
                 obj.u_CT_offset_dcLink^2+obj.u_CT_f_dcLink^2 +...
                 obj.u_CT_phi_dcLink^2);
         end
 
 
         % relativ; i_dcLink
-        function u_CT_rel_dcLink = get.u_CT_rel_dcLink(obj)
+        function u_CT_dcLink_MM = get.u_CT_dcLink_MM(obj)
            
-            u_CT_rel_dcLink = obj.b_r*sqrt(obj.u_CT_f_dcLink^2 +obj.u_CT_phi_dcLink^2);
+            u_CT_dcLink_MM = obj.b_r*sqrt(obj.u_CT_f_dcLink^2 +obj.u_CT_phi_dcLink^2);
         end
        
        
@@ -245,7 +245,7 @@ classdef powerAnalyzerUncertainty
         % phase voltage a
         function u_PA_a_dcLink_v = get.u_PA_a_dcLink_v(obj) % W
                     
-            u_PA_a_dcLink_v = obj.u_DC*obj.device.d_voltage_DC;
+            u_PA_a_dcLink_v = obj.v_DC*obj.device.d_voltage_DC;
         end
        
        
@@ -255,13 +255,13 @@ classdef powerAnalyzerUncertainty
         end
        
         % absolut
-        function u_abs_dcLink = get.u_abs_dcLink(obj) % W
-            u_abs_dcLink = obj.b_r*(sqrt(obj.u_CT_abs_dcLink^2+obj.u_PA_dcLink^2));
+        function u_el_dcLink_SM = get.u_el_dcLink_SM(obj) % W
+            u_el_dcLink_SM = obj.b_r*(sqrt(obj.u_CT_dcLink_SM^2+obj.u_PA_dcLink^2));
         end
 
         % relativ
-        function u_rel_dcLink = get.u_rel_dcLink(obj) % W
-            u_rel_dcLink = obj.b_r*(sqrt(obj.u_CT_rel_dcLink^2+obj.u_PA_dcLink^2));
+        function u_el_dcLink_MM = get.u_el_dcLink_MM(obj) % W
+            u_el_dcLink_MM = obj.b_r*(sqrt(obj.u_CT_dcLink_MM^2+obj.u_PA_dcLink^2));
         end
        
                

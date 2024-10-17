@@ -14,9 +14,9 @@ classdef torqueUncertainty
        
        u_dC         % Nm
        u_dlh        % Nm
-       u_sigma_rel  % Nm
-       u_T1_rel     % Nm
-       u_T1_abs     % Nm
+       u_repeatability  % Nm
+       u_T1_MM     % Nm
+       u_T1_SM     % Nm
    end
    
    
@@ -42,20 +42,20 @@ classdef torqueUncertainty
        end
        
        % repeatability
-       function u_rep = get.u_sigma_rel(obj) % Nm
+       function u_repeatability = get.u_repeatability(obj) % Nm
 
-           u_rep = obj.device.sigma_rel*obj.motor_T_calc;
+           u_repeatability = obj.device.sigma_rel*obj.motor_T_calc;
        end
       
                      
        % relativ torque measurement; see also Fig. 3 in the publication
-       function u_T1_rel = get.u_T1_rel(obj) % Nm
-           u_T1_rel = obj.u_sigma_rel;
+       function u_T1_MM = get.u_T1_MM(obj) % Nm
+           u_T1_MM = obj.u_repeatability;
        end
        
        % absolut torque measurement
-       function u_T1_abs = get.u_T1_abs(obj) % Nm
-           u_T1_abs = sqrt(obj.u_dC^2+obj.u_dlh^2+obj.u_sigma_rel^2);
+       function u_T1_SM = get.u_T1_SM(obj) % Nm
+           u_T1_SM = sqrt(obj.u_dC^2+obj.u_dlh^2+obj.u_repeatability^2);
        end
        
    end

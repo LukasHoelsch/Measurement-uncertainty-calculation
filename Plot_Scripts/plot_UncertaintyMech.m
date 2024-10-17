@@ -50,20 +50,20 @@ if plot_enable == 1
                 'PaperPosition',[0,0,FigW,FigH],...
                 'Position',[1,1,FigW,FigH]);
     
-    max_abs = max(max(Up_power_SM));
-    max_rel = max(max(Up_power_MM));
+    max_abs = max(max(plot_Up_eta_MM));
+    max_rel = max(max(plot_Up_eta_MM));
 
     fig.sp(end+1) = subplot(2,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_power_SM)
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_SM)
     u = colorbar
-    clim([0 max_abs]);
+    %clim([0 max_abs]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
     u.Label.String = '$\mathrm{U_{p,mech}}$ in W';
-    u.Limits = [0,20];
+    %u.Limits = [0,20];
 
     h.LevelListMode = 'auto';
     h.LevelStep = 0.5;
@@ -74,13 +74,13 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_power_MM)
     u = colorbar
-    clim([0 max_abs]);
+    %clim([0 max_abs]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
     u.Label.String = '$\mathrm{U_{P,mech}}$ in W';
-    u.Limits = [0,20];
+    %u.Limits = [0,20];
 
 %
     h.LevelListMode = 'auto';
@@ -117,7 +117,7 @@ if plot_enable == 1
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
-    text(7000,160,'absolute','interpreter','latex','Fontsize',10);
+    text(7000,160,'single','interpreter','latex','Fontsize',10);
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
@@ -137,7 +137,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
-    text(7000,160,'relative','interpreter','latex','Fontsize',10);
+    text(7000,160,'multiple','interpreter','latex','Fontsize',10);
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;

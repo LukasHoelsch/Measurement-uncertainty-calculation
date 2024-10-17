@@ -21,7 +21,7 @@ dred=colormatrix(7,:);
 
 %%
 plot_enable = 1;
-save_plot=1;
+save_plot=0;
 
 
 if plot_enable == 1
@@ -52,9 +52,9 @@ if plot_enable == 1
     
     fig.sp(end+1) = subplot(1,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(result.n_motor,result.T_motor,result.electricDrive_efficiency)
+    [~,h] = contourf(plot_n,plot_T_calc,plot_electricDrive_efficiency);
     u = colorbar
-    clim([90 99]);
+    %clim([90 99]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
@@ -86,8 +86,8 @@ if plot_enable == 1
     YTicks = [20,60,100,140,180];
     YTickLabel={'20','60','100','140','180'};
     
-    ZTicks = [80,85,90,95];
-    ZTickLabel={'80','85','90','95'};
+    % ZTicks = [80,85,90,95];
+    % ZTickLabel={'80','85','90','95'};
     
     kk=1;
     subplot(fig.sp(kk))
@@ -96,17 +96,18 @@ if plot_enable == 1
     %set(fig.sp(kk), 'zlim', [z_min z_max]);
     set(fig.sp(kk), 'XTick', XTicks);
     set(fig.sp(kk), 'YTick', YTicks);
-    set(fig.sp(kk), 'ZTick', ZTicks);
+    %set(fig.sp(kk), 'ZTick', ZTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
-    set(fig.sp(kk), 'ZTickLabel', ZTickLabel,'Fontsize',10);
+    %set(fig.sp(kk), 'ZTickLabel', ZTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
+    
 
     
 
