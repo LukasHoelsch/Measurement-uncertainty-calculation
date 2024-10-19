@@ -1,13 +1,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% plot_ED_efficiency.m %%
+%% plot_Up_eta_MM.m %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Visualization of the efficiency of the electric drive to highlight the need of a small measurement uncertainty to effectively catch even small changes.
+%% Visualization of the sensitivity coefficient for the mechanical power measurement with comparison between single and multiple measurements.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 warning off;
-
 currentFolder = pwd;
 
 colormatrix=[0.000 0.447 0.741;
@@ -35,19 +35,19 @@ save_plot=0;
 if plot_enable == 1
     
     %% Figure Configuration
-    fig.PaperFont = 'Times New Roman'; %Schriftart für Abb.
-    fig.PaperFontSize = 10; %Schriftgröße für Abb.
+    fig.PaperFont = 'Times New Roman';  % Schriftart für Abb.
+    fig.PaperFontSize = 10;     % Schriftgröße für Abb.
     fig.folder = [project_dir_Figures,'\'];
-    fig.res = '-r900'; %Grafikauflösung (falls bitmaps vorhanden)
-    fig.fh = []; %Intialisierung der figure handles
+    fig.res = '-r900';  % Grafikauflösung (falls bitmaps vorhanden)
+    fig.fh = [];    % Intialisierung der figure handles
     fig.lg =[];
-    fig.sp = []; %Initialisierung der subplot handles
-    FigW = 8.5; %Relative Angabe der zu verwendenten Seitenbreite, hier kompl. Breite
-    FigH = 4.5; %Relative Angabe der zu verwendenten Seitenhöhe, hier rund 1/4 der höhe
+    fig.sp = [];    % Initialisierung der subplot handles
+    FigW = 8.5;     % Relative Angabe der zu verwendenten Seitenbreite, hier kompl. Breite
+    FigH = 6;       % Relative Angabe der zu verwendenten Seitenhöhe, hier rund 1/4 der höhe
     
     
     
-    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'efficiency_drive', 'Resize', 'off', 'RendererMode', 'manual');
+    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'UncertaintyMech', 'Resize', 'off', 'RendererMode', 'manual');
     set(fig.fh(end),'PaperPositionMode','manual','PaperUnits','centimeters','Units','centimeters', 'PaperType', 'A4', 'Renderer', 'opengl');
     set(fig.fh(end),'defaulttextinterpreter','latex',...
                 'DefaultAxesFontSize',fig.PaperFontSize,...
@@ -58,50 +58,85 @@ if plot_enable == 1
                 'PaperPosition',[0,0,FigW,FigH],...
                 'Position',[1,1,FigW,FigH]);
     
-    fig.sp(end+1) = subplot(1,1,1);
+    max_abs = max(max(plot_Up_eta_MM));
+    max_rel = max(max(plot_Up_eta_MM));
+
+    fig.sp(end+1) = subplot(2,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(plot_n,plot_T_calc,plot_electricDrive_efficiency);
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_mech_SM)
     u = colorbar
-    %clim([90 99]);
+    %clim([0 max_abs]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$\eta_{\mathrm{sys}}$ in \%';
-    %u.Limits = [90, 96];
-%
+    u.Label.String = '$\mathrm{U_{p,mech}}$ in W';
+    %u.Limits = [0,20];
+
     h.LevelListMode = 'auto';
-    h.LevelStep = 0.1;
+    h.LevelStep = 0.5;
     h.ShowText = 'on';
     h.LineStyle = 'none';
-    %h.LevelList = [80,85,90,95];
  
+    fig.sp(end+1) = subplot(2,1,2);
+    set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_mech_MM)
+    u = colorbar
+    %clim([0 max_abs]);
+    u.FontSize = 10;
+    u.TickLabelInterpreter = 'latex';
+    u.Label.Interpreter = 'latex';
+    u.Label.FontSize = 10;
+    u.Label.String = '$\mathrm{U_{P,mech}}$ in W';
+    %u.Limits = [0,20];
+
+%
+    h.LevelListMode = 'auto';
+    h.LevelStep = 0.5;
+    h.ShowText = 'off';
+    h.LineStyle = 'none';
+    
+    
 
     %
-    AdjustSubplot(fig,0.05,[0.14 0.16 0.76 0.95],[2]);
+    AdjustSubplot(fig,0.05,[0.14 0.16 0.78 0.95],[2 2]);
     %
     
     x_min = 2000;
     x_max = 11000;
     y_min = 20;
     y_max = 180;
-    % z_min = 70;
-    % z_max = 95;
 
     XTicks=[0 2000 4000 6000 8000 10000];
     XTickLabel={'0','2000','4000','6000','8000','10000'};
     
     YTicks = [20,60,100,140,180];
     YTickLabel={'20','60','100','140','180'};
-    
-    % ZTicks = [80,85,90,95];
-    % ZTickLabel={'80','85','90','95'};
+
+    % ZTicks = [0,2000,4000,6000,8000];
+    % ZTickLabel={'0','2000','4000','6000','8000'};
     
     kk=1;
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
-    %set(fig.sp(kk), 'zlim', [z_min z_max]);
+    set(fig.sp(kk), 'YTick', YTicks);
+    %set(fig.sp(kk), 'ZTick', ZTicks);
+    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
+    set(gca,'TickLabelInterpreter','latex');
+    text(7000,160,'single','interpreter','latex','Fontsize',10);
+    ax = gca;
+    ax.FontSize = 10;
+    ax.XLabel.FontSize = 10;
+    ax.YLabel.FontSize = 10;
+    %clim([0,max_abs]);
+
+
+    kk=2;
+    subplot(fig.sp(kk))
+    set(fig.sp(kk), 'xlim', [x_min x_max]);
+    set(fig.sp(kk), 'ylim', [y_min y_max]);
     set(fig.sp(kk), 'XTick', XTicks);
     set(fig.sp(kk), 'YTick', YTicks);
     %set(fig.sp(kk), 'ZTick', ZTicks);
@@ -109,19 +144,17 @@ if plot_enable == 1
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
-    %set(fig.sp(kk), 'ZTickLabel', ZTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
+    text(7000,160,'multiple','interpreter','latex','Fontsize',10);
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
-    
-
-    
+    %clim([0,max_rel]);
 
     
      if save_plot ==1
-            FigName = ['efficiency_drive.pdf'];
+            FigName = ['UncertaintyMech.pdf'];
         if exist([fig.folder FigName]) == 0
                 print('-dpdf','-painters', fig.res,[fig.folder FigName]);
             else
@@ -133,3 +166,4 @@ if plot_enable == 1
      end 
 
 end
+

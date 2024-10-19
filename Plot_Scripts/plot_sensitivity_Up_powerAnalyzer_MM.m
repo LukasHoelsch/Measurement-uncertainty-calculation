@@ -1,3 +1,11 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% plot_sensitivity_Up_powerAnalyzer_MM.m %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Visualization of the power analyzer uncertainty for a multiple measurement operation.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 warning off;
 
 currentFolder = pwd;
@@ -39,7 +47,7 @@ if plot_enable == 1
     
     
     
-    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'uncertainty_relative', 'Resize', 'off', 'RendererMode', 'manual');
+    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'Up_PA_MM', 'Resize', 'off', 'RendererMode', 'manual');
     set(fig.fh(end),'PaperPositionMode','manual','PaperUnits','centimeters','Units','centimeters', 'PaperType', 'A4', 'Renderer', 'opengl');
     set(fig.fh(end),'defaulttextinterpreter','latex',...
                 'DefaultAxesFontSize',fig.PaperFontSize,...
@@ -52,7 +60,7 @@ if plot_enable == 1
     
     fig.sp(end+1) = subplot(1,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_MM);
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_powerAnalyzer_MM);
     u = colorbar;
     clim([0 0.7]);
     u.FontSize = 10;
@@ -116,7 +124,7 @@ if plot_enable == 1
 
     
      if save_plot ==1
-            FigName = ['uncertainty_relative.pdf'];
+            FigName = ['Up_PA_MM.pdf'];
         if exist([fig.folder FigName]) == 0
                 print('-dpdf','-painters', fig.res,[fig.folder FigName]);
             else

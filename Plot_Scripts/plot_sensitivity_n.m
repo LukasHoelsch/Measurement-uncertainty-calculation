@@ -1,9 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% plot_ED_efficiency.m %%
+%% plot_sensitivity_n.m %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Visualization of the efficiency of the electric drive to highlight the need of a small measurement uncertainty to effectively catch even small changes.
+%% Visualization of the rotational speed uncertainty.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 warning off;
@@ -47,7 +47,7 @@ if plot_enable == 1
     
     
     
-    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'efficiency_drive', 'Resize', 'off', 'RendererMode', 'manual');
+    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'sensitivity_speed', 'Resize', 'off', 'RendererMode', 'manual');
     set(fig.fh(end),'PaperPositionMode','manual','PaperUnits','centimeters','Units','centimeters', 'PaperType', 'A4', 'Renderer', 'opengl');
     set(fig.fh(end),'defaulttextinterpreter','latex',...
                 'DefaultAxesFontSize',fig.PaperFontSize,...
@@ -60,21 +60,22 @@ if plot_enable == 1
     
     fig.sp(end+1) = subplot(1,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(plot_n,plot_T_calc,plot_electricDrive_efficiency);
-    u = colorbar
-    %clim([90 99]);
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_n);
+    u = colorbar;
+    clim([0 0.7]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$\eta_{\mathrm{sys}}$ in \%';
-    %u.Limits = [90, 96];
+    u.Label.String = '$2~\mathrm{U_{k=2}}$ in \%';
+    u.Limits = [0.25, 0.6];
+    u.LimitsMode = "auto";
 %
-    h.LevelListMode = 'auto';
-    h.LevelStep = 0.1;
+    h.LevelListMode = 'manual';
+    h.LevelStep = .1;
     h.ShowText = 'on';
     h.LineStyle = 'none';
-    %h.LevelList = [80,85,90,95];
+    %h.LevelList = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8];
  
 
     %
@@ -85,43 +86,45 @@ if plot_enable == 1
     x_max = 11000;
     y_min = 20;
     y_max = 180;
-    % z_min = 70;
-    % z_max = 95;
+    % z_min = 0;
+    % z_max = 0.6;
 
     XTicks=[0 2000 4000 6000 8000 10000];
     XTickLabel={'0','2000','4000','6000','8000','10000'};
     
     YTicks = [20,60,100,140,180];
     YTickLabel={'20','60','100','140','180'};
+
+%     ZTicks = [0,2000,4000,6000,8000];
+%     ZTickLabel={'0','2000','4000','6000','8000'};
     
-    % ZTicks = [80,85,90,95];
-    % ZTickLabel={'80','85','90','95'};
+    % ZTicks = [0,0.05,0.1,0.15,0.2,0.25];
+    % ZTickLabel={'0','0.05','0.1','0.15','0.2','0.25'};
     
     kk=1;
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
-    %set(fig.sp(kk), 'zlim', [z_min z_max]);
+    % set(fig.sp(kk), 'zlim', [z_min z_max]);
     set(fig.sp(kk), 'XTick', XTicks);
     set(fig.sp(kk), 'YTick', YTicks);
-    %set(fig.sp(kk), 'ZTick', ZTicks);
+    % set(fig.sp(kk), 'ZTick', ZTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
-    %set(fig.sp(kk), 'ZTickLabel', ZTickLabel,'Fontsize',10);
+    % set(fig.sp(kk), 'ZTickLabel', ZTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
-    
 
     
 
     
      if save_plot ==1
-            FigName = ['efficiency_drive.pdf'];
+            FigName = ['sensitivity_speed.pdf'];
         if exist([fig.folder FigName]) == 0
                 print('-dpdf','-painters', fig.res,[fig.folder FigName]);
             else

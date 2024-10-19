@@ -245,9 +245,10 @@ parfor zz=1:idx
 
 
         %% Efficiency uncertainty
+        % multiple
         u_eta_MM(zz) = sqrt((1/P_dcLink(zz))^2*u_P_mech_MM(zz)^2+(-motor_P_mech(zz)/(P_dcLink(zz))^2)^2*u_el_dcLink_MM(zz)^2); % 1
             
-        % absolut
+        % single
         u_eta_SM(zz) = sqrt((1/P_dcLink(zz))^2*u_P_mech_SM(zz)^2+(-motor_P_mech(zz)/(P_dcLink(zz))^2)^2*u_el_dcLink_SM(zz)^2); % 1
         
 
@@ -261,8 +262,18 @@ parfor zz=1:idx
 
         %% Sensitivity coefficients
         % torque
-        Up_u_T_SM(zz) = u_T_SM(zz) * k_p;
-        Up_u_T_MM(zz) = u_T_MM(zz) * k_p;
+        Up_T_SM(zz) = u_T_SM(zz) * k_p;
+        Up_T_MM(zz) = u_T_MM(zz) * k_p;
+
+        % mechanical power
+        Up_mech_SM(zz) = u_P_mech_SM(zz) * k_p;
+        Up_mech_MM(zz) = u_P_mech_MM(zz) * k_p;
+
+        % power analyzer
+        Up_el_abc_MM(zz) = u_el_abc_MM(zz) * k_p;
+
+        % rotational speed
+        Up_n(zz) = u_n(zz)*k_p;
 
 
         %%
@@ -275,32 +286,53 @@ parfor zz=1:idx
 end
 toc
 
-
-%% Reshape for visualization
-plot_u_powerAnalyzer = reshape(u_el_abc_MM,[70,n_samplingPoints]);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Reshape for visualization %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 plot_T_calc = reshape(motor_T_calc,[70,n_samplingPoints]);
 plot_n = reshape(n_op,[70,n_samplingPoints]);
+
+%% Motor loss
 plot_motor_P_loss = reshape(motor_P_loss,[70,n_samplingPoints]);
 
+%% Inverter loss
 plot_inverter_P_loss = reshape(inverter_P_loss,[70,n_samplingPoints]);
 
+%% Electric drive loss
+plot_electricDrive_P_loss = reshape(electricDrive_P_loss,[70,n_samplingPoints]);
+
+%% Electric drive efficiency
+plot_electricDrive_efficiency = reshape(electricDrive_efficiency,[70,n_samplingPoints]);
+
+%% Efficency uncertainty
 plot_Up_eta_MM = reshape(Up_eta_MM,[70,n_samplingPoints]);
 plot_Up_eta_SM = reshape(Up_eta_SM,[70,n_samplingPoints]);
 
+%% Efficiency uncertainty given in W for a better understanding
 plot_Up_power_MM = reshape(Up_loss_MM,[70,n_samplingPoints]);
 plot_Up_power_SM = reshape(Up_loss_SM,[70,n_samplingPoints]);
 
-plot_electricDrive_P_loss = reshape(electricDrive_P_loss,[70,n_samplingPoints]);
-plot_electricDrive_efficiency = reshape(electricDrive_efficiency,[70,n_samplingPoints]);
-
-plot_u_P_mech_MM = reshape(u_P_mech_MM,[70,n_samplingPoints]);
-plot_u_P_mech_SM = reshape(u_P_mech_MM,[70,n_samplingPoints]);
-
-plot_Up_u_T_SM = reshape(Up_u_T_SM,[70,n_samplingPoints]);
-plot_Up_u_T_MM = reshape(Up_u_T_MM,[70,n_samplingPoints]);
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% sensitivity coefficients %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% mechanical power
+plot_Up_mech_SM = reshape(Up_mech_SM,[70,n_samplingPoints]);
+plot_Up_mech_MM = reshape(Up_mech_MM,[70,n_samplingPoints]);
+
+% torque
+plot_Up_T_SM = reshape(Up_T_SM,[70,n_samplingPoints]);
+plot_Up_T_MM = reshape(Up_T_MM,[70,n_samplingPoints]);
+
+% power analyzer
+plot_Up_powerAnalyzer_MM = reshape(Up_el_abc_MM,[70,n_samplingPoints]);
+
+% rotational speed
+plot_Up_n = reshape(Up_n,[70,n_samplingPoints]);
+
+% amplifier
 
 
 
