@@ -64,16 +64,21 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_T_SM)
     u = colorbar
-    %clim([0 max_abs]);
+    % clim([0.9166 0.9550]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$\mathrm{U_{p,T,SM}}$ in W';
-    %u.Limits = [0,20];
+    u.Label.String = '$\mathrm{U_{k=2,T}}$ in Nm';
+    % u.Limits = [0.9,0.99];
+    % ZTicks = [0.9,0.94,0.98];
+    % ZTickLabel={'0.9','0.94','0.98'};
+    % u.Ticks = ZTicks;
+    % u.TickLabels = ZTickLabel;
 
-    h.LevelListMode = 'auto';
-    h.LevelStep = 0.5;
+
+    h.LevelListMode = 'manual';
+    h.LevelStep = 0.1;
     h.ShowText = 'on';
     h.LineStyle = 'none';
  
@@ -81,24 +86,28 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_T_MM)
     u = colorbar
-    %clim([0 max_abs]);
+    % clim([0.9166 0.9550]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$\mathrm{U_{p,T,MM}}$ in W';
-    %u.Limits = [0,20];
+    u.Label.String = '$\mathrm{U_{k=2,T}}$ in Nm';
+    % u.Limits = [0.9,1];
+    % ZTicks = [0.9,0.94,0.98];
+    % ZTickLabel={'0.9','0.94','0.98'};
+    % u.Ticks = ZTicks,
+    % u.TickLabels = ZTickLabel
 
 %
-    h.LevelListMode = 'auto';
-    h.LevelStep = 0.5;
+    h.LevelListMode = 'manual';
+    h.LevelStep = 0.1;
     h.ShowText = 'off';
     h.LineStyle = 'none';
     
     
 
     %
-    AdjustSubplot(fig,0.05,[0.14 0.16 0.78 0.95],[2 2]);
+    AdjustSubplot(fig,0.05,[0.14 0.25 0.75 0.95],[2 2]);
     %
     
     x_min = 2000;
@@ -112,8 +121,8 @@ if plot_enable == 1
     YTicks = [20,60,100,140,180];
     YTickLabel={'20','60','100','140','180'};
 
-    % ZTicks = [0,2000,4000,6000,8000];
-    % ZTickLabel={'0','2000','4000','6000','8000'};
+    ZTicks = [0.9,0.95,0.99];
+    ZTickLabel={'0.9','0.95','0.99'};
     
     kk=1;
     subplot(fig.sp(kk))

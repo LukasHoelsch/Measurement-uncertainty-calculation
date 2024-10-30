@@ -165,10 +165,13 @@ classdef motorModel
 
         % power factor angle calculation
         function phi = get.phi(obj)
+
+            psi_dq = [obj.motor_spec.Psi_d.fit_Psi_d(obj.i_d,obj.i_q);
+                obj.motor_spec.Psi_q.fit_Psi_q(obj.i_d,obj.i_q)];
             
-            % phi = acosd((obj.P_mech+obj.P_loss)/obj.S);
-            % phi = acosd((obj.P_mech)/obj.S);
-            phi = 1;
+            Z_L = 2*pi*(obj.n_op/60) *obj.motor_spec.p * psi_dq(2);
+
+            phi = atand(imag(Z_L)/real(Z_L));
         end
 
 

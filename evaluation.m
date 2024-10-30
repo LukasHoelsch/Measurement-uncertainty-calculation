@@ -152,8 +152,13 @@ parfor zz=1:idx
         electricDrive_efficiency(zz) = NaN;
         u_P_mech_MM(zz) = NaN;
         u_P_mech_SM(zz) = NaN;
-        Up_u_T_SM(zz) = NaN;
-        Up_u_T_MM(zz) = NaN;
+        Up_T_SM(zz) = NaN;
+        Up_T_MM(zz) = NaN;
+        Up_mech_SM(zz) = NaN;
+        Up_mech_MM(zz) = NaN;
+        Up_n(zz) = NaN;
+        Up_el_abc_MM(zz) = NaN;
+        Up_el_dcLink_MM(zz) = NaN;
     else
 
         motor_P_loss(zz) = motorModel(HSM_16_17_12_C01,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).P_loss;
@@ -209,28 +214,33 @@ parfor zz=1:idx
         u_el_abc_MM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,n_op(zz),...
             motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
             I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_el_abc_MM;
+
+        % power analyzer, T
+        u_T3(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,n_op(zz),...
+            motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_T3;
         
         % power analyzer, n
         u_n3(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,n_op(zz),...
             motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
-            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_T3;
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_n3;
 
         % power analyzer, dc
         u_el_dcLink_MM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,n_op(zz),...
             motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
-            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_el_dcLink_MM;
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_c_el_dcLink_MM;
 
         u_el_dcLink_SM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,n_op(zz),...
             motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
-            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_el_dcLink_SM;
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_c_el_dcLink_SM;
 
         %% Torque uncertainty
         % uncertainty calculation for comparison between two measurements which are
         % done directly after each other (short time)
-        u_T_MM(zz) = sqrt(u_T1_MM(zz)^2+u_T2(zz)^2+u_el_abc_MM(zz)^2); % Nm
+        u_T_MM(zz) = sqrt(u_T1_MM(zz)^2+u_T2(zz)^2+u_T3(zz)^2); % Nm
 
         % uncertainty calculation for the single measurement case
-        u_T_SM(zz) = sqrt(u_T1_SM(zz)^2+u_T2(zz)^2+u_el_abc_MM(zz)^2); % Nm
+        u_T_SM(zz) = sqrt(u_T1_SM(zz)^2+u_T2(zz)^2+u_T3(zz)^2); % Nm
 
         %% Speed uncertainty
         u_n(zz) = sqrt(u_n1(zz)^2+u_n2(zz)^2+u_n3(zz)^2); % 1/min
@@ -238,10 +248,10 @@ parfor zz=1:idx
 
         %% Mechanical power uncertainty
         % relative
-        u_P_mech_MM(zz) = sqrt((2*pi*n_op(zz)/60)^2*u_T_MM(zz)^2+(motor_T_calc(zz)*2*pi)^2*(u_n(zz)/60)^2); % W
+        u_P_mech_MM(zz) = sqrt((2*pi*n_op(zz)/60)^2*u_T_MM(zz)^2+(motor_T_calc(zz)*2*pi/60)^2*(u_n(zz)/60)^2); % W
             
         % uncertainty calculation for the measurement of absolute values
-        u_P_mech_SM(zz) = sqrt((2*pi*n_op(zz)/60)^2*u_T_SM(zz)^2+(motor_T_calc(zz)*2*pi)^2*(u_n(zz)/60)^2); % W
+        u_P_mech_SM(zz) = sqrt((2*pi*n_op(zz)/60)^2*u_T_SM(zz)^2+(motor_T_calc(zz)*2*pi/60)^2*(u_n(zz)/60)^2); % W
 
 
         %% Efficiency uncertainty
@@ -274,6 +284,9 @@ parfor zz=1:idx
 
         % rotational speed
         Up_n(zz) = u_n(zz)*k_p;
+
+        % power analyzer
+        Up_el_dcLink_MM(zz) = u_el_dcLink_MM(zz)*k_p;
 
 
         %%
@@ -315,7 +328,7 @@ plot_Up_power_SM = reshape(Up_loss_SM,[70,n_samplingPoints]);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% sensitivity coefficients %%
+% sensitivity coefficients %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % mechanical power
@@ -331,6 +344,10 @@ plot_Up_powerAnalyzer_MM = reshape(Up_el_abc_MM,[70,n_samplingPoints]);
 
 % rotational speed
 plot_Up_n = reshape(Up_n,[70,n_samplingPoints]);
+
+% power analyzer
+plot_Up_el_dcLink_MM = reshape(Up_el_dcLink_MM,[70,n_samplingPoints]);
+
 
 % amplifier
 

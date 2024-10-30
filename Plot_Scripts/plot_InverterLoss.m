@@ -1,5 +1,12 @@
-warning off;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% plot_InverterLoss.m %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Visualization of the inverter loss.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+warning off;
 currentFolder = pwd;
 
 colormatrix=[0.000 0.447 0.741;
@@ -59,9 +66,14 @@ if plot_enable == 1
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
     u.Label.String = '$P_{\mathrm{l}}$ in W';
-%
+    u.Limits = [0,1700];
+    ZTicks = [0,500,1000,1500];
+    ZTickLabel={'0','500','1000','1500'};
+    u.Ticks = ZTicks;
+    u.TickLabels = ZTickLabel;
+
     h.LevelListMode = 'auto';
-    h.LevelStep = 5;
+    h.LevelStep = 0.5;
     h.ShowText = 'on';
     h.LineStyle = 'none';
  
@@ -100,7 +112,7 @@ if plot_enable == 1
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
-
+    
     
 
     

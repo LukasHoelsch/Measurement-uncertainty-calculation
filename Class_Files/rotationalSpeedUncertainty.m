@@ -26,24 +26,9 @@ classdef rotationalSpeedUncertainty
         end
         
         %% output functions
-        function d_n_position = get.d_n_position(obj)
-            
-            d_n_position = (2*pi*obj.device_spec.d_n_p)/(obj.device_spec.D*pi);
-        end
-        
-        function d_n_slot = get.d_n_slot(obj)
-            
-            d_n_slot = (2*pi*obj.device_spec.d_n_s)/(obj.device_spec.D*pi);
-        end
-        
-        function d_n = get.d_n(obj)
-            
-            d_n = obj.d_n_position+obj.d_n_slot;
-        end
-        
         function u_n1_SM_MM = get.u_n1_SM_MM(obj)
             
-            u_n1_SM_MM = obj.b_r*obj.d_n*obj.n_op;
+            u_n1_SM_MM = obj.b_r * obj.device_spec.d_n_lin * obj.n_op;
         end
         
     end

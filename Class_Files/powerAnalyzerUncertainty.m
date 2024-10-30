@@ -48,12 +48,14 @@ classdef powerAnalyzerUncertainty
        %
        %
        % dcLink, power anaylzer
-       u_PA_a_dcLink_i           % display error
-       u_PA_a_dcLink_v
-       u_PA_dcLink
+       u_PA_dcLink_i           % display error
+       u_PA_dcLink_v
        %
-       u_el_dcLink_SM     % single measurement
-       u_el_dcLink_MM     % multi measurement
+       u_i_dcLink_SM 
+       u_i_dcLink_MM
+       %
+       u_c_el_dcLink_SM     % single measurement
+       u_c_el_dcLink_MM     % multi measurement
    end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,44 +119,44 @@ classdef powerAnalyzerUncertainty
         % linearity
         function u_CT_lin_abc = get.u_CT_lin_abc(obj)
            
-            u_CT_lin_abc = obj.device.d_CT_lin*obj.I_abc_fund;
+            u_CT_lin_abc = obj.b_r * obj.device.d_CT_lin*obj.I_abc_fund;
         end
        
         % offset
        function u_CT_offset_abc = get.u_CT_offset_abc(obj)
            
-           u_CT_offset_abc = obj.device.d_CT_offset*obj.device.I_CT_MR;
+           u_CT_offset_abc = obj.b_r * obj.device.d_CT_offset*obj.device.I_CT_MR;
        end
        
        % frequency influence
        function u_CT_f_abc = get.u_CT_f_abc(obj)
            
-           u_CT_f_abc = obj.device.d_CT_f*obj.I_abc_fund*...
+           u_CT_f_abc = obj.b_r * obj.device.d_CT_f*obj.I_abc_fund*...
                obj.f_I_abc_fund;
        end
        
        % angular influence
        function u_CT_phi_abc_MM = get.u_CT_phi_abc_MM(obj)
            
-           u_CT_phi_abc_MM = 1-(cos((obj.angle_phi+...
+           u_CT_phi_abc_MM = obj.b_r * (1-(cos((obj.angle_phi+...
                obj.device.d_CT_phi_fix+...
                obj.device.d_CT_phi_var*obj.f_I_abc_fund)/360*2*pi)/...
-               (cos(obj.angle_phi/360*2*pi)));
+               (cos(obj.angle_phi/360*2*pi))));
        end
 
 
        % abs; i_abc
        function u_CT_abc_SM = get.u_CT_abc_SM(obj)
            
-           u_CT_abc_SM = obj.b_r*(sqrt(obj.u_CT_lin_abc^2+obj.u_CT_offset_abc^2+...
-               obj.u_CT_f_abc^2 + obj.u_CT_phi_abc_MM^2));
+           u_CT_abc_SM = sqrt(obj.u_CT_lin_abc^2+obj.u_CT_offset_abc^2+...
+               obj.u_CT_f_abc^2 + obj.u_CT_phi_abc_MM^2);
        end
        
 
        % relativ; i_abc
        function u_CT_abc_MM = get.u_CT_abc_MM(obj)
            
-           u_CT_abc_MM = obj.b_r*(sqrt(obj.u_CT_f_abc^2 + obj.u_CT_phi_abc_MM^2));
+           u_CT_abc_MM = sqrt(obj.u_CT_f_abc^2 + obj.u_CT_phi_abc_MM^2);
        end
 
 
@@ -208,19 +210,19 @@ classdef powerAnalyzerUncertainty
         % linearity
         function u_CT_lin_dcLink = get.u_CT_lin_dcLink(obj)
            
-            u_CT_lin_dcLink = obj.device.d_CT_lin*obj.I_dcLink;
+            u_CT_lin_dcLink = obj.b_r * obj.device.d_CT_lin*obj.I_dcLink;
         end
        
         % offset
         function u_CT_offset_dcLink = get.u_CT_offset_dcLink(obj)
            
-            u_CT_offset_dcLink = obj.device.d_CT_offset*obj.device.I_CT_MR;
+            u_CT_offset_dcLink = obj.b_r * obj.device.d_CT_offset*obj.device.I_CT_MR;
         end
        
         % absolut; i_dcLink
         function u_CT_dcLink_SM = get.u_CT_dcLink_SM(obj)
            
-            u_CT_dcLink_SM = obj.b_r*sqrt(obj.u_CT_lin_dcLink^2 +...
+            u_CT_dcLink_SM = sqrt(obj.u_CT_lin_dcLink^2 +...
                 obj.u_CT_offset_dcLink^2+obj.u_CT_f_dcLink^2 +...
                 obj.u_CT_phi_dcLink^2);
         end
@@ -229,39 +231,48 @@ classdef powerAnalyzerUncertainty
         % relativ; i_dcLink
         function u_CT_dcLink_MM = get.u_CT_dcLink_MM(obj)
            
-            u_CT_dcLink_MM = obj.b_r*sqrt(obj.u_CT_f_dcLink^2 +obj.u_CT_phi_dcLink^2);
+            u_CT_dcLink_MM = sqrt(obj.u_CT_f_dcLink^2 +obj.u_CT_phi_dcLink^2);
         end
        
        
         %% power analyzor, i_dcLink 
         % input: values from the CT
         
-        % phase current a
-        function u_PA_a_dcLink_i = get.u_PA_a_dcLink_i(obj) % W
+        % DC link current
+        function u_PA_dcLink_i = get.u_PA_dcLink_i(obj) % W
                     
-            u_PA_a_dcLink_i = (obj.I_dcLink)*obj.device.d_current_DC;
+            u_PA_dcLink_i = obj.b_r * obj.I_dcLink*obj.device.d_current_DC;
         end
        
-        % phase voltage a
-        function u_PA_a_dcLink_v = get.u_PA_a_dcLink_v(obj) % W
+        % DC link voltage
+        function u_PA_dcLink_v = get.u_PA_dcLink_v(obj) % W
                     
-            u_PA_a_dcLink_v = obj.v_DC*obj.device.d_voltage_DC;
+            u_PA_dcLink_v = obj.b_r * obj.v_DC*obj.device.d_voltage_DC;
         end
        
        
-        % error power analyzor DC-link
-        function u_PA_dcLink = get.u_PA_dcLink(obj) % W
-            u_PA_dcLink = sqrt(obj.u_PA_a_dcLink_i^2+obj.u_PA_a_dcLink_v^2); 
-        end
-       
-        % absolut
-        function u_el_dcLink_SM = get.u_el_dcLink_SM(obj) % W
-            u_el_dcLink_SM = obj.b_r*(sqrt(obj.u_CT_dcLink_SM^2+obj.u_PA_dcLink^2));
+        % current DC-link, single
+        function u_i_dcLink_SM = get.u_i_dcLink_SM(obj) % W
+            u_i_dcLink_SM = sqrt(obj.u_PA_dcLink_i^2+obj.u_CT_dcLink_SM^2); 
         end
 
-        % relativ
-        function u_el_dcLink_MM = get.u_el_dcLink_MM(obj) % W
-            u_el_dcLink_MM = obj.b_r*(sqrt(obj.u_CT_dcLink_MM^2+obj.u_PA_dcLink^2));
+        % current DC-link, multiple
+        function u_i_dcLink_MM = get.u_i_dcLink_MM(obj) % W
+            u_i_dcLink_MM = sqrt(obj.u_PA_dcLink_i^2+obj.u_CT_dcLink_MM^2); 
+        end
+       
+
+        %% combined uncertainty
+        % single
+        function u_c_el_dcLink_SM = get.u_c_el_dcLink_SM(obj) % W
+            u_c_el_dcLink_SM = sqrt(obj.u_PA_dcLink_v^2 * obj.u_i_dcLink_SM^2 + ...
+             obj.u_i_dcLink_SM^2*obj.u_PA_dcLink_v^2);
+        end
+
+        % multiple
+        function u_c_el_dcLink_MM = get.u_c_el_dcLink_MM(obj) % W
+            u_c_el_dcLink_MM = sqrt(obj.u_PA_dcLink_v^2 * obj.u_i_dcLink_MM^2 + ...
+             obj.u_i_dcLink_MM^2*obj.u_PA_dcLink_v^2);
         end
        
                

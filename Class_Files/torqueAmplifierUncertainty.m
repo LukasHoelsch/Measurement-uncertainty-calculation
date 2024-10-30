@@ -27,7 +27,7 @@ classdef torqueAmplifierUncertainty
    
        % 
        function u_T2 = get.u_T2(obj) % Nm
-           u_T2 = obj.device_spec.d_amp*obj.b_r*obj.motor_T_calc;
+           u_T2 = obj.b_r * obj.device_spec.d_amp*obj.motor_T_calc;
        end
 
    end

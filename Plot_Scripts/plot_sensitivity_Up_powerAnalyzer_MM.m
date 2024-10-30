@@ -62,12 +62,12 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_powerAnalyzer_MM);
     u = colorbar;
-    clim([0 0.7]);
+    % clim([0 0.7]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$2~\mathrm{U_{k=2}}$ in \%';
+    u.Label.String = '$\mathrm{U_{k=2}}$ in W';
     u.Limits = [0.25, 0.6];
     u.LimitsMode = "auto";
 %

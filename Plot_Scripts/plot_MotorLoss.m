@@ -1,5 +1,12 @@
-warning off;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% plot_MotorLoss.m %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Visualization of the motor loss from the data sheet.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+warning off;
 currentFolder = pwd;
 
 colormatrix=[0.000 0.447 0.741;
@@ -58,7 +65,10 @@ if plot_enable == 1
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$P_{\mathrm{l}}$ in W';
+    u.Label.String = '$P_{\mathrm{l}}$ in kW';
+    u.Ticks = [200,400,1000,2000,4000,7000];
+    u.TickLabels = {'0.2','0.5','1','2','4','7'};
+
 %
     h.LevelListMode = 'auto';
     h.LevelStep = 50;
@@ -100,6 +110,8 @@ if plot_enable == 1
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
+    ax.ColorScale = "log";
+    
     
 
     

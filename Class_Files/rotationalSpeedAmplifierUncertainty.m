@@ -25,7 +25,7 @@ classdef rotationalSpeedAmplifierUncertainty
        
        function u_n2 = get.u_n2(obj) % 1/min
            
-           u_n2 = obj.b_r*obj.device_spec.d_amp*obj.n_op;
+           u_n2 = obj.b_r * obj.device_spec.d_amp*obj.n_op;
        end
        
                
