@@ -31,17 +31,13 @@ The efficiency uncertainty is visualized in the figure below.
 
 ## Sensitivity coefficients
 Sensitvity coefficients show the component's uncertainty influence on the total uncertainty. This is very helpful to decerase the systems uncertainty by changing the components with the worst uncertainty first. Therefore, the sensitivity coefficients are calculated in the following, starting with the DC link power as
-````math
-P_{\mathrm{DC}} = V_{\mathrm{DC}} I_{\mathrm{DC}},
-´´´´
+
+$$P_{\mathrm{DC}} = V_{\mathrm{DC}} I_{\mathrm{DC}}$$,
 applying the partial derivative leads to:
-````math
-u_{\mathrm{c,el,dcLink}} = \sqrt{V_{\mathrm{DC}}^2 u_{\mathrm{I,DC}}^2 + I_{\mathrm{DC}}^2 u_{\mathrm{v,DC}}^2 } .
-´´´´
+
+$$u_{\mathrm{c,el,dcLink}} = \sqrt{V_{\mathrm{DC}}^2 u_{\mathrm{I,DC}}^2 + I_{\mathrm{DC}}^2 u_{\mathrm{v,DC}}^2 }$$.
 
 The uncertainty of the mechanical output power is given with:
-
-% u_{\mathrm{c,P,mech}} =
 
 
 
