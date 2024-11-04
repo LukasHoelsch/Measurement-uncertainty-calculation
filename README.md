@@ -66,12 +66,12 @@ k_p = 2;
 
 
 ## Implementation
-To reduce the computation time the main calculation is implemented inside a `parfor` loop.
+To reduce the computation time the main calculation is implemented inside a `parfor` loop. The parallel computing toolbox starts automatically and selects the number of workers for the parallelization. 
 
 
 
 ## Output
-The efficiency uncertainty is visualized in the figure below.
+The expanded uncertainty for an efficiency evaluation with a convidence interval of $k_{\mathrm{p}} = 2$ is visualized in percent points (%P) in the figure below. The maximale 
 
 
 ## Sensitivity coefficients
@@ -98,15 +98,15 @@ For transparency reasons the used parameters for the calculation in the proposal
 | $\sigma_{\mathrm{rel}}$ | Repeatability        | 0.00005       |
 | **Rotational speed** |                         | **T10FS**     |
 | $d_{\mathrm{}}$    | 
-| $n_{\mathrm{max}}$ | Max. speed                |12000 $\nicefrac{1}{\mathrm{min}}$ |
+| $n_{\mathrm{max}}$ | Max. speed                |12000 1/min   |
 | **Amplifier**      |                           |**ML60B**     |
 | $d_{\mathrm{amp}}$ | Accuracy                  | 0            |
 |**Current transducer**     |                    | **PM-867-400I**|
 | $d_{\mathrm{CT,lin}}$| Linearity deviation     | 0.00001      |
 | $d_{\mathrm{CT,offset}}$ | Offset              | 0.00004      |
-| $d_{\mathrm{CT,f}}$    | Frequency             | 0.0006 $\nicefrac{1}{\mathrm{kHz}}$ |
-| $d_{\mathrm{CT,\upvarphi,fix}}$ | Fixed angle  | 0.01 $^\circ$|
-| $d_{\mathrm{CT,\upvarphi,var}}$ | Variable angle| 0.06 $\nicefrac{^\circ}{\mathrm{kHz}}$|
+| $d_{\mathrm{CT,f}}$    | Frequency             | 0.0006 1/kHz |
+| $d_{\mathrm{CT,\varphi,fix}}$ | Fixed angle  | 0.01 $^\circ$|
+| $d_{\mathrm{CT,\varphi,var}}$ | Variable angle| 0.06 $^\circ$/kHz|
 | $I_{\mathrm{CT,MR}}$ | & Measurement range     | 400 A |
 | **Power analyzer**   |            | **WT5000**| 
 |$d_{\mathrm{i,DC}}$   | Accuracy current DC      | 0.0002 |
