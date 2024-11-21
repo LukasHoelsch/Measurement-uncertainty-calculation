@@ -68,7 +68,7 @@ if plot_enable == 1
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$\mathrm{U_{p,DC-link}}$ in W';
+    u.Label.String = '$U_\mathrm{{p,DC-link}}$ in W';
     % u.Limits = [0.9,0.99];
     % ZTicks = [0.9,0.94,0.98];
     % ZTickLabel={'0.9','0.94','0.98'};

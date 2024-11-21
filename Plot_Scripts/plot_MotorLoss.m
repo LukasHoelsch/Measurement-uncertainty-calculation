@@ -4,6 +4,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Visualization of the motor loss from the data sheet.
+%
+%% Acknowledgement: This script and the is based on an earlier version by Philipp Rehlaender and Anian Brosch
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 warning off;
@@ -33,16 +35,16 @@ save_plot=0;
 
 if plot_enable == 1
     
-    %% Figure Configuration
-    fig.PaperFont = 'Times New Roman'; %Schriftart für Abb.
-    fig.PaperFontSize = 10; %Schriftgröße für Abb.
+    %% Figure configuration
+    fig.PaperFont = 'Times New Roman'; % Font for fig.
+    fig.PaperFontSize = 10; % Font size for fig.
     fig.folder = [project_dir_Figures,'\']; % Folder to save the figure
-    fig.res = '-r900'; %Grafikauflösung (falls bitmaps vorhanden)
-    fig.fh = []; %Intialisierung der figure handles
+    fig.res = '-r900'; % Graphic resolution (if bitmaps available)
+    fig.fh = []; % Initialization of the figure handles
     fig.lg =[];
-    fig.sp = []; %Initialisierung der subplot handles
-    FigW = 8.5; %Relative Angabe der zu verwendenten Seitenbreite, hier kompl. Breite
-    FigH = 4.5; %Relative Angabe der zu verwendenten Seitenhöhe, hier rund 1/4 der höhe
+    fig.sp = []; % Initialization of the subplot handles
+    FigW = 8.5; % Relative specification of the page width to be utilized
+    FigH = 4.5; % Relative specification of the page height to be utilized
     
     
     
@@ -71,7 +73,7 @@ if plot_enable == 1
 
 %
     h.LevelListMode = 'auto';
-    h.LevelStep = 50;
+    h.LevelStep = 100;
     h.ShowText = 'on';
     h.LineStyle = 'none';
  
@@ -91,8 +93,6 @@ if plot_enable == 1
     YTicks = [20,60,100,140,180];
     YTickLabel={'20','60','100','140','180'};
 
-    ZTicks = [0,2000,4000,6000,8000];
-    ZTickLabel={'0','2000','4000','6000','8000'};
     
     kk=1;
     subplot(fig.sp(kk))
@@ -100,7 +100,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'ylim', [y_min y_max]);
     set(fig.sp(kk), 'XTick', XTicks);
     set(fig.sp(kk), 'YTick', YTicks);
-    set(fig.sp(kk), 'ZTick', ZTicks);
+    %set(fig.sp(kk), 'ZTick', ZTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);

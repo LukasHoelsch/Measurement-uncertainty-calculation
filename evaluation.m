@@ -14,10 +14,10 @@ run('init.m')
 
 %% Settings for the calculation
 % rotational speed sampling points
-n_samplingPoints = 20;
+n_samplingPoints = 50;
 
 % maximal torque
-T_max = 180; % Nm
+T_max = 100; % Nm
 
 % minimal speed
 n_min = 2000; % 1/min
@@ -146,8 +146,8 @@ parfor zz=1:idx
         u_T_SM(zz) = NaN;
         Up_eta_MM(zz) = NaN;
         Up_eta_SM(zz) = NaN;
-        Up_loss_MM(zz) = NaN;
-        Up_loss_SM(zz) = NaN;
+        Up_eta_watt_MM(zz) = NaN;
+        Up_eta_watt_SM(zz) = NaN;
         electricDrive_P_loss(zz) = NaN;
         electricDrive_efficiency(zz) = NaN;
         u_P_mech_MM(zz) = NaN;
@@ -267,8 +267,8 @@ parfor zz=1:idx
         Up_eta_SM(zz) = u_eta_SM(zz)*k_p*100; % 1
 
         %% Uncertainty in W
-        Up_loss_MM(zz) = (motor_P_loss(zz)+inverter_P_loss(zz))*(Up_eta_MM(zz)/100);
-        Up_loss_SM(zz) = (motor_P_loss(zz)+inverter_P_loss(zz))*(Up_eta_SM(zz)/100);
+        Up_eta_watt_MM(zz) = (motor_P_mech(zz) + motor_P_loss(zz)+inverter_P_loss(zz))*(Up_eta_MM(zz)/100);
+        Up_eta_watt_SM(zz) = (motor_P_mech(zz) + motor_P_loss(zz)+inverter_P_loss(zz))*(Up_eta_SM(zz)/100);
 
         %% Sensitivity coefficients
         % torque
@@ -322,8 +322,8 @@ plot_Up_eta_MM = reshape(Up_eta_MM,[70,n_samplingPoints]);
 plot_Up_eta_SM = reshape(Up_eta_SM,[70,n_samplingPoints]);
 
 %% Efficiency uncertainty given in W for a better understanding
-plot_Up_power_MM = reshape(Up_loss_MM,[70,n_samplingPoints]);
-plot_Up_power_SM = reshape(Up_loss_SM,[70,n_samplingPoints]);
+plot_Up_eta_watt_MM = reshape(Up_eta_watt_MM,[70,n_samplingPoints]);
+plot_Up_eta_watt_SM = reshape(Up_eta_watt_SM,[70,n_samplingPoints]);
 
 
 

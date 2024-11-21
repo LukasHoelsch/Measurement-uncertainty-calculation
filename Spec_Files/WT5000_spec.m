@@ -69,7 +69,7 @@ WT5000.I_MR = 400;     % A, measuring range end value
 WT5000.T_MR = 100;
 
 % measurement range speed
-WT5000.n_ME = 12000;
+WT5000.n_ME = 11000;
 
 
 %% New current transducer CT 400 from Signaltec
