@@ -66,7 +66,7 @@ WT5000.U_MR = 400;     % V, measuring range end value
 WT5000.I_MR = 400;     % A, measuring range end value
 
 % measurement range torque
-WT5000.T_MR = 200;
+WT5000.T_MR = 100;
 
 % measurement range speed
 WT5000.n_ME = 12000;
