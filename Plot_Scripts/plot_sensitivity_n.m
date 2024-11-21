@@ -29,7 +29,7 @@ dred=colormatrix(7,:);
 
 %%
 plot_enable = 1;
-save_plot=0;
+save_plot=1;
 
 
 if plot_enable == 1
@@ -67,12 +67,12 @@ if plot_enable == 1
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$\mathrm{U_{k=2}}$ in 1/min';
+    u.Label.String = '$U_\mathrm{{p}}$ in 1/min';
     % u.Limits = [0.25, 0.6];
     % u.LimitsMode = "auto";
 %
     h.LevelListMode = 'manual';
-    h.LevelStep = .1;
+    h.LevelStep = .01;
     h.ShowText = 'on';
     h.LineStyle = 'none';
     %h.LevelList = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8];

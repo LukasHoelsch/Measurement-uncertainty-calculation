@@ -4,6 +4,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Visualization of the inverter loss.
+%
+%% Acknowledgement: This script and the is based on an earlier version by Philipp Rehlaender and Anian Brosch
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 warning off;
@@ -33,16 +35,16 @@ save_plot=0;
 
 if plot_enable == 1
     
-    %% Figure Configuration
-    fig.PaperFont = 'Times New Roman'; %Schriftart für Abb.
-    fig.PaperFontSize = 10; %Schriftgröße für Abb.
+    %% Figure configuration
+    fig.PaperFont = 'Times New Roman'; % Font for fig.
+    fig.PaperFontSize = 10; % Font size for fig.
     fig.folder = [project_dir_Figures,'\'];
-    fig.res = '-r900'; %Grafikauflösung (falls bitmaps vorhanden)
-    fig.fh = []; %Intialisierung der figure handles
+    fig.res = '-r900'; % Graphic resolution (if bitmaps available)
+    fig.fh = []; % Initialization of the figure handles
     fig.lg =[];
-    fig.sp = []; %Initialisierung der subplot handles
-    FigW = 8.5; %Relative Angabe der zu verwendenten Seitenbreite, hier kompl. Breite
-    FigH = 4.5; %Relative Angabe der zu verwendenten Seitenhöhe, hier rund 1/4 der höhe
+    fig.sp = []; % Initialization of the subplot handles
+    FigW = 8.5; % Relative specification of the page width to be utilized
+    FigH = 4.5; % Relative specification of the page height to be utilized
     
     
     
@@ -66,11 +68,10 @@ if plot_enable == 1
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
     u.Label.String = '$P_{\mathrm{l}}$ in W';
-    u.Limits = [0,1700];
-    ZTicks = [0,500,1000,1500];
-    ZTickLabel={'0','500','1000','1500'};
-    u.Ticks = ZTicks;
-    u.TickLabels = ZTickLabel;
+
+    u_min = min(min(plot_inverter_P_loss));
+    u_max = max(max(plot_inverter_P_loss));
+    u.Limits =[u_min,u_max];
 
     h.LevelListMode = 'auto';
     h.LevelStep = 0.5;
@@ -82,31 +83,19 @@ if plot_enable == 1
     AdjustSubplot(fig,0.05,[0.14 0.16 0.76 0.95],[2]);
     %
     
-    x_min = 2000;
-    x_max = 11000;
-    y_min = 20;
-    y_max = 180;
+    x_min = n_min;
+    x_max = n_max;
+    y_min = motor_selected.T_calc_min;
+    y_max = T_max;
 
-    XTicks=[0 2000 4000 6000 8000 10000];
-    XTickLabel={'0','2000','4000','6000','8000','10000'};
-    
-    YTicks = [20,60,100,140,180];
-    YTickLabel={'20','60','100','140','180'};
 
-    % ZTicks = [0,2000,4000,6000,8000];
-    % ZTickLabel={'0','2000','4000','6000','8000'};
     
     kk=1;
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
-    set(fig.sp(kk), 'XTick', XTicks);
-    set(fig.sp(kk), 'YTick', YTicks);
-    % set(fig.sp(kk), 'ZTick', ZTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
-    set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);
-    set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
     ax = gca;
     ax.FontSize = 10;
