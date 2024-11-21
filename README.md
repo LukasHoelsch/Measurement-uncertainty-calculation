@@ -96,6 +96,7 @@ $$u_{\mathrm{c,el,dcLink}} = \sqrt{V_{\mathrm{DC}}^2 u_{\mathrm{I,DC}}^2 + I_{\m
 
 
 The uncertainty of the mechanical output power is given with:
+
 $$u_{\mathrm{c,\eta}} = \sqrt{\left(\frac{\partial \eta}{\partial P_{\mathrm{mech}}}\right)^2 u_{\mathrm{c,mech}}^2 + \left(\frac{\partial \eta}{\partial P_{\mathrm{DC}}}\right)^2 u_{\mathrm{c,DC}}^2 } $$
 
 $$ = \sqrt{{\left(\frac{1}{P_{\mathrm{DC}}} \right)}^2 u_{\mathrm{c,mech}}^2 + {\left(- \frac{P_{\mathrm{mech}}}{P_{\mathrm{DC}}^2}\right)}^2 u_{\mathrm{c,DC}}^2}$$
