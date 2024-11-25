@@ -77,7 +77,7 @@ classdef motorModel
               
         % Loss
         function P_loss = get.P_loss(obj)
-           P_loss = (100-obj.motor_spec.losses.fitLossBrusa(obj.n_op,obj.T_calc_idq))/100*obj.P_calc;
+           P_loss = (100-obj.motor_spec.eta.fit_eta(obj.n_op,obj.T_calc_idq))/100*obj.P_calc;
            
         end
         

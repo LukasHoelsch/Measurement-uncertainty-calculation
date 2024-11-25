@@ -45,11 +45,6 @@ load([project_dir_FittedModels,'\fit_E_off.mat'])
 
 
 %% motor spec
-run('HSM_16_17_12_C01_spec.m');
+run('Spec_Files\HSM_16_17_12_C01_spec.m');
+run('IPMSM_spec.m')
 
-% Load fit_Torque
-load([project_dir_FittedModels,'\fit_Torque.mat'])
-
-% Load fit_Psi_dq
-load([project_dir_FittedModels,'\fit_Psi_d.mat'])
-load([project_dir_FittedModels,'\fit_Psi_q.mat'])

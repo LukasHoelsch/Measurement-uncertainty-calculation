@@ -1,6 +1,12 @@
 ## figure files
-.pdf
-.svg
+Figures/*.pdf
+Figures/readme/*.pdf
+Figures/T_n_100Nm/*.pdf
+Figures/T_n_200Nm/*.pdf
+
+Figures/*.svg
+Figures/readme/*.svg
+Figures/T_n_100Nm/*.svg
 
 ## Autosave files
 .asv

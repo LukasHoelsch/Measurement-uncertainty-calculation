@@ -5,8 +5,8 @@
 
 HSM_16_17_12_C01.Psi_d = load([project_dir_FittedModels,'\fit_Psi_d.mat']);
 HSM_16_17_12_C01.Psi_q = load([project_dir_FittedModels,'\fit_Psi_q.mat']);
-HSM_16_17_12_C01.losses = load([project_dir_FittedModels,'\fit_lossBrusa.mat']);
-
+HSM_16_17_12_C01.eta = load([project_dir_FittedModels,'\fit_eta.mat']);
+HSM_16_17_12_C01.torque = load([project_dir_FittedModels,'\fit_Torque.mat']);
 
 HSM_16_17_12_C01.p = 3;
 HSM_16_17_12_C01.Rs = 0.018; % Ohm

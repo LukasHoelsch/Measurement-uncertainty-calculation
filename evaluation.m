@@ -14,19 +14,19 @@ run('init.m')
 
 %% Settings for the calculation
 % rotational speed sampling points
-n_samplingPoints = 50;
+n_samplingPoints = 20;
 
 % maximal torque
-T_max = 100; % Nm
+T_max = 20; % Nm
 
 % minimal speed
 n_min = 2000; % 1/min
 
 % maximal speed
-n_max = 11000; % 1/min
+n_max = 8000; % 1/min
 
 % maximal current of the machine
-i_max = 340; % A
+i_max = 25; % A
 
 % DC-link voltage
 v_DC = 400; % V
@@ -44,7 +44,8 @@ torqueFlange_selected = T12HP;
 powerAnalyzer_selected = WT5000;
 
 % machine,
-motor_selected = HSM_16_17_12_C01;
+motor_selected = IPMSM;
+% motor_selected = HSM_16_17_12_C01;
 
 % semiconductor
 semiconductor_selected = FS02MR12A8MA2B;
@@ -64,11 +65,12 @@ n_ref = linspace(n_min,n_max,n_samplingPoints);
 %% MTPC
 % At the beginning, the MTPC values are calculated. With the calculated
 % values, the uncertainty is determined.
-[i_d_MTPC,i_q_MTPC] = MTPC_LPV(fit_Torque,i_max);
+[i_d_MTPC,i_q_MTPC] = MTPC_LPV(motor_selected.torque.fit_Torque,i_max);
 
 % preallocation
 [n_op,i_d,i_q,i_dq,motor_T_calc,end_calculation] = preallocation(n_samplingPoints,i_d_MTPC);
 
+length_id = length(i_d_MTPC);
 
 
 %% Counter
@@ -103,7 +105,7 @@ for nn = 1:1:length(n_ref)
         i_dq(idx) = sqrt(i_d(idx)^2+i_q(idx)^2);
     
         % Calculate the motor parameters for the selected OP
-        motor_T_calc(idx) = motorModel(HSM_16_17_12_C01,OP,n_op(idx),i_d(idx),i_q(idx),i_dq(idx)).T_calc;
+        motor_T_calc(idx) = motorModel(motor_selected,OP,n_op(idx),i_d(idx),i_q(idx),i_dq(idx)).T_calc;
         
 
         % Test, if the motor is working in the safe operation range, otherwise
@@ -161,11 +163,12 @@ parfor zz=1:idx
         Up_el_dcLink_MM(zz) = NaN;
     else
 
-        motor_P_loss(zz) = motorModel(HSM_16_17_12_C01,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).P_loss;
-        motor_P_mech(zz) = motorModel(HSM_16_17_12_C01,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).P_mech;
-        motor_v_abc(zz,:) = motorModel(HSM_16_17_12_C01,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).v_abc(1,:);
-        motor_i_abc(zz,:) = motorModel(HSM_16_17_12_C01,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).i_abc(1,:);
-        motor_v_dq(zz,:) = motorModel(HSM_16_17_12_C01,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).v_dq(1,:);
+        motor_P_loss(zz) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).P_loss;
+        motor_P_mech(zz) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).P_mech;
+        motor_P_calc_bound(zz) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).P_calc_bound;
+        motor_v_abc(zz,:) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).v_abc(1,:);
+        motor_i_abc(zz,:) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).i_abc(1,:);
+        motor_v_dq(zz,:) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).v_dq(1,:);
     
         % operating variables
         f_el(zz) = n_op(zz)/60*motor_polePairNumber; % Hz
@@ -191,7 +194,7 @@ parfor zz=1:idx
     
         % power analyzer
         % WT5000.I_phase = OP.i_dq/sqrt(2);   % current RMS in A
-        angle_phi(zz) = motorModel(HSM_16_17_12_C01,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).phi; % angle in °
+        angle_phi(zz) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).phi; % angle in °
         f_I_abc_fund(zz) = n_op(zz)/60*motor_polePairNumber;   % Hz
     
     
@@ -302,28 +305,28 @@ toc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Reshape for visualization %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-plot_T_calc = reshape(motor_T_calc,[70,n_samplingPoints]);
-plot_n = reshape(n_op,[70,n_samplingPoints]);
+plot_T_calc = reshape(motor_T_calc,[length_id,n_samplingPoints]);
+plot_n = reshape(n_op,[length_id,n_samplingPoints]);
 
 %% Motor loss
-plot_motor_P_loss = reshape(motor_P_loss,[70,n_samplingPoints]);
+plot_motor_P_loss = reshape(motor_P_loss,[length_id,n_samplingPoints]);
 
 %% Inverter loss
-plot_inverter_P_loss = reshape(inverter_P_loss,[70,n_samplingPoints]);
+plot_inverter_P_loss = reshape(inverter_P_loss,[length_id,n_samplingPoints]);
 
 %% Electric drive loss
-plot_electricDrive_P_loss = reshape(electricDrive_P_loss,[70,n_samplingPoints]);
+plot_electricDrive_P_loss = reshape(electricDrive_P_loss,[length_id,n_samplingPoints]);
 
 %% Electric drive efficiency
-plot_electricDrive_efficiency = reshape(electricDrive_efficiency,[70,n_samplingPoints]);
+plot_electricDrive_efficiency = reshape(electricDrive_efficiency,[length_id,n_samplingPoints]);
 
 %% Efficency uncertainty
-plot_Up_eta_MM = reshape(Up_eta_MM,[70,n_samplingPoints]);
-plot_Up_eta_SM = reshape(Up_eta_SM,[70,n_samplingPoints]);
+plot_Up_eta_MM = reshape(Up_eta_MM,[length_id,n_samplingPoints]);
+plot_Up_eta_SM = reshape(Up_eta_SM,[length_id,n_samplingPoints]);
 
 %% Efficiency uncertainty given in W for a better understanding
-plot_Up_eta_watt_MM = reshape(Up_eta_watt_MM,[70,n_samplingPoints]);
-plot_Up_eta_watt_SM = reshape(Up_eta_watt_SM,[70,n_samplingPoints]);
+plot_Up_eta_watt_MM = reshape(Up_eta_watt_MM,[length_id,n_samplingPoints]);
+plot_Up_eta_watt_SM = reshape(Up_eta_watt_SM,[length_id,n_samplingPoints]);
 
 
 
@@ -332,21 +335,21 @@ plot_Up_eta_watt_SM = reshape(Up_eta_watt_SM,[70,n_samplingPoints]);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % mechanical power
-plot_Up_mech_SM = reshape(Up_mech_SM,[70,n_samplingPoints]);
-plot_Up_mech_MM = reshape(Up_mech_MM,[70,n_samplingPoints]);
+plot_Up_mech_SM = reshape(Up_mech_SM,[length_id,n_samplingPoints]);
+plot_Up_mech_MM = reshape(Up_mech_MM,[length_id,n_samplingPoints]);
 
 % torque
-plot_Up_T_SM = reshape(Up_T_SM,[70,n_samplingPoints]);
-plot_Up_T_MM = reshape(Up_T_MM,[70,n_samplingPoints]);
+plot_Up_T_SM = reshape(Up_T_SM,[length_id,n_samplingPoints]);
+plot_Up_T_MM = reshape(Up_T_MM,[length_id,n_samplingPoints]);
 
 % power analyzer
-plot_Up_powerAnalyzer_MM = reshape(Up_el_abc_MM,[70,n_samplingPoints]);
+plot_Up_powerAnalyzer_MM = reshape(Up_el_abc_MM,[length_id,n_samplingPoints]);
 
 % rotational speed
-plot_Up_n = reshape(Up_n,[70,n_samplingPoints]);
+plot_Up_n = reshape(Up_n,[length_id,n_samplingPoints]);
 
 % power analyzer
-plot_Up_el_dcLink_MM = reshape(Up_el_dcLink_MM,[70,n_samplingPoints]);
+plot_Up_el_dcLink_MM = reshape(Up_el_dcLink_MM,[length_id,n_samplingPoints]);
 
 
 % amplifier

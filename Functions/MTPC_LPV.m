@@ -1,4 +1,6 @@
-% MTPC_LPV_hoelsch.m
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MTPC_LPV.m
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [i_d_MTPC,i_q_MTPC] = MTPC_LPV(fit_Torque,i_max)
 
 
@@ -28,38 +30,3 @@ end
 
 i_d_MTPC=[flip(minTPC_meas(1,:)),maxTPC_meas(1,:)];
 i_q_MTPC=[flip(minTPC_meas(2,:)),maxTPC_meas(2,:)];
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-% prob = optimproblem("ObjectiveSense","minimize");
-% 
-% i_d = optimvar('i_d',1,1,'LowerBound',-i_max);
-% i_q = optimvar('i_q',1,1,'UpperBound',i_max);
-% 
-% prob.Objective = i_d^2 + i_q^2; 
-% 
-% 
-% i_q = (T+(3/2)*p*fit_Psi_q(i_d,i_q)*i_q)/((3/2)*p*fit_Psi_d(i_d,i_q));
-% 
-% %i_q = T+(3/2)*p;
-% 
-% cons1 = i_d + i_q <= i_max;
-% 
-% prob.Constraints.cons1 = cons1;
-% 
-% 
-% show(prob)
-% 
-% solve(prob)
