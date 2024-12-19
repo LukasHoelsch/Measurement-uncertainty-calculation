@@ -17,6 +17,7 @@ classdef torqueUncertainty
        u_repeatability  % Nm
        u_T1_MM     % Nm
        u_T1_SM     % Nm
+       f_T         % Hz
    end
    
    
@@ -55,7 +56,12 @@ classdef torqueUncertainty
        
        % absolut torque measurement
        function u_T1_SM = get.u_T1_SM(obj) % Nm
-           u_T1_SM = sqrt(obj.u_dC^2+obj.u_dlh^2+obj.u_repeatability^2);
+           u_T1_SM = sqrt(obj.u_dC^2+obj.u_dlh^2);
+       end
+
+       % frequency output
+       function f_T = get.f_T(obj) % Hz
+           f_T = (obj.device.f_T_nom - obj.device.f_T0)/obj.device.T_n * obj.motor_T_calc + obj.device.f_T0;
        end
        
    end

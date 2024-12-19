@@ -30,7 +30,7 @@ dred=colormatrix(7,:);
 
 %%
 plot_enable = 1;
-save_plot=0;
+save_plot=1;
 
 
 if plot_enable == 1

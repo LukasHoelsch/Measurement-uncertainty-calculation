@@ -2,6 +2,7 @@ classdef powerAnalyzerUncertainty
     
     properties
         device
+        device_torque
         n_op
         motor_T_calc
         I_abc_fund
@@ -11,6 +12,8 @@ classdef powerAnalyzerUncertainty
         motor_v_dq
         I_dcLink
         v_DC
+        f_n
+        f_T
     end
     
    properties (Access = private)
@@ -80,10 +83,11 @@ classdef powerAnalyzerUncertainty
        
        
         %% constructor
-        function obj = powerAnalyzerUncertainty(device,n_op,motor_T_calc,I_abc_fund,...
-                f_I_abc_fund,angle_phi,I_abc_harm,motor_v_dq,I_dcLink,v_DC)
+        function obj = powerAnalyzerUncertainty(device,device_torque,n_op,motor_T_calc,I_abc_fund,...
+                f_I_abc_fund,angle_phi,I_abc_harm,motor_v_dq,I_dcLink,v_DC,f_n,f_T)
            
             obj.device = device;
+            obj.device_torque = device_torque;
             obj.n_op = n_op;
             obj.motor_T_calc = motor_T_calc;
             obj.I_abc_fund = I_abc_fund;
@@ -93,6 +97,8 @@ classdef powerAnalyzerUncertainty
             obj.motor_v_dq = motor_v_dq;
             obj.I_dcLink = I_dcLink;
             obj.v_DC = v_DC;
+            obj.f_n = f_n;
+            obj.f_T = f_T;
         end
        
        
@@ -102,15 +108,14 @@ classdef powerAnalyzerUncertainty
         % troque
         function u_T3 = get.u_T3(obj) % Nm
            
-            u_T3 = obj.b_r*(obj.device.d_A*obj.motor_T_calc+obj.device.d_a_MR*...
-                obj.device.T_MR);
+            u_T3 = (obj.b_r*(obj.device.d_pulse_1+obj.f_T/obj.device.d_pulse_2))/obj.device_torque.f_T_nom*obj.motor_T_calc;
+
         end
        
         % rotational speed
         function u_n3 = get.u_n3(obj) % 1/min
-           
-            u_n3 = obj.b_r*(obj.device.d_A*obj.n_op+obj.device.d_a_MR*...
-                obj.device.n_ME);
+            
+            u_n3 = (obj.b_r*(obj.device.d_pulse_1+obj.f_n/obj.device.d_pulse_2))*60/obj.device_torque.d_inc;
         end
        
         %% current transducer; i_abc
@@ -189,7 +194,7 @@ classdef powerAnalyzerUncertainty
 
            u_el_abc_SM = sqrt(obj.i_a^2+obj.i_a^2+obj.i_a^2+ ...
                obj.v_a^2+obj.v_a^2+obj.v_a^2 + ...
-               obj.u_CT_abc_SM^2);
+               obj.u_CT_abc_SM^2+obj.u_CT_abc_SM^2+obj.u_CT_abc_SM^2);
        
        end
 
@@ -198,7 +203,7 @@ classdef powerAnalyzerUncertainty
 
            u_el_abc_MM = sqrt(obj.i_a^2+obj.i_a^2+obj.i_a^2+ ...
                obj.v_a^2+obj.v_a^2+obj.v_a^2 + ...
-               obj.u_CT_abc_MM^2);
+               obj.u_CT_abc_MM^2+obj.u_CT_abc_MM^2+obj.u_CT_abc_MM^2);
        
        end
 

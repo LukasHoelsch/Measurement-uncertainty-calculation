@@ -62,11 +62,14 @@ if plot_enable == 1
     max_abs = max(max(plot_Up_eta_MM));
     max_rel = max(max(plot_Up_eta_MM));
 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% plot 1
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     fig.sp(end+1) = subplot(2,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_T_SM)
     u = colorbar
-    clim([0.05 .2]);
+    clim([0.05 .15]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
@@ -75,15 +78,18 @@ if plot_enable == 1
 
 
     h.LevelListMode = 'manual';
-    h.LevelStep = 0.1;
+    h.LevelStep = 0.001;
     h.ShowText = 'on';
     h.LineStyle = 'none';
  
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% plot 2
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     fig.sp(end+1) = subplot(2,1,2);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_T_MM)
     u = colorbar
-    clim([0.05 .2]);
+    clim([0.001 .15]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
@@ -91,7 +97,7 @@ if plot_enable == 1
     u.Label.String = '$U_\mathrm{{p}}$ in Nm';
 %
     h.LevelListMode = 'manual';
-    h.LevelStep = 0.1;
+    h.LevelStep = 0.001;
     h.ShowText = 'off';
     h.LineStyle = 'none';
     
@@ -101,6 +107,9 @@ if plot_enable == 1
     AdjustSubplot(fig,0.05,[0.14 0.25 0.76 0.95],[2 2]);
     %
     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% min and max values
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     x_min = 2000;
     x_max = 11000;
     y_min = 20;
@@ -111,10 +120,10 @@ if plot_enable == 1
     
     YTicks = [20,60,100,140,180];
     YTickLabel={'20','60','100','140','180'};
-
-    ZTicks = [0.9,0.95,0.99];
-    ZTickLabel={'0.9','0.95','0.99'};
-    
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% k = 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     kk=1;
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
@@ -123,13 +132,15 @@ if plot_enable == 1
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
-    text(7000,160,'single','interpreter','latex','Fontsize',10);
+    text(10500,150,'SM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% k = 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     kk=2;
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
@@ -141,13 +152,16 @@ if plot_enable == 1
     set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
-    text(7000,160,'multiple','interpreter','latex','Fontsize',10);
+    text(10500,150,'MM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
 
-    
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% save plot
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
      if save_plot ==1
             FigName = ['UncertaintyT.pdf'];
         if exist([fig.folder FigName]) == 0

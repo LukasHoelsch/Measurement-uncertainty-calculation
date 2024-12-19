@@ -62,7 +62,7 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_n);
     u = colorbar;
-    %clim([0 0.7]);
+    % clim([0 7]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
