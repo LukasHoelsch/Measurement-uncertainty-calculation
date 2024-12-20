@@ -68,6 +68,12 @@ k_p = 2;
 To reduce the computation time the main calculation is implemented inside a `parfor` loop. The parallel computing toolbox starts automatically and selects the available number of workers for the parallelization. 
 
 
+## Electric drive's efficiency
+The already high efficiency of the electric drive is shown in the figure below.
+<p align="center">
+  <img src="./Figures/readme/efficiency_drive.svg" />
+</p>
+
 
 ## Output
 The expanded uncertainty for an efficiency evaluation with a coverage factor $k_{\mathrm{p}} = 2$ is visualized in percent points (pp) in the figure below.
@@ -76,7 +82,7 @@ The expanded uncertainty for an efficiency evaluation with a coverage factor $k_
 </p>
 
 
-To view this result in a different perspective, the uncertainty is visualized, where the maximum uncertainty for the MM procedure is given with 68 W.
+To view this result in a different perspective, the uncertainty is visualized, where the maximum uncertainty for the MM procedure is given with 10 W.
 <p align="center">
   <img src="./Figures/readme/Fig2.svg" />
 </p>
