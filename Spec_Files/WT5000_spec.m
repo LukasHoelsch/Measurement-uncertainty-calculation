@@ -18,8 +18,12 @@ WT5000.I_CT_MR = 400;           % measuring range in A
 % 
 % Section: Motor evaluation Function
 % general accuracy
-WT5000.d_A = 0.0003;            % display value error
-WT5000.d_a_MR = 0.0003;         % measuring range error
+% WT5000.d_A = 0.0003;            % display value error
+% WT5000.d_a_MR = 0.0003;         % measuring range error
+
+% Section: Pulse input
+WT5000.d_pulse_1 = 0.0003; % fix value
+WT5000.d_pulse_2 = 10*10e8; % frequency dependant value
 
 
 
@@ -52,12 +56,6 @@ WT5000.d_voltage_harm = 0.001;        % reading
 WT5000.d_voltage_harm_MR = 0.0005;    % measurement range
 
 
-% old
-% WT5000.d_1kHz = 0.0005;         %
-% WT5000.d_10kHz = 0.0015;        %
-% WT5000.d_50kHz = 0.003;         %
-% WT5000.d_1MHz = 0.05;           %
-%
 
 % measurement range voltage
 WT5000.U_MR = 400;     % V, measuring range end value
@@ -66,7 +64,7 @@ WT5000.U_MR = 400;     % V, measuring range end value
 WT5000.I_MR = 400;     % A, measuring range end value
 
 % measurement range torque
-WT5000.T_MR = 100;
+%WT5000.T_MR = 200;
 
 % measurement range speed
 WT5000.n_ME = 11000;

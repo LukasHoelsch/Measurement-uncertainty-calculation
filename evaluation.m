@@ -14,19 +14,19 @@ run('init.m')
 
 %% Settings for the calculation
 % rotational speed sampling points
-n_samplingPoints = 20;
+n_samplingPoints = 30;
 
 % maximal torque
-T_max = 20; % Nm
+T_max = 180; % Nm
 
 % minimal speed
 n_min = 2000; % 1/min
 
 % maximal speed
-n_max = 8000; % 1/min
+n_max = 11000; % 1/min
 
 % maximal current of the machine
-i_max = 25; % A
+i_max = 340; % A
 
 % DC-link voltage
 v_DC = 400; % V
@@ -44,8 +44,8 @@ torqueFlange_selected = T12HP;
 powerAnalyzer_selected = WT5000;
 
 % machine,
-motor_selected = IPMSM;
-% motor_selected = HSM_16_17_12_C01;
+% motor_selected = IPMSM;
+motor_selected = HSM_16_17_12_C01;
 
 % semiconductor
 semiconductor_selected = FS02MR12A8MA2B;
@@ -138,11 +138,13 @@ parfor zz=1:idx
         P_dcLink(zz) = NaN;
         u_T2(zz) = NaN;
         u_n1(zz) = NaN;
+        f_n(zz) = NaN;
         u_n2(zz) = NaN;
         u_n3(zz) = NaN;
         u_n(zz) = NaN;
         u_T1_MM(zz) = NaN;
         u_T1_SM(zz) = NaN;
+        f_T(zz) = NaN;
         u_el_abc_MM(zz) = NaN;
         u_T_MM(zz) = NaN;
         u_T_SM(zz) = NaN;
@@ -198,44 +200,52 @@ parfor zz=1:idx
         f_I_abc_fund(zz) = n_op(zz)/60*motor_polePairNumber;   % Hz
     
     
-        % torque amplifier
-        u_T2(zz) = torqueAmplifierUncertainty(ML60B,motor_T_calc(zz)).u_T2;
-    
-        % rotational speed
-        u_n1(zz) = rotationalSpeedUncertainty(T10FS,n_op(zz)).u_n1_SM_MM;
-                
-        % amplifier speed
-        u_n2(zz) = rotationalSpeedAmplifierUncertainty(ML60B,n_op(zz)).u_n2;
-    
         % torque
         u_T1_MM(zz) = torqueUncertainty(torqueFlange_selected,motor_T_calc(zz)).u_T1_MM;
         u_T1_SM(zz) = torqueUncertainty(torqueFlange_selected,motor_T_calc(zz)).u_T1_SM;
 
+        f_T(zz) = torqueUncertainty(torqueFlange_selected,motor_T_calc(zz)).f_T;
+ 
+
+        % torque amplifier
+        u_T2(zz) = torqueAmplifierUncertainty(ML60B,motor_T_calc(zz)).u_T2;
+    
+
+
+        % rotational speed
+        u_n1(zz) = rotationalSpeedUncertainty(torqueFlange_selected,n_op(zz)).u_n1_SM_MM;
+        f_n(zz) = rotationalSpeedUncertainty(torqueFlange_selected,n_op(zz)).f_n;
+                
+        % amplifier speed
+        u_n2(zz) = rotationalSpeedAmplifierUncertainty(ML60B,n_op(zz)).u_n2;
+    
+        
+
     
 
         % power analyzer, el, abc
-        u_el_abc_MM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,n_op(zz),...
+        u_el_abc_MM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,torqueFlange_selected,n_op(zz),...
             motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
-            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_el_abc_MM;
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC,f_n(zz),f_T(zz)).u_el_abc_MM;
 
         % power analyzer, T
-        u_T3(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,n_op(zz),...
+        u_T3(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,torqueFlange_selected,n_op(zz),...
             motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
-            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_T3;
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC,f_n(zz),f_T(zz)).u_T3;
         
         % power analyzer, n
-        u_n3(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,n_op(zz),...
+        u_n3(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,torqueFlange_selected,n_op(zz),...
             motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
-            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_n3;
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC,f_n(zz),f_T(zz)).u_n3;
 
         % power analyzer, dc
-        u_el_dcLink_MM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,n_op(zz),...
+        u_el_dcLink_MM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,torqueFlange_selected,n_op(zz),...
             motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
-            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_c_el_dcLink_MM;
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC,f_n(zz),f_T(zz)).u_c_el_dcLink_MM;
 
-        u_el_dcLink_SM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,n_op(zz),...
+        u_el_dcLink_SM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,torqueFlange_selected,n_op(zz),...
             motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
-            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC).u_c_el_dcLink_SM;
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC,f_n(zz),f_T(zz)).u_c_el_dcLink_SM;
 
         %% Torque uncertainty
         % uncertainty calculation for comparison between two measurements which are

@@ -41,7 +41,7 @@ if plot_enable == 1
     %% Figure configuration
     fig.PaperFont = 'Times New Roman'; % Font for fig.
     fig.PaperFontSize = 10; % Font size for fig.
-    fig.folder = [project_dir_Figures,'\','T_n_100Nm','/'];
+    fig.folder = [project_dir_Figures,'\','T_n_200Nm','/'];
     fig.res = '-r900'; % Graphic resolution (if bitmaps available)
     fig.fh = []; % Initialization of the figure handles
     fig.lg =[];
@@ -69,7 +69,7 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_watt_SM);
     u = colorbar;
-    clim([5 90]);
+    clim([1 130]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
@@ -77,7 +77,7 @@ if plot_enable == 1
     u.Label.String = '$U_\mathrm{{p}}$ in W';
   
     h.LevelListMode = 'auto';
-    h.LevelStep = .01;
+    h.LevelStep = .1;
     h.ShowText = 'on';
     h.LineStyle = 'none';
     
@@ -89,7 +89,7 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_watt_MM);
     u = colorbar;
-    clim([5 90]);
+    clim([1 10]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
@@ -97,12 +97,12 @@ if plot_enable == 1
     u.Label.String = '$U_\mathrm{{p}}$ in W';
    
     h.LevelListMode = 'auto';
-    h.LevelStep = .01;
+    h.LevelStep = .1;
     h.ShowText = 'on';
     h.LineStyle = 'none';
 
     %
-    AdjustSubplot(fig,0.05,[0.14 0.2 0.78 0.95],[2 2]);
+    AdjustSubplot(fig,0.05,[0.14 0.15 0.76 0.95],[2 2]);
     %
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,6 +113,11 @@ if plot_enable == 1
     y_min = motor_selected.T_calc_min;
     y_max = T_max;
 
+    XTicks=[0 2000 4000 6000 8000 10000];
+    XTickLabel={'0','2000','4000','6000','8000','10000'};
+    
+    YTicks = [20,60,100,140,180];
+    YTickLabel={'20','60','100','140','180'};
 
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,9 +127,11 @@ if plot_enable == 1
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
+    set(fig.sp(kk), 'XTick', XTicks);
+    set(fig.sp(kk), 'YTick', YTicks);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
-    text(2500,80,'SM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1);
+    text(10500,150,'SM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
@@ -137,10 +144,12 @@ if plot_enable == 1
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
+    set(fig.sp(kk), 'XTick', XTicks);
+    set(fig.sp(kk), 'YTick', YTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
-    text(2500,80,'MM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1);
+    text(10500,150,'MM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
@@ -152,17 +161,17 @@ if plot_enable == 1
 %% save plot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      if save_plot ==1
-            FigName = ['u_eta_InWatt.svg'];
+            FigName = ['u_eta_InWatt.pdf'];
         if exist([fig.folder FigName]) == 0
                 %% select between pdf and svg file
-                % print('-dpdf','-painters', fig.res,[fig.folder FigName]);
-                print('-dsvg','-painters', fig.res,[fig.folder FigName]);
+                print('-dpdf','-painters', fig.res,[fig.folder FigName]);
+                %print('-dsvg','-painters', fig.res,[fig.folder FigName]);
             else
                 choice = questdlg(['Datei "' FigName '" existiert bereit! Überschreiben?'], 'Problem', 'Ja', 'Nein', 'Ja');
             if strcmp(choice, 'Ja')
                 %% select between pdf and svg file
-                %  print(fig.fh(end), '-dpdf', '-painters' , fig.res,[fig.folder FigName]);
-                 print(fig.fh(end), '-dsvg', '-painters' , fig.res,[fig.folder FigName]);
+                print(fig.fh(end), '-dpdf', '-painters' , fig.res,[fig.folder FigName]);
+                 %print(fig.fh(end), '-dsvg', '-painters' , fig.res,[fig.folder FigName]);
             end
        end
      end 
