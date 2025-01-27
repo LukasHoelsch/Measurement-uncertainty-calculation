@@ -1,7 +1,8 @@
 % WT5000_spec.m
 %%%%%%%%%%%%%%%
 % Specifications for the Yokogawa WT5000 power analyzer
-
+WT5000.name = 'WT5000';
+WT5000.nameCT = 'PM-867-700I';
 
 %% current transducer
 % model: PM-867-700I

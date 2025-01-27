@@ -14,7 +14,7 @@ run('init.m')
 
 %% Settings for the calculation
 % rotational speed sampling points
-n_samplingPoints = 30;
+n_samplingPoints = 3;
 
 % maximal torque
 T_max = 180; % Nm
@@ -341,7 +341,7 @@ plot_Up_eta_watt_SM = reshape(Up_eta_watt_SM,[length_id,n_samplingPoints]);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% sensitivity coefficients %
+%% sensitivity coefficients %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % mechanical power
@@ -366,10 +366,13 @@ plot_Up_el_dcLink_MM = reshape(Up_el_dcLink_MM,[length_id,n_samplingPoints]);
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% save fig. for automatically generated report %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
+run('Plot_Scripts\plot_ED_efficiency_report');
+run('Plot_Scripts\plot_efficiencyUncertainty_report');
+run('Plot_Scripts\plot_sensitivity_Up_T_report');
 
 
 

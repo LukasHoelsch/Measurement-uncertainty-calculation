@@ -1,6 +1,7 @@
 % T12HP_spec.m
 %%%%%%%%%%%%%%%
 % Specifications for the Hottinger Bruel & Kjaer T12HP torque flange
+T12HP.name = 'T12HP';
 
 % Input parameter
 T12HP.d_c = 0.0005;             % sensitivity tolerance
