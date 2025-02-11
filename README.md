@@ -1,11 +1,19 @@
 # Evaluation of the Efficiency Measurement Uncertainty of Electric Drive Test Benches for Direct Data-Driven Control Optimization
 
-This GitHub page features the uncertainty-calculation toolchain used in the proposal "Evaluation of the Efficiency Measurement Uncertainty of Electric Drive Test Benches for Direct Data-Driven Control Optimization"
+This GitHub page features the uncertainty-calculation toolchain used in the paper ["Evaluation of the Efficiency Measurement Uncertainty of Electric Drive Test Benches for Direct Data-Driven Control Optimization"](https://www.techrxiv.org/doi/full/10.36227/techrxiv.173603411.17559954/v1).
 
-
+```
+ @article{Hoelsch2025,
+  author  = {Hölsch, Lukas and Wallscheid, Oliver},
+  title   = {Evaluation of the Efficiency Measurement Uncertainty of Electric Drive Test Benches for Direct Data-Driven Control Optimization},
+  journal = {TechRxiv preprint},
+  year    = {2025},
+  DOI     = {10.36227/techrxiv.173603411.17559954/v1},
+ }
+```
 
 ## Motivation
-This software is used to determine the measurement uncertainty for electric drive test benches, including the current transducers, power analyzer and the torque flange. 
+This toolchain is used to determine the measurement uncertainty for electric drive test benches, including the current transducers, power analyzer and the torque flange. 
 Therefore, the toolchain is split into different class files, representing the components (electrical machine and inverter) and the measurement equipment. These classes are fed with the specifications of the utilized devices, which makes it easily flexible to exchange the components and the measurement devices.
 
 ## Usage
@@ -47,7 +55,7 @@ torqueFlange_selected = T12HP;
 %   WT5000
 powerAnalyzer_selected = WT5000;
 
-% machine,
+% machine
 motor_selected = HSM_16_17_12_C01;
 
 % semiconductor
@@ -109,9 +117,11 @@ $$ = \sqrt{{\left(\frac{1}{P_{\mathrm{DC}}} \right)}^2 u_{\mathrm{c,mech}}^2 + {
 
 
 
-## Parameter
-All relevant parameters for the calculation are listed in the table. Moreover, all parameters are marked, if they are operating point dependant. 
-|                       |                                   |   Yes     | No        |
+## Automatic report
+After each evaluation an automatic report is generated, which contains the utilized parameters and the output graphics. This pdf report can be saved, so that later all the necessary informations is available later in a single document.
+
+
+<!-- |                       |                                   |   Yes     | No        |
 | -----                 | ------                            | -----     | ------    |
 | **Torque**            |                                   |           |           |
 | $T_{\mathrm{max}}$    | Max.\@ measured torque            | &check;   |           |
@@ -198,7 +208,7 @@ For transparency reasons the used parameters for the calculation in the article 
 | $d_{\mathrm{v,harm,MR}}$ | Accuracy voltage fund. |0.0005|
 |    % | | | 
 | $d_{\mathrm{a}}$     | Accuracy analog input      | 0.0003 |
-| $d_{\mathrm{a,MR}}$  | Accuracy MR analog input   | 0.0003 |
+| $d_{\mathrm{a,MR}}$  | Accuracy MR analog input   | 0.0003 | -->
 
 
 ## Folder structure
@@ -228,7 +238,6 @@ The folder structure is visualized below.
 │   ├── FS02MR12A8MA2B_spec
 │   ├── T10FS_spec
 │   ├── T12HP_spec
-│   ├── WT3000_spec
 │   ├── WT5000_spec
 │
 ├── Plot_Files
@@ -253,7 +262,6 @@ The folder structure is visualized below.
 │   │   ├── T10FS
 │   │    
 │   └── powerAnalyzer
-│   │   ├── WT3000
 │   │   ├── WT5000
 │   │    
 │   └── currentTransducer
