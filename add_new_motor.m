@@ -1,6 +1,6 @@
 % createFluxLinkageMaps.m
 %%%%%%%%%%%%%%%
-% Function to create the flux linkage maps with given parameters in the data sheet.
+% Function to create the flux linkage maps with given parameters in the data sheet, or from published papers.
 
 clc;
 
