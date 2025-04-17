@@ -9,6 +9,8 @@ clc;
 % Get project directories
 project_dir = [fileparts(mfilename('fullpath'))];
 
+
+
 %% Initialization
 run('init.m')
 
@@ -39,7 +41,6 @@ torqueFlange_selected = T12HP;
 
 % power analyzer
 % select between
-%   WT3000
 %   WT5000
 powerAnalyzer_selected = WT5000;
 

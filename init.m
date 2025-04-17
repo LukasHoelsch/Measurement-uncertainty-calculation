@@ -30,8 +30,6 @@ run('T12HP_spec.m')
 run('ML60B_spec.m')
 
 %% Power analyzer
-% WT3000
-run('WT3000_spec.m')
 
 % WT5000
 run('WT5000_spec.m')
@@ -45,6 +43,11 @@ load([project_dir_FittedModels,'\fit_E_off.mat'])
 
 
 %% motor spec
-run('Spec_Files\HSM_16_17_12_C01_spec.m');
-run('IPMSM_spec.m')
+run('HSM_16_17_12_C01_spec.m');
+run('HSM_16_17_12_C01_fit.m');
+HSM_16_17_12_C01 = mach_spec;
+
+run('IPMSM_350kW_spec.m')
+run('IPMSM_350kW_fit.m')
+IPMSM_350kW_spec = mach_spec;
 
