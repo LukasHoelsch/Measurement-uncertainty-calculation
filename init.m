@@ -24,14 +24,18 @@ run('T10FS_spec.m')
 % HBM - T12HP
 run('T12HP_spec.m')
 
+% HBM - T40B
+run('T40B_spec.m')
+
+% Kistler - 4551A
+run('Kistler_4551A_spec.m')
+
 
 %% Torque measuring amplifier
 % ML60B
 run('ML60B_spec.m')
 
 %% Power analyzer
-% WT3000
-run('WT3000_spec.m')
 
 % WT5000
 run('WT5000_spec.m')
@@ -40,11 +44,13 @@ run('WT5000_spec.m')
 run('SkiiP_1242GB120_4D_spec')
 run('FS02MR12A8MA2B_spec')
 
-load([project_dir_FittedModels,'\fit_E_on.mat'])
-load([project_dir_FittedModels,'\fit_E_off.mat'])
-
 
 %% motor spec
-run('Spec_Files\HSM_16_17_12_C01_spec.m');
-run('IPMSM_spec.m')
+run('HSM_16_17_12_C01_spec.m');
+run('HSM_16_17_12_C01_fit.m');
+HSM_16_17_12_C01 = mach_spec;
+
+run('IPMSM_350kW_spec.m')
+run('IPMSM_350kW_fit.m')
+IPMSM_350kW = mach_spec;
 

@@ -10,8 +10,8 @@
 
 
 
-FS02MR12A8MA2B.fit_E_on = load([project_dir_FittedModels,'\fit_E_on.mat']);
-FS02MR12A8MA2B.fit_E_off = load([project_dir_FittedModels,'\fit_E_off.mat']);
+FS02MR12A8MA2B.fit_E_on = load([project_dir_FittedModels,'\FS02MR12A8MA2B','\fit_E_on.mat']);
+FS02MR12A8MA2B.fit_E_off = load([project_dir_FittedModels,'\FS02MR12A8MA2B','\fit_E_off.mat']);
 
 
 
