@@ -19,34 +19,38 @@ run('init.m')
 n_samplingPoints = 3;
 
 % maximal torque
-T_max = 180; % Nm
+T_max = 550; % Nm
 
 % minimal speed
-n_min = 2000; % 1/min
+n_min = 1000; % 1/min
 
 % maximal speed
-n_max = 11000; % 1/min
+n_max = 15000; % 1/min
 
 % maximal current of the machine
 i_max = 340; % A
 
 % DC-link voltage
-v_DC = 400; % V
+v_DC = 560; % V
 
 % torque flange
 % select between
 %   T10FS
 %   T12HP
-torqueFlange_selected = T12HP;
+%   T40B
+%   Kistler_4551A
+torqueFlange_selected = T40B;
 
 % power analyzer
 % select between
 %   WT5000
 powerAnalyzer_selected = WT5000;
 
-% machine,
-% motor_selected = IPMSM;
-motor_selected = HSM_16_17_12_C01;
+% machine
+% select between
+%   IPMSM_350kW
+%   HSM_16_17_12_C01
+motor_selected = IPMSM_350kW;
 
 % semiconductor
 semiconductor_selected = FS02MR12A8MA2B;
