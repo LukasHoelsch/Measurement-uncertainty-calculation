@@ -38,7 +38,7 @@ if plot_enable == 1
     %% Figure configuration
     fig.PaperFont = 'Times New Roman';  % Font for fig.
     fig.PaperFontSize = 10;     % Font size for fig.
-    fig.folder = [project_dir_Figures,'\'];
+    fig.folder = [project_dir_Figures,'\T_n_200Nm\'];
     fig.res = '-r900';  % Graphic resolution (if bitmaps available)
     fig.fh = [];    % Initialization of the figure handles
     fig.lg =[];

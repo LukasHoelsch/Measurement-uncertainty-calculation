@@ -68,7 +68,7 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_SM);
     u = colorbar;
-    clim([0.05 0.25]);
+    clim([0.05 .5]);
     u.FontSize = 14;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
@@ -89,7 +89,7 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_MM);
     u = colorbar;
-    clim([0.05 0.25]);
+    clim([0.05 0.5]);
     u.FontSize = 14;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';

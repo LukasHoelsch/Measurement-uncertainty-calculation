@@ -69,9 +69,12 @@ if plot_enable == 1
     u.Label.FontSize = 10;
     u.Label.String = '$P_{\mathrm{l}}$ in W';
 
-    u_min = min(min(plot_inverter_P_loss));
-    u_max = max(max(plot_inverter_P_loss));
-    u.Limits =[u_min,u_max];
+    % u_min = min(min(plot_inverter_P_loss));
+    % u_max = max(max(plot_inverter_P_loss));
+    u.Limits =[0,1900];
+
+    u.Ticks = [0,500,1000,1500];
+    u.TickLabels = {'0','500','1000','1500'};
 
     h.LevelListMode = 'auto';
     h.LevelStep = 0.5;
@@ -87,13 +90,24 @@ if plot_enable == 1
     x_max = n_max;
     y_min = motor_selected.T_calc_min;
     y_max = T_max;
+    z_min = 0;
+    z_max = 1900;
 
+    YTicks = [20,60,100,140,180];
+    YTickLabel={'20','60','100','140','180'};
+
+    ZTicks = [0,500,1000,1500];
+    ZTickLabel={'0','500','1000','1500'};
+    
 
     
     kk=1;
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
+    set(fig.sp(kk), 'zlim', [z_min z_max]);
+    set(fig.sp(kk), 'YTick', YTicks);
+    set(fig.sp(kk), 'ZTick', ZTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');

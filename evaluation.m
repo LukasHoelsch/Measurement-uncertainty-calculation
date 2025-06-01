@@ -16,22 +16,22 @@ run('init.m')
 
 %% Settings for the calculation
 % rotational speed sampling points
-n_samplingPoints = 3;
+n_samplingPoints = 100;
 
 % maximal torque
-T_max = 550; % Nm
+T_max = 180; % Nm
 
 % minimal speed
-n_min = 1000; % 1/min
+n_min = 2000; % 1/min
 
 % maximal speed
-n_max = 15000; % 1/min
+n_max = 11000; % 1/min
 
 % maximal current of the machine
 i_max = 340; % A
 
 % DC-link voltage
-v_DC = 560; % V
+v_DC = 400; % V
 
 % torque flange
 % select between
@@ -39,7 +39,7 @@ v_DC = 560; % V
 %   T12HP
 %   T40B
 %   Kistler_4551A
-torqueFlange_selected = T40B;
+torqueFlange_selected = T12HP;
 
 % power analyzer
 % select between
@@ -50,7 +50,7 @@ powerAnalyzer_selected = WT5000;
 % select between
 %   IPMSM_350kW
 %   HSM_16_17_12_C01
-motor_selected = IPMSM_350kW;
+motor_selected = HSM_16_17_12_C01;
 
 % semiconductor
 semiconductor_selected = FS02MR12A8MA2B;
@@ -137,6 +137,7 @@ parfor zz=1:idx
 
     if end_calculation(zz) == 1
         motor_P_loss(zz) = NaN;
+        motor_P_loss_mech(zz) = NaN;
         motor_P_mech(zz) = NaN;
         inverter_P_loss(zz) = NaN;
         inverter_P_sw(zz) = NaN;
@@ -168,9 +169,14 @@ parfor zz=1:idx
         Up_n(zz) = NaN;
         Up_el_abc_MM(zz) = NaN;
         Up_el_dcLink_MM(zz) = NaN;
+        c_T_SM(zz) = NaN;
+        c_T_MM(zz) = NaN;
+        c_I_SM(zz) = NaN;
+        c_I_MM(zz) = NaN;
     else
 
         motor_P_loss(zz) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).P_loss;
+        motor_P_loss_mech(zz) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).P_loss_mech;
         motor_P_mech(zz) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).P_mech;
         motor_P_calc_bound(zz) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).P_calc_bound;
         motor_v_abc(zz,:) = motorModel(motor_selected,OP,n_op(zz),i_d(zz),i_q(zz),i_dq(zz)).v_abc(1,:);
@@ -252,6 +258,26 @@ parfor zz=1:idx
             motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
             I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC,f_n(zz),f_T(zz)).u_c_el_dcLink_SM;
 
+        % power analyzer, PA_dcLink_i
+        u_PA_dcLink_i(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,torqueFlange_selected,n_op(zz),...
+            motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC,f_n(zz),f_T(zz)).u_PA_dcLink_i;
+
+        % power analyzer, PA_dcLink_v
+        u_PA_dcLink_v(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,torqueFlange_selected,n_op(zz),...
+            motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC,f_n(zz),f_T(zz)).u_PA_dcLink_v;
+
+        % i_dcLink_SM
+        u_i_dcLink_SM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,torqueFlange_selected,n_op(zz),...
+            motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC,f_n(zz),f_T(zz)).u_i_dcLink_SM;
+
+        % i_dcLink_MM
+        u_i_dcLink_MM(zz) = powerAnalyzerUncertainty(powerAnalyzer_selected,torqueFlange_selected,n_op(zz),...
+            motor_T_calc(zz),I_abc_fund(zz),f_I_abc_fund(zz),angle_phi(zz),...
+            I_abc_harm(zz),motor_v_dq(zz,:),I_dcLink(zz),v_DC,f_n(zz),f_T(zz)).u_i_dcLink_MM;
+
         %% Torque uncertainty
         % uncertainty calculation for comparison between two measurements which are
         % done directly after each other (short time)
@@ -290,24 +316,16 @@ parfor zz=1:idx
 
         %% Sensitivity coefficients
         % torque
-        Up_T_SM(zz) = u_T_SM(zz) * k_p;
-        Up_T_MM(zz) = u_T_MM(zz) * k_p;
+        c_T_SM(zz) = n_op(zz)*2*pi/(v_DC*I_dcLink(zz))*u_T_SM(zz);
+        c_T_MM(zz) = n_op(zz)*2*pi/(v_DC*I_dcLink(zz))*u_T_MM(zz);
 
-        % mechanical power
-        Up_mech_SM(zz) = u_P_mech_SM(zz) * k_p;
-        Up_mech_MM(zz) = u_P_mech_MM(zz) * k_p;
-
-        % power analyzer
-        Up_el_abc_MM(zz) = u_el_abc_MM(zz) * k_p;
-
-        % rotational speed
-        Up_n(zz) = u_n(zz)*k_p;
-
-        % power analyzer
-        Up_el_dcLink_MM(zz) = u_el_dcLink_MM(zz)*k_p;
+        % current
+        c_I_SM(zz) = -n_op(zz)*2*pi*motor_T_calc(zz)/(v_DC*I_dcLink(zz)^2)*u_i_dcLink_SM(zz);
+        c_I_MM(zz) = -n_op(zz)*2*pi*motor_T_calc(zz)/(v_DC*I_dcLink(zz)^2)*u_i_dcLink_MM(zz);
 
 
-        %%
+
+        %% Electric drive
         electricDrive_P_loss(zz) = (inverter_P_loss(zz) + motor_P_loss(zz));
 
         electricDrive_efficiency(zz) = motor_P_mech(zz)/(electricDrive_P_loss(zz)+motor_P_mech(zz))*100;
@@ -325,6 +343,9 @@ plot_n = reshape(n_op,[length_id,n_samplingPoints]);
 
 %% Motor loss
 plot_motor_P_loss = reshape(motor_P_loss,[length_id,n_samplingPoints]);
+
+%% Mechanical motor loss
+plot_motor_P_loss_mech = reshape(motor_P_loss_mech,[length_id,n_samplingPoints]);
 
 %% Inverter loss
 plot_inverter_P_loss = reshape(inverter_P_loss,[length_id,n_samplingPoints]);
@@ -349,25 +370,14 @@ plot_Up_eta_watt_SM = reshape(Up_eta_watt_SM,[length_id,n_samplingPoints]);
 %% sensitivity coefficients %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% mechanical power
-plot_Up_mech_SM = reshape(Up_mech_SM,[length_id,n_samplingPoints]);
-plot_Up_mech_MM = reshape(Up_mech_MM,[length_id,n_samplingPoints]);
+% torque measurement
+plot_c_T_SM = reshape(c_T_SM,[length_id,n_samplingPoints]);
+plot_c_T_MM = reshape(c_T_MM,[length_id,n_samplingPoints]);
 
-% torque
-plot_Up_T_SM = reshape(Up_T_SM,[length_id,n_samplingPoints]);
-plot_Up_T_MM = reshape(Up_T_MM,[length_id,n_samplingPoints]);
+% DC power current measurement
+plot_c_I_SM = reshape(c_I_SM,[length_id,n_samplingPoints]);
+plot_c_I_MM = reshape(c_I_MM,[length_id,n_samplingPoints]);
 
-% power analyzer
-plot_Up_powerAnalyzer_MM = reshape(Up_el_abc_MM,[length_id,n_samplingPoints]);
-
-% rotational speed
-plot_Up_n = reshape(Up_n,[length_id,n_samplingPoints]);
-
-% power analyzer
-plot_Up_el_dcLink_MM = reshape(Up_el_dcLink_MM,[length_id,n_samplingPoints]);
-
-
-% amplifier
 
 
 
@@ -377,7 +387,7 @@ plot_Up_el_dcLink_MM = reshape(Up_el_dcLink_MM,[length_id,n_samplingPoints]);
 
 run('Plot_Scripts\plot_ED_efficiency_report');
 run('Plot_Scripts\plot_efficiencyUncertainty_report');
-run('Plot_Scripts\plot_sensitivity_Up_T_report');
+% run('Plot_Scripts\plot_sensitivity_Up_T_report');
 
 
 

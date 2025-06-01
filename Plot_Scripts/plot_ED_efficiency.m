@@ -64,7 +64,7 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_electricDrive_efficiency);
     u = colorbar
-    %clim([88 96]);
+    clim([88 96]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
@@ -79,21 +79,44 @@ if plot_enable == 1
  
 
     %
-    AdjustSubplot(fig,0.05,[0.14 0.16 0.76 0.95],[2]);
+    AdjustSubplot(fig,0.05,[0.14 0.16 0.79 0.95],[2]);
     %
     
-    x_min = n_min;
-    x_max = n_max;
-    y_min = motor_selected.T_calc_min;
-    y_max = T_max;
+    % x_min = n_min;
+    % x_max = n_max;
+    % y_min = motor_selected.T_calc_min;
+    % y_max = T_max;
+
+    x_min = 2000;
+    x_max = 11000;
+    y_min = 20;
+    y_max = 180;
+    z_min = 0;
+    z_max = 100;
+
+    XTicks=[0 2000 4000 6000 8000 10000];
+    XTickLabel={'0','2000','4000','6000','8000','10000'};
+    
+    YTicks = [20,60,100,140,180];
+    YTickLabel={'20','60','100','140','180'};
+
+    ZTicks = [88,90,92,94,96];
+    ZTickLabel={'88','90','92','94','96'};
     
     
     kk=1;
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
+    set(fig.sp(kk), 'zlim', [z_min z_max]);
+    set(fig.sp(kk), 'XTick', XTicks);
+    set(fig.sp(kk), 'YTick', YTicks);
+    set(fig.sp(kk), 'ZTick', ZTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);
+    set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
+    set(fig.sp(kk), 'ZTickLabel', ZTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
     ax = gca;
     ax.FontSize = 10;

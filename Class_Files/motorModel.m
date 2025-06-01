@@ -19,6 +19,9 @@ classdef motorModel
         T_calc_bound % W
         P_calc       % W
         P_calc_bound % W
+        P_loss_bearing % W
+        P_loss_air     % W
+        P_loss_mech  % W
         P_loss       % W
         P_mech       % W
         S            % W
@@ -75,7 +78,54 @@ classdef motorModel
             end
         end
               
-        % Loss
+        % air friction mechanical loss
+        function P_loss_air = get.P_loss_air(obj)
+
+            Re1 = obj.motor_spec.rho*obj.n_op*obj.motor_spec.p*2*pi/60*obj.motor_spec.D_r*obj.motor_spec.l_delta/(2*obj.motor_spec.mu_v);
+
+            if Re1 < 64
+                C_M1 = 10*(2*obj.motor_spec.l_delta/obj.motor_spec.D_r)^(0.3)/Re1;
+            
+            elseif 64 < Re1 && Re1 < 5*10^2
+                C_M1 = 2*(2*obj.motor_spec.l_delta/obj.motor_spec.D_r)^(0.3)/Re1^(0.6);
+
+            elseif 5*10^2 < Re1 && Re1 < 10^4
+                C_M1 = 1.03*(2*obj.motor_spec.l_delta/obj.motor_spec.D_r)^(0.3)/Re1^(0.5);
+
+            elseif Re1 > 10^4
+                C_M1 = 0.065*(2*obj.motor_spec.l_delta/obj.motor_spec.D_r)^(0.3)/Re1^(0.2);
+
+            end
+
+            P_w1 = 1/32 * obj.motor_spec.k * C_M1 * pi *obj.motor_spec.rho * (obj.n_op*obj.motor_spec.p*2*pi/60)^3 *obj.motor_spec.D_r^4*obj.motor_spec.l_r;
+
+            Re2 = obj.motor_spec.rho*obj.n_op*obj.motor_spec.p*2*pi/60 * obj.motor_spec.D_r/(4*obj.motor_spec.mu_v);
+
+            if Re2 < 3e5
+                C_M2 = 3.87/Re2^(0.5);
+            elseif Re2 > 3e5
+                C_M2 = 0.146/Re2^(0.2);
+            end
+
+            P_w2 = 1/64 * C_M2 * obj.motor_spec.rho * (obj.n_op*obj.motor_spec.p*2*pi/60)^3 * (obj.motor_spec.D_r^5-obj.motor_spec.D_ri^5);
+
+           P_loss_air = P_w1 + P_w2;
+           
+        end
+
+        % bearing friction mechanical loss
+        function P_loss_bearing = get.P_loss_bearing(obj)
+           P_loss_bearing = 0;
+           
+        end
+
+        % mechanical loss
+        function P_loss_mech = get.P_loss_mech(obj)
+           P_loss_mech = obj.P_loss_bearing + obj.P_loss_air; 
+           
+        end
+
+        % total loss
         function P_loss = get.P_loss(obj)
            P_loss = (100-obj.motor_spec.eta.fit_eta(obj.n_op,obj.T_calc_idq))/100*obj.P_calc;
            

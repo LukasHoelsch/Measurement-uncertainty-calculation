@@ -20,6 +20,14 @@ FS02MR12A8MA2B.fit_E_off = load([project_dir_FittedModels,'\FS02MR12A8MA2B','\fi
 
 % conduction loss
 FS02MR12A8MA2B.R_ds_on = 0.0032; % ohm
+
+
+%% DC-link capacitor
+FS02MR12A8MA2B.R_ESR = 0.001; % Ohm
+
+
+
+
 % 
 % % current vector, sampling points
 % FS02MR12A8MA2B.I_on = [44.82758620689655, 82.68199233716474, 125.51724137931033, 182.29885057471265, ...

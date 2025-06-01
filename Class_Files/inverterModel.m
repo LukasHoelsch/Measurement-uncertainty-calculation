@@ -16,6 +16,7 @@ classdef inverterModel
 
         P_sw    % W
         P_conduction  % W
+        P_loss_DC % W
         P_loss  % W
         n_steps
     end
@@ -118,10 +119,16 @@ classdef inverterModel
             P_conduction = 3*obj.i_dq^2*obj.semiconductor.R_ds_on;
         end
 
+        % DC link loss
+        function P_loss_DC = get.P_loss_DC(obj)
+            P_loss_DC = obj.semiconductor.R_ESR * obj.i_dq^2;
+        end
+
+
         % Mosfet loss calculation
         function P_loss = get.P_loss(obj) % W
 
-            P_loss = obj.P_sw + obj.P_conduction;
+            P_loss = obj.P_sw + obj.P_conduction + obj.P_loss_DC;
         end
 
 

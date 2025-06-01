@@ -79,7 +79,7 @@ if plot_enable == 1
  
 
     %
-    AdjustSubplot(fig,0.05,[0.14 0.16 0.76 0.95],[2]);
+    AdjustSubplot(fig,0.05,[0.14 0.16 0.77 0.95],[2]);
     %
     
     x_min = 2000;
