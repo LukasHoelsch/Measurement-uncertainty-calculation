@@ -101,19 +101,15 @@ This highlights the usefulness of the MM model in order to carry out efficiency 
 
 
 ## Sensitivity coefficients
-Sensitivity coefficients show the component's uncertainty influence on the total uncertainty. This is very helpful to decerase the systems uncertainty by changing the components with the worst uncertainty first. Therefore, the sensitivity coefficients are calculated in the following, starting with the DC link power as
+To reduce the measurement uncertainty of a considered existing system design, it is crucial to know the measurement components, for which a small change of their output value have a big impact on the total uncertainty. This is very helpful to decerase the systems uncertainty by changing the components with the worst uncertainty first. Therefore, the sensitivity coefficients are calculated in the following, starting with the torque measurement on the total efficiency by
 
-$$P_{\mathrm{DC}} = V_{\mathrm{DC}} I_{\mathrm{DC}},$$
-applying the partial derivative leads to:
-
-$$u_{\mathrm{c,el,dcLink}} = \sqrt{V_{\mathrm{DC}}^2 u_{\mathrm{I,DC}}^2 + I_{\mathrm{DC}}^2 u_{\mathrm{v,DC}}^2}.$$
+$$c_{\mathrm{T}} = \frac{\partial \eta}{\partial T} u_{\mathrm{T}} = \frac{\omega_{\mathrm{mech}}}{V_{\mathrm{DC}}I_{\mathrm{DC}}} u_{\mathrm{T}},$$
 
 
-The uncertainty of the mechanical output power is given with:
+and for the current measurement as: 
+$$c_{\mathrm{I,DC}} = \frac{\partial \eta}{\partial I_{\mathrm{DC}}} = - \frac{T \omega_{\mathrm{mech}}}{V_{\mathrm{DC}} I_{\mathrm{DC}}^2} u_{\mathrm{I,DC}}. $$
 
-$$u_{\mathrm{c,\eta}} = \sqrt{\left(\frac{\partial \eta}{\partial P_{\mathrm{mech}}}\right)^2 u_{\mathrm{c,mech}}^2 + \left(\frac{\partial \eta}{\partial P_{\mathrm{DC}}}\right)^2 u_{\mathrm{c,DC}}^2 } $$
 
-$$ = \sqrt{{\left(\frac{1}{P_{\mathrm{DC}}} \right)}^2 u_{\mathrm{c,mech}}^2 + {\left(- \frac{P_{\mathrm{mech}}}{P_{\mathrm{DC}}^2}\right)}^2 u_{\mathrm{c,DC}}^2}$$
 
 
 
