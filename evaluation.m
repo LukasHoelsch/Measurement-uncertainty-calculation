@@ -19,27 +19,28 @@ run('init.m')
 n_samplingPoints = 100;
 
 % maximal torque
-T_max = 180; % Nm
+T_max = 580; % Nm
 
 % minimal speed
 n_min = 2000; % 1/min
 
 % maximal speed
-n_max = 11000; % 1/min
+n_max = 15000; % 1/min
 
 % maximal current of the machine
-i_max = 340; % A
+i_max = 330; % A
 
 % DC-link voltage
-v_DC = 400; % V
+v_DC = 650; % V
 
 % torque flange
 % select between
 %   T10FS
 %   T12HP
+%   T12HP_Tn500Nm
 %   T40B
 %   Kistler_4551A
-torqueFlange_selected = T12HP;
+torqueFlange_selected = T12HP_Tn500Nm;
 
 % power analyzer
 % select between
@@ -50,7 +51,7 @@ powerAnalyzer_selected = WT5000;
 % select between
 %   IPMSM_350kW
 %   HSM_16_17_12_C01
-motor_selected = HSM_16_17_12_C01;
+motor_selected = IPMSM_350kW;
 
 % semiconductor
 semiconductor_selected = FS02MR12A8MA2B;
@@ -385,20 +386,11 @@ plot_c_I_MM = reshape(c_I_MM,[length_id,n_samplingPoints]);
 %% save fig. for automatically generated report %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-run('Plot_Scripts\plot_ED_efficiency_report');
-run('Plot_Scripts\plot_efficiencyUncertainty_report');
-% run('Plot_Scripts\plot_sensitivity_Up_T_report');
-
-
-
-
-
-
-
-
-
-
-
+run('Plot_Scripts\report\plot_ED_efficiency_report');
+run('Plot_Scripts\report\plot_efficiencyUncertainty_report');
+run('Plot_Scripts\report\plot_efficiencyUncertainty_watt_report');
+run('Plot_Scripts\report\plot_sensitivity_torque_report');
+run('Plot_Scripts\report\plot_sensitivity_current_report');
 
 
 

@@ -107,6 +107,7 @@ $$c_{\mathrm{T}} = \frac{\partial \eta}{\partial T} u_{\mathrm{T}} = \frac{\omeg
 
 
 and for the current measurement as: 
+
 $$c_{\mathrm{I,DC}} = \frac{\partial \eta}{\partial I_{\mathrm{DC}}} = - \frac{T \omega_{\mathrm{mech}}}{V_{\mathrm{DC}} I_{\mathrm{DC}}^2} u_{\mathrm{I,DC}}. $$
 
 

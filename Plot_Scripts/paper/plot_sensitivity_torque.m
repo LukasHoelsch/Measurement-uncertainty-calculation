@@ -1,9 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% plot_sensitivity_Up_dcLink.m %%
+%% plot_sensitivity_torque.m %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Visualization of the multiple measurement uncertainty for the DC link power.
+%% Visualization of the sensetitiy coefficient for the torque measurement.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 warning off;
@@ -28,7 +28,7 @@ dred=colormatrix(7,:);
 
 %%
 plot_enable = 1;
-save_plot=0;
+save_plot=1;
 
 
 if plot_enable == 1
@@ -36,7 +36,7 @@ if plot_enable == 1
     %% Figure Configuration
     fig.PaperFont = 'Times New Roman';  % Schriftart für Abb.
     fig.PaperFontSize = 10;     % Schriftgröße für Abb.
-    fig.folder = [project_dir_Figures,'\'];
+    fig.folder = [project_dir_Figures,'\T_n_200Nm\'];
     fig.res = '-r900';  % Grafikauflösung (falls bitmaps vorhanden)
     fig.fh = [];    % Intialisierung der figure handles
     fig.lg =[];
@@ -46,7 +46,7 @@ if plot_enable == 1
     
     
     
-    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'sensitivity_dcLink', 'Resize', 'off', 'RendererMode', 'manual');
+    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'sensitivity_torque', 'Resize', 'off', 'RendererMode', 'manual');
     set(fig.fh(end),'PaperPositionMode','manual','PaperUnits','centimeters','Units','centimeters', 'PaperType', 'A4', 'Renderer', 'opengl');
     set(fig.fh(end),'defaulttextinterpreter','latex',...
                 'DefaultAxesFontSize',fig.PaperFontSize,...
@@ -58,17 +58,19 @@ if plot_enable == 1
                 'Position',[1,1,FigW,FigH]);
     
 
-
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% plot 1
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     fig.sp(end+1) = subplot(2,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_el_dcLink_MM)
+    [~,h] = contourf(plot_n,plot_T_calc,plot_c_T_SM)
     u = colorbar
     % clim([0.9166 0.9550]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$U_\mathrm{{p,DC-link}}$ in W';
+    u.Label.String = '$c_\mathrm{T}$';
     % u.Limits = [0.9,0.99];
     % ZTicks = [0.9,0.94,0.98];
     % ZTickLabel={'0.9','0.94','0.98'};
@@ -77,18 +79,54 @@ if plot_enable == 1
 
 
     h.LevelListMode = 'manual';
-    h.LevelStep = 0.1;
+    h.LevelStep = 0.01;
     h.ShowText = 'on';
     h.LineStyle = 'none';
  
 
-    
-    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% plot 2
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    fig.sp(end+1) = subplot(2,1,2);
+    set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
+    [~,h] = contourf(plot_n,plot_T_calc,plot_c_T_MM)
+    u = colorbar
+    % clim([0.9166 0.9550]);
+    % u.Limits = [0,0.009];
+
+    u.Ruler.Exponent = 0;  % Keeps tick labels as full numbers
+    u.Ruler.TickLabelFormat = '%.0f';  % Adjust format if needed
+
+    pos = u.Position;
+
+    % Place custom text (e.g., "×10^3") manually — adjust x and y as needed
+    text(pos(1) + pos(3)/2 +0.47, pos(2) + pos(4) + 0.5, '$\times 10^{-3}$', ...
+     'Units', 'normalized', 'HorizontalAlignment', 'center', ...
+     'FontSize', 10, 'Interpreter','latex');
+
+    u.FontSize = 10;
+    u.TickLabelInterpreter = 'latex';
+    u.Label.Interpreter = 'latex';
+    u.Label.FontSize = 10;
+    u.Label.String = '$c_\mathrm{T}$';
+
+    ZTicks = [0.0027,0.00275,0.002800];
+    ZTickLabel={'2.7','2.75','2.8'};
+    u.Ticks = ZTicks;
+    u.TickLabels = ZTickLabel;
+
+    h.LevelListMode = 'manual';
+    h.LevelStep = 0.01;
+    h.ShowText = 'on';
+    h.LineStyle = 'none';
 
     %
-    AdjustSubplot(fig,0.05,[0.14 0.25 0.75 0.9],[2]);
+    AdjustSubplot(fig,0.05,[0.14 0.16 0.75 0.95],[2 2]);
     %
     
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% min and max values
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     x_min = 2000;
     x_max = 11000;
     y_min = 20;
@@ -102,7 +140,10 @@ if plot_enable == 1
 
     % ZTicks = [0.9,0.95,0.99];
     % ZTickLabel={'0.9','0.95','0.99'};
-    
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% kk = 1
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     kk=1;
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
@@ -112,17 +153,36 @@ if plot_enable == 1
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
-    text(7000,160,'single','interpreter','latex','Fontsize',10);
+    text(10500,150,'SM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
     %clim([0,max_abs]);
 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% kk = 2
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    kk=2;
+    subplot(fig.sp(kk))
+    set(fig.sp(kk), 'xlim', [x_min x_max]);
+    set(fig.sp(kk), 'ylim', [y_min y_max]);
+    set(fig.sp(kk), 'YTick', YTicks);
+    %set(fig.sp(kk), 'ZTick', ZTicks);
+    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
+    set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
+    set(gca,'TickLabelInterpreter','latex');
+    text(10500,150,'MM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
+    ax = gca;
+    ax.FontSize = 10;
+    ax.XLabel.FontSize = 10;
+    ax.YLabel.FontSize = 10;
+    %clim([0,max_abs]);
 
        
      if save_plot ==1
-            FigName = ['UncertaintyUp_dcLink.pdf'];
+            FigName = ['sensitivity_torque.pdf'];
         if exist([fig.folder FigName]) == 0
                 print('-dpdf','-painters', fig.res,[fig.folder FigName]);
             else

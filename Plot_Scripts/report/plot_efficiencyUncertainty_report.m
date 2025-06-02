@@ -1,9 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% plot_Up_eta_MM.m %%
+%% plot_efficiencyUncertainty_report.m %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Visualization of the efficency uncertainty for a multiple measurement operation.
+%% Visualization of the efficency uncertainty.
 %
 %% Acknowledgement: This script and the is based on an earlier version by Philipp Rehlaender and Anian Brosch
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -38,18 +38,18 @@ if plot_enable == 1
     
     %% Figure configuration
     fig.PaperFont = 'Times New Roman'; % Font for fig.
-    fig.PaperFontSize = 10; % Font size for fig.
-    fig.folder = [project_dir_Figures,'\','T_n_100Nm','/'];
+    fig.PaperFontSize = 14; % Font size for fig.
+    fig.folder = [project_dir_Figures,'\report','\'];
     fig.res = '-r900'; % Graphic resolution (if bitmaps available)
     fig.fh = []; % Initialization of the figure handles
     fig.lg =[];
     fig.sp = []; % Initialization of the subplot handles
-    FigW = 8.5; % Relative specification of the page width to be utilized
-    FigH = 7; % Relative specification of the page height to be utilized
+    FigW = 12; % Relative specification of the page width to be utilized
+    FigH = 8; % Relative specification of the page height to be utilized
     
     
     
-    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'u_eta_MM', 'Resize', 'off', 'RendererMode', 'manual');
+    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'efficiency_uncertainty', 'Resize', 'off', 'RendererMode', 'manual');
     set(fig.fh(end),'PaperPositionMode','manual','PaperUnits','centimeters','Units','centimeters', 'PaperType', 'A4', 'Renderer', 'opengl');
     set(fig.fh(end),'defaulttextinterpreter','latex',...
                 'DefaultAxesFontSize',fig.PaperFontSize,...
@@ -68,15 +68,14 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_SM);
     u = colorbar;
-    clim([0.05 0.25]);
-    u.FontSize = 10;
+    u.FontSize = 14;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
-    u.Label.FontSize = 10;
+    u.Label.FontSize = 14;
     u.Label.String = '$U_\mathrm{{p}}$ in pp';
 %
     h.LevelListMode = 'auto';
-    h.LevelStep = .01;
+    h.LevelStep = .001;
     h.ShowText = 'on';
     h.LineStyle = 'none';
 
@@ -89,24 +88,27 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_MM);
     u = colorbar;
-    clim([0.05 0.25]);
-    u.FontSize = 10;
+    u.FontSize = 14;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
-    u.Label.FontSize = 10;
+    u.Label.FontSize = 14;
     u.Label.String = '$U_\mathrm{{p}}$ in pp';
 %
     h.LevelListMode = 'auto';
-    h.LevelStep = .01;
+    h.LevelStep = .001;
     h.ShowText = 'on';
-    h.LineStyle = 'none';
+    h.LineStyle = "none";
    
  
 
     %
     AdjustSubplot(fig,0.05,[0.14 0.16 0.76 0.95],[2 2]);
     %
-    
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% min and max values
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     x_min = n_min;
     x_max = n_max;
     y_min = motor_selected.T_calc_min;
@@ -120,13 +122,13 @@ if plot_enable == 1
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
-    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',14);
     set(gca,'TickLabelInterpreter','latex');
-    text(2500,80,'SM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1);
+    text(x_max-x_max/8,y_max-y_max/4,'SM','interpreter','latex','Fontsize',14,'BackgroundColor','#D3D3D3','Margin',1);
     ax = gca;
-    ax.FontSize = 10;
-    ax.XLabel.FontSize = 10;
-    ax.YLabel.FontSize = 10;
+    ax.FontSize = 14;
+    ax.XLabel.FontSize = 14;
+    ax.YLabel.FontSize = 14;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% k = 2
@@ -135,14 +137,15 @@ if plot_enable == 1
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
-    xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
-    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',14);
+    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',14);
+    xticks([0+n_max/5 n_max/2 n_max*8/10]);
     set(gca,'TickLabelInterpreter','latex');
-    text(2500,80,'MM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1);
+    text(x_max-x_max/8,y_max-y_max/4,'MM','interpreter','latex','Fontsize',14,'BackgroundColor','#D3D3D3','Margin',1);
     ax = gca;
-    ax.FontSize = 10;
-    ax.XLabel.FontSize = 10;
-    ax.YLabel.FontSize = 10;
+    ax.FontSize = 14;
+    ax.XLabel.FontSize = 14;
+    ax.YLabel.FontSize = 14;
 
     
 
@@ -150,17 +153,8 @@ if plot_enable == 1
     %% save plot
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
      if save_plot ==1
-            FigName = ['u_eta_MM.svg'];
-        if exist([fig.folder FigName]) == 0
-                % print('-dpdf','-painters', fig.res,[fig.folder FigName]);
-                print('-dsvg','-painters', fig.res,[fig.folder FigName]);
-            else
-                choice = questdlg(['Datei "' FigName '" existiert bereit! Überschreiben?'], 'Problem', 'Ja', 'Nein', 'Ja');
-            if strcmp(choice, 'Ja')
-                %  print(fig.fh(end), '-dpdf', '-painters' , fig.res,[fig.folder FigName]);
-                 print(fig.fh(end), '-dsvg', '-painters' , fig.res,[fig.folder FigName]);
-            end
-       end
+            FigName = ['efficiencyUncertainty.svg'];
+            print('-dsvg','-painters', fig.res,[fig.folder FigName]);
      end 
 
 end

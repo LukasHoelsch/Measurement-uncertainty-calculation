@@ -24,6 +24,9 @@ run('T10FS_spec.m')
 % HBM - T12HP
 run('T12HP_spec.m')
 
+% HBM - T12HP_Tn500Nm
+run('T12HP_Tn500Nm_spec.m')
+
 % HBM - T40B
 run('T40B_spec.m')
 

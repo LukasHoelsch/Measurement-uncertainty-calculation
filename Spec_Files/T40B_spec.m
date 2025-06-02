@@ -7,7 +7,7 @@ T40B.name = 'T40B';
 T40B.d_c = 0.001;             % sensitivity tolerance
 T40B.T_n = 500;        % Nm    % nominal torque
 T40B.sigma_rel = 0.0003;      % rel. standard deviation of repeatability
-T40B.d_lh = 0.0001;            % linear deviation including hysteresis
+T40B.d_lh = 0.0002;            % linear deviation including hysteresis
 
 
 %% output torque

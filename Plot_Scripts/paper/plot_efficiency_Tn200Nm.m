@@ -1,11 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% plot_efficiencyUncertainty_MM_watt_MM.m %%
+%% plot_efficiency_Tn200Nm.m %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Visualization of the efficency uncertainty for a multiple measurement operation in Watt.
-%
-%% Acknowledgement: This script and the is based on an earlier version by Philipp Rehlaender and Anian Brosch
+%% Visualization of the efficency uncertainty for a multiple measurement operation.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 warning off;
@@ -29,29 +27,27 @@ lblue=colormatrix(6,:);
 dred=colormatrix(7,:);
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% k = 2
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
 plot_enable = 1;
 save_plot=1;
 
 
 if plot_enable == 1
     
-    %% Figure configuration
-    fig.PaperFont = 'Times New Roman'; % Font for fig.
-    fig.PaperFontSize = 10; % Font size for fig.
+    %% Figure Configuration
+    fig.PaperFont = 'Times New Roman'; %Schriftart für Abb.
+    fig.PaperFontSize = 10; %Schriftgröße für Abb.
     fig.folder = [project_dir_Figures,'\','T_n_200Nm','/'];
-    fig.res = '-r900'; % Graphic resolution (if bitmaps available)
-    fig.fh = []; % Initialization of the figure handles
+    fig.res = '-r900'; %Grafikauflösung (falls bitmaps vorhanden)
+    fig.fh = []; %Intialisierung der figure handles
     fig.lg =[];
-    fig.sp = []; % Initialization of the subplot handles
-    FigW = 8.5; % Relative specification of the page width to be utilized
-    FigH = 7; % Relative specification of the page height to be utilized
+    fig.sp = []; %Initialisierung der subplot handles
+    FigW = 8.5; %Relative Angabe der zu verwendenten Seitenbreite, hier kompl. Breite
+    FigH = 7; %Relative Angabe der zu verwendenten Seitenhöhe, hier rund 1/4 der höhe
     
     
     
-    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'u_eta_MM_watt', 'Resize', 'off', 'RendererMode', 'manual');
+    fig.fh(end+1) = figure('NumberTitle', 'off', 'name', 'u_eta_Tn200Nm', 'Resize', 'off', 'RendererMode', 'manual');
     set(fig.fh(end),'PaperPositionMode','manual','PaperUnits','centimeters','Units','centimeters', 'PaperType', 'A4', 'Renderer', 'opengl');
     set(fig.fh(end),'defaulttextinterpreter','latex',...
                 'DefaultAxesFontSize',fig.PaperFontSize,...
@@ -62,66 +58,73 @@ if plot_enable == 1
                 'PaperPosition',[0,0,FigW,FigH],...
                 'Position',[1,1,FigW,FigH]);
     
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% plot 1
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     fig.sp(end+1) = subplot(2,1,1);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_watt_SM);
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_SM);
     u = colorbar;
-    clim([1 130]);
+    clim([0.0 0.4]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$U_\mathrm{{p}}$ in W';
-  
+    u.Label.String = '$U_\mathrm{{p}}$ in pp';
+%
     h.LevelListMode = 'auto';
-    h.LevelStep = .1;
+    h.LevelStep = .01;
     h.ShowText = 'on';
     h.LineStyle = 'none';
-    
- 
+
+
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% plot 2
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     fig.sp(end+1) = subplot(2,1,2);
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
-    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_watt_MM);
+    [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_MM);
     u = colorbar;
-    clim([1 10]);
+    clim([0.0 0.4]);
     u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
     u.Label.FontSize = 10;
-    u.Label.String = '$U_\mathrm{{p}}$ in W';
-   
+    u.Label.String = '$U_\mathrm{{p}}$ in pp';
+%
     h.LevelListMode = 'auto';
-    h.LevelStep = .1;
+    h.LevelStep = .001;
     h.ShowText = 'on';
     h.LineStyle = 'none';
+    h.LineWidth = 0.1;
+   
+ 
 
     %
-    AdjustSubplot(fig,0.05,[0.14 0.15 0.76 0.95],[2 2]);
+    AdjustSubplot(fig,0.05,[0.14 0.16 0.76 0.95],[2 2]);
     %
-    
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% min and max values
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
     x_min = n_min;
     x_max = n_max;
     y_min = motor_selected.T_calc_min;
     y_max = T_max;
-
+ 
     XTicks=[0 2000 4000 6000 8000 10000];
     XTickLabel={'0','2000','4000','6000','8000','10000'};
     
     YTicks = [20,60,100,140,180];
     YTickLabel={'20','60','100','140','180'};
 
-    
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% kk = 1
+%% k = 1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     kk=1;
     subplot(fig.sp(kk))
@@ -130,6 +133,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'XTick', XTicks);
     set(fig.sp(kk), 'YTick', YTicks);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
     text(10500,150,'SM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
     ax = gca;
@@ -138,7 +142,7 @@ if plot_enable == 1
     ax.YLabel.FontSize = 10;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% kk = 2
+%% k = 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     kk=2;
     subplot(fig.sp(kk))
@@ -148,30 +152,33 @@ if plot_enable == 1
     set(fig.sp(kk), 'YTick', YTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    set(fig.sp(kk), 'XTickLabel', XTickLabel,'Fontsize',10);
+    set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
     text(10500,150,'MM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
     ax = gca;
     ax.FontSize = 10;
     ax.XLabel.FontSize = 10;
     ax.YLabel.FontSize = 10;
-
     
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% save plot
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% save plot
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
      if save_plot ==1
-            FigName = ['u_eta_InWatt.pdf'];
+            FigName = ['u_eta_Tn200Nm.pdf'];
+            % FigName = ['u_eta_Tn200Nm.svg'];
+
         if exist([fig.folder FigName]) == 0
-                %% select between pdf and svg file
                 print('-dpdf','-painters', fig.res,[fig.folder FigName]);
                 %print('-dsvg','-painters', fig.res,[fig.folder FigName]);
+
             else
                 choice = questdlg(['Datei "' FigName '" existiert bereit! Überschreiben?'], 'Problem', 'Ja', 'Nein', 'Ja');
             if strcmp(choice, 'Ja')
-                %% select between pdf and svg file
-                print(fig.fh(end), '-dpdf', '-painters' , fig.res,[fig.folder FigName]);
+                 print(fig.fh(end), '-dpdf', '-painters' , fig.res,[fig.folder FigName]);
                  %print(fig.fh(end), '-dsvg', '-painters' , fig.res,[fig.folder FigName]);
+
             end
        end
      end 

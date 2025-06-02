@@ -56,16 +56,25 @@ append(rpt,Chapter(Title='Introduction and motivation'))
 
 txt_basic1 = Text("Optimizing the efficiency of electric drives is a major " + ...
     "goal in academia and industry. Due to the already high efficiency of electric drives, " + ...
-    "the measurement uncertainty has to be very small to measure even small " + ...
-    "changes in the efficency, e.g., due to the control method. Therefore, " + ...
-    "the uncertainty of already available or in the future planned test benches " + ...
-    "must be evaluated. With the presented tool (calculation itself), the users " + ...
-    "can evalutate their uncertainties. However, repeating this evaluation with " + ...
-    "minor changes of the parameters, the users maybe will lose the specific results. Here, " + ...
-    "this tool comes into action. An automatic report with the general simulation " + ...
-    "settings, all utilized parameters and results is generated after every evaluation.")
+    "the expected improvements are in the single digit and below percentage point range. " + ...
+    "Therfore, a low measurement uncertainty of the electrical input and the mechanical output power " + ...
+    "is necessary to compare the efficiency of different drive designs. " + ...
+    "For the uncertainty evaluation a open-source software has been developed, which calculates the uncertainties. " + ...
+    "This automatic generated report summarizes the selected measurement components and presents the results, " + ...
+    "which is very helpful, when different combinations of measurement components are compared " + ...
+    "to find the best test bench setup.");
 txt_basic1.FontSize = "14";
 append(rpt,txt_basic1);
+
+txt_basic2 =Text("");
+append(rpt,txt_basic2);
+
+txt_basic3 = Text("All details, including the source code of this evaluation, are available on GitHub " + ...
+    "and the underlying calculation model is described in detail in the paper " + ...
+    "“Evaluation of the Efficiency Measurement Uncertainty of Electric Drive Test Benches " + ...
+    "for Direct Data-Driven Control Optimization.“");
+txt_basic3.FontSize = "14";
+append(rpt,txt_basic3);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,7 +325,11 @@ lo_table.TableEntriesStyle = [lo_table.TableEntriesStyle ...
 % Add the layout table to the report
 add(rpt,lo_table)
 
+txt_space = Text("");
+add(rpt,txt_space);
 
+txt_space = Text("");
+add(rpt,txt_space);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Efficiency Uncertainty
@@ -377,15 +390,83 @@ lo_table.TableEntriesStyle = [lo_table.TableEntriesStyle ...
 % Add the layout table to the report
 add(rpt,lo_table)
 
+txt_space = Text("");
+add(rpt,txt_space);
+
+txt_space = Text("");
+add(rpt,txt_space);
 
 
-
-
-%% Torque Sensitivity
-txt_result = Text("The sensitivity of the torque measurement is shown in Fig. 3.");
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Efficiency Uncertainty in Watt
+txt_result = Text("Absolute uncertainty for an efficiency evaluation of the electric drive is visualized in Fig. 3.");
 add(rpt,txt_result);
 
-figure_dir_report = [project_dir_Figures,'\report','\sensitivity_T.svg'];
+figure_dir_report = [project_dir_Figures,'\report','\efficiency_uncertainty_watt.svg'];
+
+% create a formal image
+formalImage = FormalImage(figure_dir_report);
+formalImage.Caption = "Absolute uncertainty for an efficiency evaluation.";
+
+% Use the getImageReporter method of the FormalImage reporter to get the image
+% reporter and the getCaptionReporter method to get the caption reporte
+imageReporter = getImageReporter(formalImage,rpt);
+captionReporter = getCaptionReporter(formalImage);
+
+% Use the getImpl methods of the image and caption reporters to get the
+% corresponding DOM implementations
+imageImpl = getImpl(imageReporter,rpt);
+captionImpl = getImpl(captionReporter,rpt);
+
+% The DOM implementations contain a DOM Paragraph that contains the image and caption content.
+% Update the style of the paragraphs to make sure that there is no white space around the paragraphs
+% and that they are centered in the table entry that is created in a subsequent step
+paraStyle = { ...
+        OuterMargin("0in","0in","0in","0in"), ...
+        HAlign("center") ...
+        };
+    
+imagePara = clone(imageImpl.Children(1));
+imagePara.Style = [imagePara.Style, paraStyle];
+
+captionPara = clone(captionImpl.Children(1));
+captionPara.Style = [captionPara.Style, paraStyle];
+
+% Create a 1-by-1 invisible layout table (lo_table). A table is considered
+% invisible when the borders are not defined for the table and its table entries
+lo_table = Table(1);
+row = append(lo_table,TableRow);
+entry = append(row,TableEntry);
+
+% Add the paragraphs that contain the image and caption content to the only
+% table entry in the invisible layout table
+append(entry,imagePara);
+append(entry,captionPara);
+
+% Span the table to the available page body width
+lo_table.Width = bodyWidth;
+
+% Center the table
+lo_table.TableEntriesStyle = [lo_table.TableEntriesStyle ...
+        { ...
+        HAlign("center"), ...
+        VAlign("middle") ...
+        }];
+
+% Add the layout table to the report
+add(rpt,lo_table)
+
+txt_space = Text("");
+add(rpt,txt_space);
+
+txt_space = Text("");
+add(rpt,txt_space);
+
+%% Torque Sensitivity
+txt_result = Text("The sensitivity of the torque measurement is shown in Fig. 4.");
+add(rpt,txt_result);
+
+figure_dir_report = [project_dir_Figures,'\report','\sensitivity_torque.svg'];
 
 % create a formal image
 formalImage = FormalImage(figure_dir_report);
@@ -440,12 +521,78 @@ lo_table.TableEntriesStyle = [lo_table.TableEntriesStyle ...
 add(rpt,lo_table)
 
 
+txt_space = Text("");
+add(rpt,txt_space);
+
+txt_space = Text("");
+add(rpt,txt_space);
 
 
 
+%% Torque Sensitivity
+txt_result = Text("The sensitivity of the current measurement is shown in Fig. 5.");
+add(rpt,txt_result);
+
+figure_dir_report = [project_dir_Figures,'\report','\sensitivity_current.svg'];
+
+% create a formal image
+formalImage = FormalImage(figure_dir_report);
+formalImage.Caption = "Sensitivity for the current measurement.";
+
+% Use the getImageReporter method of the FormalImage reporter to get the image
+% reporter and the getCaptionReporter method to get the caption reporte
+imageReporter = getImageReporter(formalImage,rpt);
+captionReporter = getCaptionReporter(formalImage);
+
+% Use the getImpl methods of the image and caption reporters to get the
+% corresponding DOM implementations
+imageImpl = getImpl(imageReporter,rpt);
+captionImpl = getImpl(captionReporter,rpt);
+
+% The DOM implementations contain a DOM Paragraph that contains the image and caption content.
+% Update the style of the paragraphs to make sure that there is no white space around the paragraphs
+% and that they are centered in the table entry that is created in a subsequent step
+paraStyle = { ...
+        OuterMargin("0in","0in","0in","0in"), ...
+        HAlign("center") ...
+        };
+    
+imagePara = clone(imageImpl.Children(1));
+imagePara.Style = [imagePara.Style, paraStyle];
+
+captionPara = clone(captionImpl.Children(1));
+captionPara.Style = [captionPara.Style, paraStyle];
+
+% Create a 1-by-1 invisible layout table (lo_table). A table is considered
+% invisible when the borders are not defined for the table and its table entries
+lo_table = Table(1);
+row = append(lo_table,TableRow);
+entry = append(row,TableEntry);
+
+% Add the paragraphs that contain the image and caption content to the only
+% table entry in the invisible layout table
+append(entry,imagePara);
+append(entry,captionPara);
+
+% Span the table to the available page body width
+lo_table.Width = bodyWidth;
+
+% Center the table
+lo_table.TableEntriesStyle = [lo_table.TableEntriesStyle ...
+        { ...
+        HAlign("center"), ...
+        VAlign("middle") ...
+        }];
+
+% Add the layout table to the report
+add(rpt,lo_table)
 
 
+txt_space = Text("");
+add(rpt,txt_space);
 
+txt_space = Text("");
+add(rpt,txt_space);
 
 
 
