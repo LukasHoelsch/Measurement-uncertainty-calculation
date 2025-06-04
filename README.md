@@ -84,7 +84,7 @@ k_p = 2;
 ## Results
 The expanded uncertainty for an efficiency evaluation with a coverage factor $k_{\mathrm{p}} = 2$ is visualized in percent points (pp) in the figure below. The unvertainty of the MM aproach is significantly lower and mostly uniform distributed within the torque-speed plane.
 <p align="center">
-  <img src="./Figures/readme/efficiencyUncertainty.svg" />
+  <img src="./Figures/readme/efficiency_uncertainty.svg" />
 </p>
 
 
