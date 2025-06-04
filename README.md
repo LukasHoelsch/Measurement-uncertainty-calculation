@@ -13,8 +13,16 @@ This GitHub page features the uncertainty-calculation toolchain used in the pape
 ```
 
 ## Motivation
-This toolchain is used to determine the measurement uncertainty for electric drive test benches, including the current transducers, power analyzer and the torque flange. 
-Therefore, the toolchain is split into different class files, representing the components (electrical machine and inverter) and the measurement equipment. These classes are fed with the specifications of the utilized devices, which makes it easily flexible to exchange the components and the measurement devices.
+Optimizing the efficiency of electric drives is a major goal in academia and industry. Due to the already high efficiency of electric drives, the expected improvements are in the single digit and below percentage point range. Therfore, a low measurement uncertainty of the electrical input and the mechanical output power is necessary to compare the efficiency of different drive designs. For the uncertainty evaluation a open-source software has been developed, which calculates the uncertainties.
+
+For the evaluation, this open-source software considers the current transducers, power analyzer and the torque flange. Therefore, the software is split into different class files, representing the electrical machine, inverter and the measurement equipment. These classes are fed with the specifications of the utilized devices, which makes it easy and flexible to exchange the electric drive's components and measurement devices.
+
+The already high efficiency of the electric drive is shown in the figure below.
+<p align="center">
+  <img src="./Figures/readme/efficiency_drive.svg" />
+</p>
+
+
 
 ## Usage
 <!-- In the main script, the number of sampling points and the maximum values of the motor are set, as it is shown in the figure below.
@@ -72,32 +80,19 @@ k_p = 2;
 ````
 
 
-## Implementation
-To reduce the computation time the main calculation is implemented inside a `parfor` loop. The parallel computing toolbox starts automatically and selects the available number of workers for the parallelization. 
 
-
-## Electric drive's efficiency
-The already high efficiency of the electric drive is shown in the figure below.
-<p align="center">
-  <img src="./Figures/readme/efficiency_drive.svg" />
-</p>
-
-
-## Output
-The expanded uncertainty for an efficiency evaluation with a coverage factor $k_{\mathrm{p}} = 2$ is visualized in percent points (pp) in the figure below.
+## Results
+The expanded uncertainty for an efficiency evaluation with a coverage factor $k_{\mathrm{p}} = 2$ is visualized in percent points (pp) in the figure below. The unvertainty of the MM aproach is significantly lower and mostly uniform distributed within the torque-speed plane.
 <p align="center">
   <img src="./Figures/readme/Fig1.svg" />
 </p>
 
 
-To view this result in a different perspective, the uncertainty is visualized, where the maximum uncertainty for the MM procedure is given with 10 W.
+To view this result in a different perspective, the efficiency uncertainty is visualized in Fig. 10, where the maximum uncertainty is given in absolute values of the entire 65 kW electric drive. This figure highlights the usefulness of differentiating the two measurement uncertainty models to showcase that it makes a significant difference if one is interested in measuring the absolute efficiency in a single shot manner (with relatively high uncertainty) or if one wants to optimize the drive performance by comparing multiple operation strategies to each other (with relatively low uncertainty).
 <p align="center">
   <img src="./Figures/readme/Fig2.svg" />
 </p>
 
-
-
-This highlights the usefulness of the MM model in order to carry out efficiency evaluations.
 
 
 ## Sensitivity coefficients
@@ -110,106 +105,33 @@ and for the current measurement as:
 
 $$c_{\mathrm{I,DC}} = \frac{\partial \eta}{\partial I_{\mathrm{DC}}} = - \frac{T \omega_{\mathrm{mech}}}{V_{\mathrm{DC}} I_{\mathrm{DC}}^2} u_{\mathrm{I,DC}}. $$
 
+Thus, in the figure below, the torque sensitivity coefficient is depicted. The influence of the torque measurement on the resulting uncertainty for the SM model in the low torque region is high, due to the non-ideal utilization of the torque transducer. This influence is neglectable for the MM model, thus the sensitivity coefficient is very low.
+<p align="center">
+  <img src="./Figures/readme/Fig2.svg" />
+</p>
+
+In the figure, the sensitivity coefficient of the current measurement is visualized, where the current measurement of the SM approach has a larger impact on the output uncertainty than the MM approach. Comparing the sensitivity coefficients for the presented exemplary use case, the impact of the torque measurement on the uncertainty is approx. three times higher than the current measurement.
+<p align="center">
+  <img src="./Figures/readme/Fig2.svg" />
+</p>
+
 
 
 
 
 ## Automatic report
-After each evaluation an automatic report is generated, which contains the utilized parameters and the output graphics. This pdf report can be saved, so that later all the necessary informations is available later in a single document.
-
-
-<!-- |                       |                                   |   Yes     | No        |
-| -----                 | ------                            | -----     | ------    |
-| **Torque**            |                                   |           |           |
-| $T_{\mathrm{max}}$    | Max.\@ measured torque            | &check;   |           |
-| $T_{\mathrm{n}}$      | Nominal torque                    |           | &check;   |
-| $d_{\mathrm{TC}}$     | Temperature factor                |           | &check;   |
-| $d_{\mathrm{TC0}}$    | Temperature factor                |           | &check;   |
-| $\Delta T$            | $T_{\mathrm{min}}-T_{\mathrm{max}}$           | &check;   |
-| $L_{\mathrm{para}}$   | Parasitic Load                    |           | &check;   |
-| $d_{\mathrm{para}}$   | Parasitic Load                    |           | &check;   |
-| $d_{\mathrm{dC}}$     | Characteristic tolerance          |           | &check;   |
-| $d_{\mathrm{lh}}$     | Linearity with hysteresis         |           | &check;   |
-| $\sigma_{\mathrm{rel}}$ | Repeatability                   |           | &check;   |
-| $\Delta \theta_{\mathrm{meas}}$ | Temperature difference  |           | &check;   |
-| **Rotational speed**  |                     
-| $d_{\mathrm{n,lin}}$  | Linearity                         |           | &check;   |  
-| $n_{\mathrm{max}}$    | Max. measured speed               | &check;   |           |
-| **Amplifier**                
-| $d_{\mathrm{amp}}$    | Accuracy                          |           | &check;   | 
-| $\Delta \theta_{\mathrm{amp}}$  | Temperature difference  |           | &check;   | 
-| $d_{\mathrm{amp,\mathrm{\theta}}}$     | Temperature factor      |    | &check;   |
-| **Current transducer** |  
-| $d_{\mathrm{CT,lin}}$             | Linearity deviation   |           | &check;   |
-| $d_{\mathrm{CT,offset}}$          | Offset                |           | &check;   | 
-| $d_{\mathrm{CT,f}}$               | Frequency             |           | &check;   |
-| $d_{\mathrm{CT,\varphi,fix}}$   | Fixed angle             |           | &check;   |
-| $d_{\mathrm{CT,\varphi,var}}$   | Variable angle          |           | &check;   |
-| $I_{\mathrm{CT,MR}}$              | Measurement range     |           | &check;   |
-| **Power analyzer** |  
-| $d_{\mathrm{i,DC}}$               | Accuracy current DC       |       | &check;   |
-| $d_{\mathrm{v,DC}}$               | Accuracy voltage DC       |       | &check;   |
-| $d_{\mathrm{i,fund}}$             | Accuracy current fund.    |       | &check;   |
-| $d_{\mathrm{i,harm}}$             | Accuracy current harm.    |       | &check;   |
-| $d_{\mathrm{v,fund}}$             | Accuracy voltage fund.    |       | &check;   |
-| $d_{\mathrm{v,harm}}$             | Accuracy voltage harm.    |       | &check;   |
-| $d_{\mathrm{i,DC,MR}}$            | MR current DC             |       | &check;   |
-| $d_{\mathrm{v,DC,MR}}$            | MR voltage DC             |       | &check;   |
-| $d_{\mathrm{i,fund,MR}}$          | Accuracy current fund.    |       | &check;   |
-| $d_{\mathrm{i,harm,MR}}$          | Accuracy current harm.    |       | &check;   |
-| $d_{\mathrm{v,fund,MR}}$          | Accuracy voltage fund.    |       | &check;   |
-| $d_{\mathrm{v,harm,MR}}$          | Accuracy voltage fund.    |       | &check;   |
-| $f_{\mathrm{I_{abc}}}$            | Frequency phase current               | &check;       |   |
-| $\varphi$                         | Angle between voltage and current     | &check;       |   |
-| $I_{\mathrm{abc}}$                | Phase current                         | &check;       |   |
-| $d_{\mathrm{a}}$                  | Accuracy reading analog input         |       | &check;   |
-| $d_{\mathrm{MR}}$                 | Accuracy measurement range            |       | &check;   | 
+After each evaluation an automatic report is generated, which contains the utilized parameters and the results as graphics. For example a preview picute of the report is shown in the figure.
+<p align="center">
+  <img src="./Figures/readme/report_preview.png" />
+</p>
 
 
 
-## Specific parameters for the presented calculation in the article
-For transparency reasons the used parameters for the calculation in the article are given in the following table.
-
-| Parameter          | Description                  | Value         |
-| -------------      | -------------                | ------        |
-| **Torque**         |                              | **T12HP**     |
-| $T_{\mathrm{N}}$   | Nominal torque               | 100 Nm        |
-| $d_{\mathrm{c}}$   | Characteristic tolerance     | 0.0005        |
-| $d_{\mathrm{lh}}$  | Linearity with hysteresis    | 0.0001        |
-| $\sigma_{\mathrm{rel}}$ | Repeatability           | 0.00005       |
-| **Rotational speed** |                            | **T10FS**     |
-| $d_{\mathrm{}}$    | 
-| $n_{\mathrm{max}}$ | Max. speed                   |12000 1/min   |
-| **Amplifier**      |                              |**ML60B**     |
-| $d_{\mathrm{amp}}$ | Accuracy                     | 0            |
-|**Current transducer**     |                       | **PM-867-400I**|
-| $d_{\mathrm{CT,lin}}$| Linearity deviation        | 0.00001      |
-| $d_{\mathrm{CT,offset}}$ | Offset                 | 0.00004      |
-| $d_{\mathrm{CT,f}}$    | Frequency                | 0.0006 1/kHz |
-| $d_{\mathrm{CT,\varphi,fix}}$ | Fixed angle       | 0.01 $^\circ$|
-| $d_{\mathrm{CT,\varphi,var}}$ | Variable angle    | 0.06 $^\circ$/kHz|
-| $I_{\mathrm{CT,MR}}$ | & Measurement range        | 400 A |
-| **Power analyzer**   |                            | **WT5000**| 
-|$d_{\mathrm{i,DC}}$   | Accuracy current DC        | 0.0002 |
-| $d_{\mathrm{v,DC}}$  | Accuracy voltage DC        | 0.0002 |
-| $d_{\mathrm{i,fund}}$| Accuracy current fund.     | 0.0003 |
-| $d_{\mathrm{i,harm}}$| Accuracy current harm.     | 0.001  |
-| $d_{\mathrm{v,fund}}$| Accuracy voltage fund.     | 0.0003 |
-| $d_{\mathrm{v,harm}}$| Accuracy voltage harm.     | 0.001  |
-| MR | | |
-| $d_{\mathrm{i,DC,MR}}$| MR current DC             | 0.0005 |
-| $d_{\mathrm{v,DC,MR}}$| MR voltage DC             | 0.0005 |
-| $d_{\mathrm{i,fund,MR}}$ | Accuracy current fund. |0.0004 |
-| $d_{\mathrm{i,harm,MR}}$ | Accuracy current harm. |0.0005 |
-| $d_{\mathrm{v,fund,MR}}$ | Accuracy voltage fund. |0.0003 |
-| $d_{\mathrm{v,harm,MR}}$ | Accuracy voltage fund. |0.0005|
-|    % | | | 
-| $d_{\mathrm{a}}$     | Accuracy analog input      | 0.0003 |
-| $d_{\mathrm{a,MR}}$  | Accuracy MR analog input   | 0.0003 | -->
-
+## Computational effort
+To reduce the computation time the main calculation is implemented inside a `parfor` loop. The parallel computing toolbox starts automatically and selects the available number of workers for the parallelization.
 
 ## Folder structure
-The folder structure is visualized below.
+The folder structure is built as shown below. Hint: This is only for illustration purposes and the real folder structure may contains for files.
 ````bash
 ├── Class_Files
 │   ├── inverterModel
@@ -221,18 +143,23 @@ The folder structure is visualized below.
 │   ├── torqueUncertainty
 │
 ├── FittedModels
-│   ├── fit_lossBrusa.mat
-│   ├── fit_Psi_d.mat
-│   ├── fit_Psi_q.mat
-│   ├── fit_lossBrusa.mat
-│   ├── fit_E_on.mat
-│   ├── fit_E_off.mat
+│   ├── HSM_1_6_17_12_C01
+│       ├── fit_Psi_d.mat
+│       ├── fit_Psi_q.mat
+│       ├── fit_Torque.mat
+│       ├── fit_eta.mat
+│   ├── IPMSM_350kW
+│       ├── fit_Psi_d.mat
+│       ├── fit_Psi_q.mat
+│       ├── fit_Torque.mat
+│       ├── fit_eta.mat
+│   ├── FS02MR12A8MA2B
+│       ├── fit_E_on.mat
+│       ├── fit_E_off.mat
 │   
 ├── Spec_Files
-│   ├── HSM_16_17_12_C01_spec
-│   ├── ML60B_spec
-│   ├── SkiiP_1242GB120_4D_spec
-│   ├── FS02MR12A8MA2B_spec
+│   ├── HSM_1_6_17_12_C01_spec
+│   ├── HSM_1_6_17_12_C01_fit
 │   ├── T10FS_spec
 │   ├── T12HP_spec
 │   ├── WT5000_spec
@@ -244,26 +171,4 @@ The folder structure is visualized below.
 │
 └── init
 └── testBench_evaluation
-````
-
-## Existing components
-````bash
-├── testBench_evaluation
-│   └── init.m
-│   │
-│   └── motorModel
-│       ├── Brusa
-│   │
-│   └── torqueFlange
-│   │   ├── T12HP
-│   │   ├── T10FS
-│   │    
-│   └── powerAnalyzer
-│   │   ├── WT5000
-│   │    
-│   └── currentTransducer
-│   │   ├── PM-867-400I
-│   │
-│   └── measuringAmplifier
-│       ├── ML60B
 ````
