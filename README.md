@@ -84,13 +84,13 @@ k_p = 2;
 ## Results
 The expanded uncertainty for an efficiency evaluation with a coverage factor $k_{\mathrm{p}} = 2$ is visualized in percent points (pp) in the figure below. The unvertainty of the MM aproach is significantly lower and mostly uniform distributed within the torque-speed plane.
 <p align="center">
-  <img src="./Figures/readme/Fig1.svg" />
+  <img src="./Figures/readme/efficiencyUncertainty.svg" />
 </p>
 
 
 To view this result in a different perspective, the efficiency uncertainty is visualized in Fig. 10, where the maximum uncertainty is given in absolute values of the entire 65 kW electric drive. This figure highlights the usefulness of differentiating the two measurement uncertainty models to showcase that it makes a significant difference if one is interested in measuring the absolute efficiency in a single shot manner (with relatively high uncertainty) or if one wants to optimize the drive performance by comparing multiple operation strategies to each other (with relatively low uncertainty).
 <p align="center">
-  <img src="./Figures/readme/Fig2.svg" />
+  <img src="./Figures/readme/efficiency_uncertainty_watt.svg" />
 </p>
 
 
@@ -107,12 +107,12 @@ $$c_{\mathrm{I,DC}} = \frac{\partial \eta}{\partial I_{\mathrm{DC}}} = - \frac{T
 
 Thus, in the figure below, the torque sensitivity coefficient is depicted. The influence of the torque measurement on the resulting uncertainty for the SM model in the low torque region is high, due to the non-ideal utilization of the torque transducer. This influence is neglectable for the MM model, thus the sensitivity coefficient is very low.
 <p align="center">
-  <img src="./Figures/readme/Fig2.svg" />
+  <img src="./Figures/readme/sensitivity_torque.svg" />
 </p>
 
 In the figure, the sensitivity coefficient of the current measurement is visualized, where the current measurement of the SM approach has a larger impact on the output uncertainty than the MM approach. Comparing the sensitivity coefficients for the presented exemplary use case, the impact of the torque measurement on the uncertainty is approx. three times higher than the current measurement.
 <p align="center">
-  <img src="./Figures/readme/Fig2.svg" />
+  <img src="./Figures/readme/sensitivity_current.svg" />
 </p>
 
 
@@ -122,7 +122,7 @@ In the figure, the sensitivity coefficient of the current measurement is visuali
 ## Automatic report
 After each evaluation an automatic report is generated, which contains the utilized parameters and the results as graphics. For example a preview picute of the report is shown in the figure.
 <p align="center">
-  <img src="./Figures/readme/report_preview.png" />
+  <img src="./Figures/readme/report_preview.PNG" />
 </p>
 
 

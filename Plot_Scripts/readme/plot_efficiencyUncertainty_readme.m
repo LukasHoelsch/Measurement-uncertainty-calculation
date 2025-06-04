@@ -38,14 +38,14 @@ if plot_enable == 1
     
     %% Figure configuration
     fig.PaperFont = 'Times New Roman'; % Font for fig.
-    fig.PaperFontSize = 14; % Font size for fig.
-    fig.folder = [project_dir_Figures,'\report','\'];
+    fig.PaperFontSize = 10; % Font size for fig.
+    fig.folder = [project_dir_Figures,'\readme','\'];
     fig.res = '-r900'; % Graphic resolution (if bitmaps available)
     fig.fh = []; % Initialization of the figure handles
     fig.lg =[];
     fig.sp = []; % Initialization of the subplot handles
     FigW = 12; % Relative specification of the page width to be utilized
-    FigH = 8; % Relative specification of the page height to be utilized
+    FigH = 7; % Relative specification of the page height to be utilized
     
     
     
@@ -68,10 +68,10 @@ if plot_enable == 1
     set(fig.sp(end), 'TickLabelInterpreter', 'Latex');
     [~,h] = contourf(plot_n,plot_T_calc,plot_Up_eta_SM);
     u = colorbar;
-    u.FontSize = 14;
+    u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
-    u.Label.FontSize = 14;
+    u.Label.FontSize = 10;
     u.Label.String = '$U_\mathrm{{p}}$ in pp';
 %
     h.LevelListMode = 'auto';
@@ -93,10 +93,10 @@ if plot_enable == 1
 
     u = colorbar;
     u.Limits = ([color_min color_max]);
-    u.FontSize = 14;
+    u.FontSize = 10;
     u.TickLabelInterpreter = 'latex';
     u.Label.Interpreter = 'latex';
-    u.Label.FontSize = 14;
+    u.Label.FontSize = 10;
     u.Label.String = '$U_\mathrm{{p}}$ in pp';
 %
     h.LevelListMode = 'auto';
@@ -107,7 +107,7 @@ if plot_enable == 1
  
 
     %
-    AdjustSubplot(fig,0.05,[0.14 0.16 0.76 0.95],[2 2]);
+    AdjustSubplot(fig,0.1,[0.14 0.16 0.76 0.95],[2 2]);
     %
 
 
@@ -131,9 +131,9 @@ if plot_enable == 1
     set(gca,'TickLabelInterpreter','latex');
     text(x_max-x_max/8,y_max-y_max/4,'SM','interpreter','latex','Fontsize',14,'BackgroundColor','#D3D3D3','Margin',1);
     ax = gca;
-    ax.FontSize = 14;
-    ax.XLabel.FontSize = 14;
-    ax.YLabel.FontSize = 14;
+    ax.FontSize = 10;
+    ax.XLabel.FontSize = 10;
+    ax.YLabel.FontSize = 10;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% k = 2
@@ -148,9 +148,9 @@ if plot_enable == 1
     set(gca,'TickLabelInterpreter','latex');
     text(x_max-x_max/8,y_max-y_max/4,'MM','interpreter','latex','Fontsize',14,'BackgroundColor','#D3D3D3','Margin',1);
     ax = gca;
-    ax.FontSize = 14;
-    ax.XLabel.FontSize = 14;
-    ax.YLabel.FontSize = 14;
+    ax.FontSize = 10;
+    ax.XLabel.FontSize = 10;
+    ax.YLabel.FontSize = 10;
     set(fig.sp(kk), 'zlim',[0 color_max]);
 
     
