@@ -159,7 +159,7 @@ if plot_enable == 1
     %% save plot
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
      if save_plot ==1
-            FigName = ['efficiencyUncertainty.svg'];
+            FigName = ['efficiency_uncertainty.svg'];
             print('-dsvg','-painters', fig.res,[fig.folder FigName]);
      end 
 
