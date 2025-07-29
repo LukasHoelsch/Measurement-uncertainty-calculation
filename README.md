@@ -12,6 +12,8 @@ This GitHub page features the uncertainty-calculation toolchain used in the pape
  }
 ```
 
+
+
 ## Motivation
 Optimizing the efficiency of electric drives is a major goal in academia and industry. Due to the already high efficiency of electric drives, the expected improvements are in the single digit and below percentage point range. Therfore, a low measurement uncertainty of the electrical input and the mechanical output power is necessary to compare the efficiency of different drive designs. For the uncertainty evaluation a open-source software has been developed, which calculates the uncertainties.
 
@@ -28,7 +30,9 @@ The already high efficiency of the electric drive is shown in the figure below.
 <!-- In the main script, the number of sampling points and the maximum values of the motor are set, as it is shown in the figure below.
 <img src="./Figures/readme/settings.png" width="350"> -->
 
-The general settings are defined at the beginning of the evaluation script.
+The general settings are defined at the beginning of the `evaluation.m` script.
+
+
 ````matlab
 %% Settings for the calculation
 % rotational speed sampling points
@@ -88,7 +92,7 @@ The expanded uncertainty for an efficiency evaluation with a coverage factor $k_
 </p>
 
 
-To view this result in a different perspective, the efficiency uncertainty is visualized in Fig. 10, where the maximum uncertainty is given in absolute values of the entire 65 kW electric drive. This figure highlights the usefulness of differentiating the two measurement uncertainty models to showcase that it makes a significant difference if one is interested in measuring the absolute efficiency in a single shot manner (with relatively high uncertainty) or if one wants to optimize the drive performance by comparing multiple operation strategies to each other (with relatively low uncertainty).
+To view this result in a different perspective, the efficiency uncertainty is visualized in the figure below, where the maximum uncertainty is given in absolute values of the entire 65 kW electric drive. This figure highlights the usefulness of differentiating the two measurement uncertainty models to showcase that it makes a significant difference if one is interested in measuring the absolute efficiency in a single shot manner (with relatively high uncertainty) or if one wants to optimize the drive performance by comparing multiple operation strategies to each other (with relatively low uncertainty).
 <p align="center">
   <img src="./Figures/readme/efficiency_uncertainty_watt.svg" />
 </p>
@@ -120,7 +124,7 @@ In the figure, the sensitivity coefficient of the current measurement is visuali
 
 
 ## Automatic report
-After each evaluation an automatic report is generated, which contains the utilized parameters and the results as graphics. For example a preview picute of the report is shown in the figure.
+After each evaluation an automatic report is generated, which contains the utilized parameters and the results as graphics. For example a preview picute of the report is shown in the figure below.
 <p align="center">
   <img src="./Figures/readme/report_preview.PNG" />
 </p>
@@ -131,7 +135,7 @@ After each evaluation an automatic report is generated, which contains the utili
 To reduce the computation time the main calculation is implemented inside a `parfor` loop. The parallel computing toolbox starts automatically and selects the available number of workers for the parallelization.
 
 ## Folder structure
-The folder structure is built as shown below. Hint: This is only for illustration purposes and the real folder structure may contains for files.
+The folder structure is built as shown below. Hint: This is only for illustration purposes and the real folder structure may contains more files.
 ````bash
 ├── Class_Files
 │   ├── inverterModel
@@ -172,3 +176,6 @@ The folder structure is built as shown below. Hint: This is only for illustratio
 └── init
 └── testBench_evaluation
 ````
+
+## Bug report and contributing
+If you have any ideas or questions about the content, please open an issue or send me an email at lukas.hoelsch@uni-siegen.de .

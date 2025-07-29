@@ -99,7 +99,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',14);
-    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',14);
+    ylabel('$T$ in $\mathrm{N}{\cdot}\mathrm{m}$','interpreter', 'latex','Fontsize',14);
     set(gca,'TickLabelInterpreter','latex');
     ax = gca;
     ax.FontSize = 14;

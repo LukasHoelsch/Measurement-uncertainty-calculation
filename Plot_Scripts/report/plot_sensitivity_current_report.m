@@ -117,7 +117,7 @@ if plot_enable == 1
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
-    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',14);
+    ylabel('$T$ in $\mathrm{N}{\cdot}\mathrm{m}$','interpreter', 'latex','Fontsize',14);
     set(gca,'TickLabelInterpreter','latex');
     text(x_max-x_max/8,y_max-y_max/4,'SM','interpreter','latex','Fontsize',14,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
     ax = gca;
@@ -133,7 +133,7 @@ if plot_enable == 1
     subplot(fig.sp(kk))
     set(fig.sp(kk), 'xlim', [x_min x_max]);
     set(fig.sp(kk), 'ylim', [y_min y_max]);
-    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',14);
+    ylabel('$T$ in $\mathrm{N}{\cdot}\mathrm{m}$','interpreter', 'latex','Fontsize',14);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',14);
     xticks([0+n_max/5 n_max/2 n_max*8/10]);
     set(gca,'TickLabelInterpreter','latex');
