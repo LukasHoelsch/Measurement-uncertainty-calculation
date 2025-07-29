@@ -129,7 +129,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'ylim', [y_min y_max]);
     set(fig.sp(kk), 'XTick', XTicks);
     set(fig.sp(kk), 'YTick', YTicks);
-    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    ylabel('$T$ in $\mathrm{N}{\cdot}\mathrm{m}$','interpreter', 'latex','Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
     text(10500,150,'SM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
     ax = gca;
@@ -147,7 +147,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'XTick', XTicks);
     set(fig.sp(kk), 'YTick', YTicks);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
-    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    ylabel('$T$ in $\mathrm{N}{\cdot}\mathrm{m}$','interpreter', 'latex','Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
     text(10500,150,'MM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
     ax = gca;

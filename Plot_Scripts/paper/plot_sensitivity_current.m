@@ -149,7 +149,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'ylim', [y_min y_max]);
     set(fig.sp(kk), 'YTick', YTicks);
     %set(fig.sp(kk), 'ZTick', ZTicks);
-    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    ylabel('$T$ in $\mathrm{N}{\cdot}\mathrm{m}$','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
     text(10500,150,'SM','interpreter','latex','Fontsize',10,'BackgroundColor','#D3D3D3','Margin',1,'HorizontalAlignment','right');
@@ -168,7 +168,7 @@ if plot_enable == 1
     set(fig.sp(kk), 'ylim', [y_min y_max]);
     set(fig.sp(kk), 'YTick', YTicks);
     %set(fig.sp(kk), 'ZTick', ZTicks);
-    ylabel('$T$ in Nm','interpreter', 'latex','Fontsize',10);
+    ylabel('$T$ in $\mathrm{N}{\cdot}\mathrm{m}$','interpreter', 'latex','Fontsize',10);
     xlabel('$n$ in 1/min','interpreter', 'latex','Fontsize',10);
     set(fig.sp(kk), 'YTickLabel', YTickLabel,'Fontsize',10);
     set(gca,'TickLabelInterpreter','latex');
